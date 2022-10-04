@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const route_contaBancaria = require('./routes/route_contaBancaria');
 const route_motivoGastos = require('./routes/route_motivoGastos');
+const route_origemCredito = require('./routes/route_origemCredito');
 const route_login = require('./routes/route_login');
 
 //CONFIGURAÇÃO
@@ -50,6 +51,7 @@ app.get('/Menu', async (req,res) => {
 //ROTAS
 app.use('/ContaBancaria',route_contaBancaria);
 app.use('/MotivoGastos',route_motivoGastos);
+app.use('/OrigemCredito',route_origemCredito);
 app.use('/Login',route_login );
 
 app.listen(process.env.PORT || 3000,() => {
