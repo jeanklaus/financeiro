@@ -1,0 +1,73 @@
+.not-visible {
+    visibility: hidden;
+    size: 0px;
+    width: 0px;
+    margin: 0px;
+   
+  }
+
+  body
+  {
+    background-color: rgb(165, 165, 165);
+  }
+
+  #ValorTotal
+  {
+    background-color: rgb(165, 165, 165);
+  }
+
+  .transp
+  {
+    background-color: rgb(165, 165, 165);
+  }
+
+  .rolagem
+  {
+    height: 250px;    
+    overflow-y:auto;  
+  }
+
+  .font-bt-redondo
+  {
+    font-size: 25px;  
+  }
+
+  .marca-dose
+  {
+    font-size: 25px;  
+  }
+
+  .dinheiroVermelho
+  {
+    font-size: 25px;
+    color: rgb(3, 3, 3);
+    text-shadow:1px 1px 2px rgb(255, 0, 0);
+  }
+
+  .dinheiroAzul
+  {
+    font-size: 25px;
+    color: rgb(3, 3, 3);
+    text-shadow:1px 1px 2px rgb(0, 191, 255);
+  }
+
+  .dinheiroVerde
+  {
+    font-size: 25px;
+    color: rgb(3, 3, 3);
+    text-shadow:1px 1px 2px rgb(3, 173, 11);
+  }
+
+  .form-control
+  {
+    width: auto;
+  }
+
+  body, h1, h2, h3, h4, h5, h6 {
+    font-family: Geneva, Verdana, sans-serif;
+  }
+
+input[data]
+{
+  width: 180px;
+}
