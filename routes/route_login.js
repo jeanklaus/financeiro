@@ -22,7 +22,7 @@ router.post('/',async (req,res) => {
             database:'tornei65_financeiro'
         });
       
-        let sql =  `SELECT id,nome,login,senha FROM Usuario WHERE login = ? AND senha = ?`
+        let sql =  `SELECT id,nome,login,senha,saldo FROM Usuario WHERE login = ? AND senha = ?`
         let values = [req.body.login,req.body.senha]
         const [rows] = await connection.query(sql,values);
 
@@ -30,6 +30,7 @@ router.post('/',async (req,res) => {
        {
             global.user.id = rows[0].id; 
             global.user.nome = rows[0].nome; 
+            global.user.saldo = rows[0].saldo; 
             global.logado = true;  
             global.conectado = false;
             res.redirect('/Menu');

@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="PT-BR">
+<head>
+  <title>Consulta</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+  <link rel="stylesheet" href="/styles.css">  
+</head>
+<body>
+
+  <div class="w3-container">
+    
+    <h1 class="w3-left">
+      <input id="ValorTotal"  style="text-shadow:1px 1px 2px rgb(135, 128, 128);width: 350px;" class="w3-input"
+        type="text" value="Resultado: $ <%= valorTotal.toFixed(2) %>" readonly>
+    </h1>
+
+    <h1 class="w3-left">
+      <input id="ValorTotal"  style="text-shadow:1px 1px 2px rgb(96, 252, 0);width: 350px;" class="w3-input"
+        type="text" value="Saldo: $ <%= global.user.saldo %>" readonly>
+    </h1>
+
+    <h1 class="w3-left">
+      <input id="ValorTotal"  style="text-shadow:1px 1px 2px rgb(238, 3, 3);width: 350px;" class="w3-input"
+        type="text" value="Devendo: $ <%= valorTotalPendente.toFixed(2) %>" readonly>
+    </h1>
+
+    <h1 class="w3-left">
+      <input id="ValorTotal"  style="text-shadow:1px 1px 2px rgb(37, 0, 248);width: 350px;" class="w3-input"
+        type="text" value="Pendente: $ <%= valorTotalPendenteRecebimento.toFixed(2) %>" readonly>
+    </h1>
+    
+  </div>
+
+  <div class="container w3-left">
+    <form action="/Carteira/ClickGastos" method="post">
+    <nav class="navbar navbar-expand navbar-dark bg-dark">
+      <div class="container">
+      <div class="collapse navbar-collapse" id="mynavbar">
+
+        <select class="form-control me-2" name="motivoGastos" style="width: auto;">
+          <% if(filtros.motivoGastos.id) { %>
+            <option value="<%= filtros.motivoGastos.id %>|<%= filtros.motivoGastos.descricao %>" selected><%= filtros.motivoGastos.descricao %></option>
+          <% }else { %>
+            <option value="" disabled selected>Motivo</option>
+          <% } %>   
+          <% Motivos.forEach(m => { %>
+            <option value="<%= m.id %>|<%= m.descricao %>"><%= m.descricao %></option>
+          <% }); %>
+        </select>
+
+        <select class="form-control me-2" name="formaPagamento" style="width: auto;">
+          <% if(filtros.formaPagamento) { %>
+            <option value="<%= filtros.formaPagamento %>|" selected><%= filtros.formaPagamento %></option>
+          <% }else { %>
+            <option value="" disabled selected>Forma de Pagamento</option>
+          <% } %>     
+            <option value="AVISTA">AVISTA</option>
+            <option value="APRAZO">APRAZO</option>
+        </select>
+
+        <select class="form-control me-2" name="conta" style="width: auto;">
+          <% if(filtros.conta.id) { %>
+            <option value="<%= filtros.conta.id %>|<%= filtros.conta.descricao %>" selected><%= filtros.conta.descricao %></option>
+          <% }else { %>
+            <option value="" disabled selected>Contas</option>
+          <% } %>          
+          <% Contas.forEach(c => { %>
+            <option value="<%= c.id %>|<%= c.descricao %>">
+              <%= c.descricao %>
+            </option>
+            <% }); %>
+        </select>
+
+        <select class="form-control me-2" name="Situacao" style="width: auto;">
+          <% if(filtros.Situacao.id) { %>
+            <option value="<%= filtros.Situacao.id %>|<%= filtros.Situacao.descricao %>" selected><%= filtros.Situacao.descricao %></option>
+          <% }else { %>
+            <option value="" disabled selected>Situação</option>
+          <% } %>  
+          <option value="1|PENDENTE">PENDENTE</option>
+          <option value="2|ATRASADO">ATRASADO</option>
+          <option value="3|PAGO">PAGO</option>  
+               
+        </select>
+
+        <% if(filtros.dataIni) { %>
+          <input class="w3-input w3-border form-control me-2" type="date" name="dataIni" value="<%= filtros.dataIni %>">
+        <% }else { %>
+          <input class="w3-input w3-border form-control me-2" type="date" name="dataIni">
+        <% } %>   
+
+        <% if(filtros.dataFim) { %>
+          <input class="w3-input w3-border form-control me-2" type="date" name="dataFim" value="<%= filtros.dataFim %>">
+        <% }else { %>
+          <input class="w3-input w3-border form-control me-2" type="date" name="dataFim">
+        <% } %> 
+        <button class="btn btn-primary me-2" name="PESQUISAR" value="true">Pesquisar</button>
+        
+        <a href="/Menu" class="btn btn-success me-2">Voltar</a>
+        <a href="/Carteira/ConsultaGastos" class="btn btn-warning">Rezetar</a>
+      </div>
+      </div>
+    </nav>
+  </form>
+    <div class="container mt-3">
+      <table class="table table-dark table-striped">
+        <thead>
+          <tr>       
+            <th>Motivo</th>  
+            <th>Valor</th> 
+            <th>Forma Pagamento</th> 
+            <th>Conta Bancaria</th> 
+            <th>Dt Registro</th> 
+            <th>Dt Vencimento</th>
+            <th>Situação</th>  
+            <th></th>         
+          </tr>
+        </thead>
+        <tbody>          
+          <% Gastos.forEach(g => { %>
+          <tr>
+            <td><%= g.motivo %></td>  
+            <td>$ <%= g.valor %></td>  
+            <td><%= g.formaPagamento %></td>  
+            <td><%= g.conta %></td> 
+            <td><%= g.dt_registro %></td>  
+            <td><%= g.dt_vencimento %></td>
+  
+            <% if(g.situacao == 'PAGO') { %>
+              <td style="color:rgb(0, 255, 0);"><%= g.situacao %></td>
+            <% } else if(g.situacao == 'ATRASADO'){ %> 
+              <td style="color:rgb(249, 224, 0);"><%= g.situacao %></td>
+            <% } else { %> 
+              <td style="color:rgb(250, 0, 0);"><%= g.situacao %></td>
+            <% } %> 
+
+            <form action="/Carteira/PagarGasto" method="post">
+              <% if(g.situacao != 'PAGO') { %>
+                <td><button name="PAGAR" value="<%= g.id %>" class="form-control btn-primary">Pagar</button></td>
+              <% } else { %> 
+                <td></td>
+              <% } %>
+            </form>
+          </tr>  
+          <% }); %>             
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+
+</body>
+</html>

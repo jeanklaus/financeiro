@@ -145,4 +145,24 @@ function VerificaTP(obj)
   }
 }
 
-module.exports = { formataData, ConverterData,AnalisaFiltros }
+function getPedacoData(data,qual)//yyyy-mm-dd
+{
+  let [ano,mes,dia] = data.split('-');
+
+  if(qual == "DIA")
+  {
+    return dia;
+  }
+  else if(qual == "MES")
+  {
+    return mes;
+  }
+  else
+  {
+    return ano;
+  }
+}
+
+
+
+module.exports = { formataData, ConverterData,AnalisaFiltros,getPedacoData }

@@ -41,8 +41,7 @@ router.post('/Click',async (req,res) => {
              let result = await Conta.Gravar(req.body.nome.toUpperCase())             
              if(result.affectedRows > 0)
              {
-                res.render('contaBancaria_view/feed',{status:'success',txt:'Conta gravada com sucesso!'})
-                return;
+                return res.render('contaBancaria_view/feed',{status:'success',txt:'Conta gravada com sucesso!'})                
              } 
              else
              {
