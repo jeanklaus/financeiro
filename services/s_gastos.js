@@ -11,7 +11,8 @@ async function getAll(){
     INNER JOIN MotivoGastos as m ON m.id = g.motivo
     INNER JOIN SituacaoGastos as s ON s.id = g.situacao
     INNER JOIN ContaBancaria as c ON c.id = g.contaBancaria
-    WHERE g.usuario = ${global.user.id}`
+    WHERE g.usuario = ${global.user.id}
+    ORDER BY g.dt_vencimento`
     const [rows] = await conn.query(sql,values);
 
     let newrows = rows.map(registro => {
@@ -36,7 +37,8 @@ async function getAll_Filtros(filtro){
     INNER JOIN MotivoGastos as m ON m.id = g.motivo
     INNER JOIN SituacaoGastos as s ON s.id = g.situacao
     INNER JOIN ContaBancaria as c ON c.id = g.contaBancaria
-    WHERE ${filtro} AND g.usuario = ${global.user.id}`
+    WHERE ${filtro} AND g.usuario = ${global.user.id}
+    ORDER BY g.dt_vencimento`
     const [rows] = await conn.query(sql,values);
 
     let newrows = rows.map(registro => {
@@ -60,7 +62,7 @@ async function Gravar(valor,dt_registro,dt_vencimento,formaPagamento,motivo,situ
     let dia = DLL.getPedacoData(dt_vencimento,"DIA")
     let ano = DLL.getPedacoData(dt_vencimento,"ANO")
 
-    const conn = await db.connect();  
+    const conn = await db.connect(); 
 
     const sql =  `INSERT INTO Gastos
     (usuario,valor,dt_registro,dt_vencimento,formaPagamento,motivo,situacao,contaBancaria) 
@@ -77,6 +79,32 @@ async function Gravar(valor,dt_registro,dt_vencimento,formaPagamento,motivo,situ
             await conn.query(sql, values);
         }
     }
+}
+
+//GRAVAR PARCELADO
+async function GravarParcelado(valor,dt_registro,dt_vencimento,formaPagamento,motivo,situacao,contaBancaria,qtParcelas)
+{
+    let vlParcela = valor / qtParcelas;
+
+    const conn = await db.connect();
+
+    for(let i = 0; i < qtParcelas; i++)
+    {
+        let sql =  `INSERT INTO Gastos
+        (usuario,valor,dt_registro,dt_vencimento,formaPagamento,motivo,situacao,contaBancaria) 
+        VALUES (?,?,?,DATE_ADD("${dt_vencimento}", INTERVAL ${i} MONTH),?,?,?,?)`;
+
+        if(i == 0)
+        {
+            let values = [global.user.id,vlParcela,dt_registro,formaPagamento,motivo,situacao,contaBancaria]; 
+            await conn.query(sql, values);
+        }  
+        else
+        {
+            let values = [global.user.id,vlParcela,null,formaPagamento,motivo,1,contaBancaria]; 
+            await conn.query(sql, values);
+        } 
+    }  
 }
 
 //BUSCA GASTO PELO ID
@@ -122,6 +150,21 @@ async function Pagar(id,valor){
     await Credito.DiminuiSaldo(valor);
 }
 
-module.exports = {getAll,getAll_Filtros,Gravar,getGastoID,Pagar}
+//EDITAR O VALOR DO GASTO
+async function EditarValor(id,valor){
+
+    const conn = await db.connect();
+
+    const sql =  `  UPDATE Gastos 
+                    SET valor = ?
+                    WHERE id = ?
+                    AND usuario = ?`;
+
+    const values = [valor,id,global.user.id];   
+    await conn.query(sql, values);
+}
+
+
+module.exports = {getAll,getAll_Filtros,Gravar,getGastoID,Pagar,EditarValor,GravarParcelado}
 
 

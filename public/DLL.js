@@ -1,6 +1,44 @@
 
+function checkName(nome,ids = []) {
+  
+  let checkbox = document.getElementById(nome); 
+  let inputs = []
+
+  ids.forEach(id => {
+    inputs.push(document.getElementById(id));
+  });
+
+  verificaCheckParcela();
+
+  if (checkbox.checked) {
+    inputs.forEach(input => {
+      input.hidden = true;
+    });
+  }
+  else {
+    inputs.forEach(input => {
+      input.hidden = false;
+    });
+  }
+}
+
+function verificaCheckParcela()
+{
+  let campo = document.getElementById("qtParcelas"); 
+  let checkbox = document.getElementById("parcelado"); 
+
+  if (checkbox.checked) 
+  {
+    campo.hidden = false;  
+  }
+  else
+  {
+    campo.hidden = true;  
+  }
+}
+
 function check(ids = []) {
-  let checkbox = document.getElementById("checkbox");
+  let checkbox = document.getElementById("checkbox"); 
   let inputs = []
 
   ids.forEach(id => {
@@ -162,7 +200,5 @@ function getPedacoData(data,qual)//yyyy-mm-dd
     return ano;
   }
 }
-
-
 
 module.exports = { formataData, ConverterData,AnalisaFiltros,getPedacoData }

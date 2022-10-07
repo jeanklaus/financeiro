@@ -12,7 +12,7 @@ const router = express.Router();
 router.use(bodyparser.urlencoded({ extended: false }));
 
 //=============================================================
-let teste = ""
+
 let wheres = []
 let filtros = {}
 filtros.motivoGastos = {}
@@ -61,6 +61,12 @@ router.post('/ClickGastos',async (req,res) => {
         let Contas = await ContaBancaria.getAll();
         wheres = []
 
+        if(req.body.EDI)
+        {
+            let [id,valor] = req.body.EDI.split('|');
+            return res.render('carteira_view/editarGasto',{id,valor})
+        }
+
         if(req.body.PESQUISAR)
         {
             if (req.body.motivoGastos) 
@@ -100,13 +106,12 @@ router.post('/ClickGastos',async (req,res) => {
             }
             
             //======================================
-            Gastos = await Gasto.getAll_Filtros(Func.AnalisaFiltros(wheres));            
-        }
-
-        let valorTotal = getCustoTotal(Gastos);  
-        let valorTotalPendente =  await getGastoTotalPendente(); 
-        let valorTotalPendenteRecebimento = await getCreditoTotalPendente();   
-        res.render('carteira_view/inicialGastos',{Gastos,valorTotal,Motivos,Contas,filtros,valorTotalPendente,valorTotalPendenteRecebimento});
+            Gastos = await Gasto.getAll_Filtros(Func.AnalisaFiltros(wheres)); 
+            let valorTotal = getCustoTotal(Gastos);  
+            let valorTotalPendente =  await getGastoTotalPendente(); 
+            let valorTotalPendenteRecebimento = await getCreditoTotalPendente();   
+            return res.render('carteira_view/inicialGastos',{Gastos,valorTotal,Motivos,Contas,filtros,valorTotalPendente,valorTotalPendenteRecebimento});           
+        }        
     }
     catch(erro)
     {
@@ -135,7 +140,9 @@ router.post('/CofirmarRegistroGastos',async (req,res) => {
     { 
         let situacao = 1;//PENDENTE
         let inAnoTodo = false;
+        let inParcelado = false;
         let dataRegistro = null;
+        let qtParcelas = 0;
 
         if(!req.body.valor)
         {
@@ -175,11 +182,30 @@ router.post('/CofirmarRegistroGastos',async (req,res) => {
             inAnoTodo =  true;
         }
 
-       await Gasto.Gravar(req.body.valor,dataRegistro,req.body.dtVencimento,req.body.formaPagamento,
-        req.body.motivoGastos,situacao,req.body.conta,inAnoTodo)
+        if(req.body.parcelado)
+        {
+            inParcelado =  true;
 
-    return res.render('carteira_view/feedGastos',{status:'success',txt:'Gasto gravado com sucesso!'})  
+            if(!req.body.qtParcelas)
+            {
+                return res.render('feed',{erro:'Informe a quantidade de parcelas'}) 
+            }
 
+            qtParcelas = req.body.qtParcelas;
+        }
+
+        if(inParcelado)
+        {
+            await Gasto.GravarParcelado(req.body.valor,dataRegistro,req.body.dtVencimento,req.body.formaPagamento,
+            req.body.motivoGastos,situacao,req.body.conta,qtParcelas)
+        }
+        else
+        {
+            await Gasto.Gravar(req.body.valor,dataRegistro,req.body.dtVencimento,req.body.formaPagamento,
+            req.body.motivoGastos,situacao,req.body.conta,inAnoTodo)
+        }      
+
+        return res.render('carteira_view/feedGastos',{status:'success',txt:'Gasto gravado com sucesso!'})  
     }
     catch(erro)
     {
@@ -237,6 +263,30 @@ router.post('/AlterarSaldo',async (req,res) => {
         {
             return res.render('feed',{erro:'Informe o novo saldo'})
         }
+    }
+    catch(erro)
+    {
+        global.conectado = false;      
+        res.render('feed',{erro})
+    } 
+});
+
+router.post('/ConfirmaEdicaoGasto',async (req,res) => {
+    try
+    { 
+        if(req.body.CONFIRMADO)
+        {
+            if(!req.body.valor)
+            {
+                return res.render('feed',{erro:'Informe o valor'}) 
+            }
+
+            let [id,] = req.body.CONFIRMADO.split('|'); 
+            let valor =  req.body.valor  
+
+            await Gasto.EditarValor(id,valor);
+            res.redirect('/Carteira/ConsultaGastos');
+        } 
     }
     catch(erro)
     {

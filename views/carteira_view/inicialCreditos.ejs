@@ -94,7 +94,7 @@
     </nav>
  
     <div class="container mt-3">
-      <table class="table table-dark table-striped">
+      <table class="table table-dark table-striped table-sm">
         <thead>
           <tr>   
             <th></th>     
@@ -112,7 +112,7 @@
           <tr>
 
             <% if(c.situacao != 'RECEBIDO') { %>
-              <td><button name="EDI" value="<%= c.id %>|<%= c.valor %>" class="form-control btn-warning">E</button></td>
+              <td><button name="EDI" value="<%= c.id %>|<%= c.valor %>" class="btn-sm form-control btn-warning">E</button></td>
             <% } else { %> 
               <td></td>
             <% } %> 
@@ -131,7 +131,7 @@
             </form>
             <form action="/Carteira/ReceberCredito" method="post">
               <% if(c.situacao != 'RECEBIDO') { %>
-                <td><button name="RECEBER" value="<%= c.id %>" class="form-control btn-primary">Receber</button></td>
+                <td><button name="RECEBER" value="<%= c.id %>" class="btn-sm form-control btn-primary">Receber</button></td>
               <% } else { %> 
                 <td></td>
               <% } %>

@@ -58,7 +58,7 @@
           <% }else { %>
             <option value="" disabled selected>Forma de Pagamento</option>
           <% } %>     
-            <option value="AVISTA">AVISTA</option>
+            <option value="DINHEIRO">DINHEIRO</option>
             <option value="APRAZO">APRAZO</option>
         </select>
 
@@ -105,11 +105,12 @@
       </div>
       </div>
     </nav>
-  </form>
+  
     <div class="container mt-3">
-      <table class="table table-dark table-striped">
+      <table class="table table-dark table-striped table-sm">
         <thead>
-          <tr>       
+          <tr>  
+            <th></th>     
             <th>Motivo</th>  
             <th>Valor</th> 
             <th>Forma Pagamento</th> 
@@ -123,6 +124,13 @@
         <tbody>          
           <% Gastos.forEach(g => { %>
           <tr>
+
+            <% if(g.situacao != 'PAGO') { %>
+              <td><button name="EDI" value="<%= g.id %>|<%= g.valor %>" class="btn-sm form-control btn-warning">E</button></td>
+            <% } else { %> 
+              <td></td>
+            <% } %>
+
             <td><%= g.motivo %></td>  
             <td>$ <%= g.valor %></td>  
             <td><%= g.formaPagamento %></td>  
@@ -137,10 +145,10 @@
             <% } else { %> 
               <td style="color:rgb(250, 0, 0);"><%= g.situacao %></td>
             <% } %> 
-
+            </form>
             <form action="/Carteira/PagarGasto" method="post">
               <% if(g.situacao != 'PAGO') { %>
-                <td><button name="PAGAR" value="<%= g.id %>" class="form-control btn-primary">Pagar</button></td>
+                <td><button name="PAGAR" value="<%= g.id %>" class="btn-sm form-control btn-primary">Pagar</button></td>
               <% } else { %> 
                 <td></td>
               <% } %>
