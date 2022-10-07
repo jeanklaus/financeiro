@@ -15,8 +15,9 @@
   </div>
   
   <form class="w3-container" action="/Carteira/AlterarSaldo" method="post">
+
     <label class="w3-text-black"><h2>Insira o novo valor do saldo</h2></label>
-    <input class="form-control" type="text" name="saldo" id="saldo" style="width: auto;" >
+    <input class="form-control" type="number" step="0.01" name="saldo" id="saldo" style="width: auto;" >
     <hr>
     <a href="/Menu" class="btn btn-primary">Voltar</a>
     <button name="CONFIRMAR_ADD" value="true" class="btn w3-green">Confirmar</button>    

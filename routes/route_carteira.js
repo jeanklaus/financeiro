@@ -146,7 +146,7 @@ router.post('/CofirmarRegistroGastos',async (req,res) => {
 
         if(!req.body.valor)
         {
-            return res.render('feed',{erro:'Informe o valor'}) 
+            return res.render('feed',{erro:'Informe o valor'})
         }
 
         if(!req.body.motivoGastos)
