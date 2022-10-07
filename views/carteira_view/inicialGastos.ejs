@@ -84,7 +84,7 @@
           <option value="1|PENDENTE">PENDENTE</option>
           <option value="2|ATRASADO">ATRASADO</option>
           <option value="3|PAGO">PAGO</option>  
-               
+          <option value="4|ORCAMENTO">ORCAMENTO</option> 
         </select>
 
         <% if(filtros.dataIni) { %>
@@ -118,7 +118,7 @@
             <th>Dt Registro</th> 
             <th>Dt Vencimento</th>
             <th>Situação</th>  
-            <th></th>         
+            <th></th>  
           </tr>
         </thead>
         <tbody>          
@@ -142,17 +142,29 @@
               <td style="color:rgb(0, 255, 0);"><%= g.situacao %></td>
             <% } else if(g.situacao == 'ATRASADO'){ %> 
               <td style="color:rgb(249, 224, 0);"><%= g.situacao %></td>
+            <% } else if(g.situacao == 'ORCAMENTO'){ %> 
+              <td style="color:rgb(0, 45, 248);"><%= g.situacao %></td>
             <% } else { %> 
               <td style="color:rgb(250, 0, 0);"><%= g.situacao %></td>
             <% } %> 
             </form>
+
             <form action="/Carteira/PagarGasto" method="post">
-              <% if(g.situacao != 'PAGO') { %>
+
+              <% if(g.inOrcamentario) { %>
+                <td>
+                  <div class="btn-group">
+                    <button name="CONSUMIR" value="<%= g.id %>" class="me-1 btn-sm form-control btn-info">Consumir</button>
+                    <button name="DEL" value="<%= g.id %>" class=" btn-sm form-control btn-danger">X</button>
+                  </div>
+                </td>
+              <% } else if(g.situacao != 'PAGO') { %> 
                 <td><button name="PAGAR" value="<%= g.id %>" class="btn-sm form-control btn-primary">Pagar</button></td>
-              <% } else { %> 
+              <% } else { %>
                 <td></td>
               <% } %>
             </form>
+
           </tr>  
           <% }); %>             
         </tbody>

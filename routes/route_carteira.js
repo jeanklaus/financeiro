@@ -182,7 +182,7 @@ router.post('/CofirmarRegistroGastos',async (req,res) => {
             inAnoTodo =  true;
         }
 
-        if(req.body.parcelado)
+        if(req.body.parcelado)//PARCELADO
         {
             inParcelado =  true;
 
@@ -192,18 +192,20 @@ router.post('/CofirmarRegistroGastos',async (req,res) => {
             }
 
             qtParcelas = req.body.qtParcelas;
-        }
 
-        if(inParcelado)
-        {
             await Gasto.GravarParcelado(req.body.valor,dataRegistro,req.body.dtVencimento,req.body.formaPagamento,
             req.body.motivoGastos,situacao,req.body.conta,qtParcelas)
         }
-        else
+        else if(req.body.orcamento)//ORCAMENTO
+        {
+            await Gasto.GravarOrcamento(req.body.valor,req.body.dtVencimento,req.body.formaPagamento,
+            req.body.motivoGastos,req.body.conta,inAnoTodo)  
+        } 
+        else//NORMAL
         {
             await Gasto.Gravar(req.body.valor,dataRegistro,req.body.dtVencimento,req.body.formaPagamento,
-            req.body.motivoGastos,situacao,req.body.conta,inAnoTodo)
-        }      
+            req.body.motivoGastos,situacao,req.body.conta,inAnoTodo)  
+        }     
 
         return res.render('carteira_view/feedGastos',{status:'success',txt:'Gasto gravado com sucesso!'})  
     }
@@ -214,6 +216,7 @@ router.post('/CofirmarRegistroGastos',async (req,res) => {
     } 
 });
 
+//PAGAR - CONSUMIR - DELETAR ORCAMENTO
 router.post('/PagarGasto',async (req,res) => {
     try
     { 
@@ -225,10 +228,46 @@ router.post('/PagarGasto',async (req,res) => {
             return res.render('carteira_view/feedDellGastos') 
         }  
 
+        if(req.body.CONSUMIR)
+        {
+            idGasto = req.body.CONSUMIR;
+            gasto = await Gasto.getGastoID(idGasto);
+
+            return res.render('carteira_view/consumirGastos',{gasto}) 
+        } 
+
         if(req.body.CONFIRMADO)
         {
             await Gasto.Pagar(idGasto,gasto.valor);
             res.redirect('/Carteira/ConsultaGastos');
+        } 
+
+        if(req.body.CONF_CONSUMO)
+        {
+            if(!req.body.valor)
+            {
+                return res.render('feed',{erro:'Informe o valor'})
+            }
+
+            if(!req.body.dataConsumo)
+            {
+                return res.render('feed',{erro:'Informe a data do consumo'})
+            }
+
+            await Gasto.Consumir(gasto,req.body.valor,req.body.dataConsumo);
+            res.redirect('/Carteira/ConsultaGastos');
+        } 
+
+        if(req.body.DEL)
+        {
+            idGasto = req.body.DEL;
+            return res.render('carteira_view/feedDellOrcamento') 
+        }  
+
+        if(req.body.CONF_DELL_ORC)
+        {
+            await Gasto.DelOrcamento(idGasto);
+            res.redirect('/Carteira/ConsultaGastos'); 
         } 
     }
     catch(erro)

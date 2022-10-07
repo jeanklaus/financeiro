@@ -35,5 +35,15 @@ async function Update(id,nome){
     return result[0] 
 }
 
+//BUSCA ID 
+async function getID(descricao){   
+    const conn = await db.connect();  
+    const values = [descricao,global.user.id]; 
 
-module.exports = {getAll,Gravar,Update}
+    let sql =  `SELECT id FROM MotivoGastos WHERE descricao = ? AND usuario = ?`
+    const [rows] = await conn.query(sql,values);
+    return rows[0].id;
+}
+
+
+module.exports = {getAll,Gravar,Update,getID}
