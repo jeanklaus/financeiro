@@ -279,6 +279,12 @@ router.post('/ClickCreditos',async (req,res) => {
         let Contas = await ContaBancaria.getAll();
         wheres = []
 
+        if(req.body.EDI)
+        {
+            let [id,valor] = req.body.EDI.split('|');
+            return res.render('carteira_view/editarCredito',{id,valor})
+        }
+
         if(req.body.PESQUISAR)
         {
             if (req.body.origemCredito) 
@@ -312,13 +318,13 @@ router.post('/ClickCreditos',async (req,res) => {
             }
             
             //======================================
-            Creditos = await Credito.getAll_Filtros(Func.AnalisaFiltros(wheres));            
-        }
-
-        let valorTotal = getCustoTotal(Creditos);  
-        let valorTotalPendenteRecebimento = await getCreditoTotalPendente();
-        let valorTotalPendente = await getGastoTotalPendente();      
-        res.render('carteira_view/inicialCreditos',{Creditos,valorTotal,Origens,Contas,filtros,valorTotalPendente,valorTotalPendenteRecebimento});
+            Creditos = await Credito.getAll_Filtros(Func.AnalisaFiltros(wheres)); 
+            
+            let valorTotal = getCustoTotal(Creditos);  
+            let valorTotalPendenteRecebimento = await getCreditoTotalPendente();
+            let valorTotalPendente = await getGastoTotalPendente();      
+            return res.render('carteira_view/inicialCreditos',{Creditos,valorTotal,Origens,Contas,filtros,valorTotalPendente,valorTotalPendenteRecebimento});
+        } 
     }
     catch(erro)
     {
@@ -419,6 +425,29 @@ router.post('/ReceberCredito',async (req,res) => {
     } 
 });
 
+router.post('/ConfirmaEdicaoCredito',async (req,res) => {
+    try
+    { 
+        if(req.body.CONFIRMADO)
+        {
+            if(!req.body.valor)
+            {
+                return res.render('feed',{erro:'Informe o valor'}) 
+            }
+
+            let [id,] = req.body.CONFIRMADO.split('|'); 
+            let valor =  req.body.valor  
+
+            await Credito.EditarValor(id,valor);
+            res.redirect('/Carteira/ConsultaCreditos');
+        } 
+    }
+    catch(erro)
+    {
+        global.conectado = false;      
+        res.render('feed',{erro})
+    } 
+});
 
 //========================== LOCAL PROC ====================
 function getCustoTotal(lista) 

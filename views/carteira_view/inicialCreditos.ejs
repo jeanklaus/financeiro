@@ -92,11 +92,12 @@
       </div>
       </div>
     </nav>
-  </form>
+ 
     <div class="container mt-3">
       <table class="table table-dark table-striped">
         <thead>
-          <tr>       
+          <tr>   
+            <th></th>     
             <th>Origem</th>  
             <th>Valor</th>            
             <th>Conta Bancaria</th> 
@@ -109,7 +110,14 @@
         <tbody>          
           <% Creditos.forEach(c => { %>
           <tr>
-            <td><%= c.descricao %></td>  
+
+            <% if(c.situacao != 'RECEBIDO') { %>
+              <td><button name="EDI" value="<%= c.id %>|<%= c.valor %>" class="form-control btn-warning">E</button></td>
+            <% } else { %> 
+              <td></td>
+            <% } %> 
+
+            <td><%= c.descricao %></td> 
             <td>$ <%= c.valor %></td>             
             <td><%= c.conta %></td> 
             <td><%= c.dt_recebimento %></td>  
@@ -120,7 +128,7 @@
             <% } else { %> 
               <td style="color:rgb(250, 0, 0);"><%= c.situacao %></td>
             <% } %> 
-
+            </form>
             <form action="/Carteira/ReceberCredito" method="post">
               <% if(c.situacao != 'RECEBIDO') { %>
                 <td><button name="RECEBER" value="<%= c.id %>" class="form-control btn-primary">Receber</button></td>

@@ -181,6 +181,20 @@ async function Receber(id,valor){
     await AumentaSaldo(valor);
 }
 
-module.exports = {getSaldo,DiminuiSaldo,AtualizaSaldo,getAll,getAll_Filtros,AumentaSaldo,Gravar,getCreditoID,Receber}
+//EDITAR O VALOR DO CREDITO
+async function EditarValor(id,valor){
+
+    const conn = await db.connect();
+
+    const sql =  `  UPDATE Credito 
+                    SET valor = ?
+                    WHERE id = ?
+                    AND usuario = ?`;
+
+    const values = [valor,id,global.user.id];   
+    await conn.query(sql, values);
+}
+
+module.exports = {getSaldo,DiminuiSaldo,AtualizaSaldo,getAll,getAll_Filtros,AumentaSaldo,Gravar,getCreditoID,Receber,EditarValor}
 
 
