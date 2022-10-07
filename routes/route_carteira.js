@@ -12,7 +12,7 @@ const router = express.Router();
 router.use(bodyparser.urlencoded({ extended: false }));
 
 //=============================================================
-
+let teste = ""
 let wheres = []
 let filtros = {}
 filtros.motivoGastos = {}
