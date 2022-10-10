@@ -139,8 +139,7 @@ router.post('/CofirmarRegistroGastos',async (req,res) => {
     try
     { 
         let situacao = 1;//PENDENTE
-        let inAnoTodo = false;
-        let inParcelado = false;
+        let inAnoTodo = false;       
         let dataRegistro = null;
         let qtParcelas = 0;
 
@@ -184,17 +183,29 @@ router.post('/CofirmarRegistroGastos',async (req,res) => {
 
         if(req.body.parcelado)//PARCELADO
         {
-            inParcelado =  true;
-
             if(!req.body.qtParcelas)
             {
                 return res.render('feed',{erro:'Informe a quantidade de parcelas'}) 
             }
 
+            if(!req.body.tpValor)
+            {
+                return res.render('feed',{erro:'Selecione um tipo de valor'}) 
+            }
+
             qtParcelas = req.body.qtParcelas;
 
-            await Gasto.GravarParcelado(req.body.valor,dataRegistro,req.body.dtVencimento,req.body.formaPagamento,
-            req.body.motivoGastos,situacao,req.body.conta,qtParcelas)
+            if(req.body.tpValor == "B")//BRUTO
+            {
+                await Gasto.GravarParceladoBruto(req.body.valor,dataRegistro,req.body.dtVencimento,req.body.formaPagamento,
+                req.body.motivoGastos,situacao,req.body.conta,qtParcelas)
+            }
+            else//PARCELA
+            {
+                await Gasto.GravarParceladoParcela(req.body.valor,dataRegistro,req.body.dtVencimento,req.body.formaPagamento,
+                req.body.motivoGastos,situacao,req.body.conta,qtParcelas)
+            }
+           
         }
         else if(req.body.orcamento)//ORCAMENTO
         {

@@ -52,6 +52,14 @@
 
     <div id="parceladodiv">
       <input type="checkbox" name="parcelado" id="parcelado" onclick="checkName('parcelado',['fimAnodiv','orcamentodiv'])"> Esse valor é parcelado?
+      <br>
+        <div id="divTpValor" hidden>          
+          <input type="radio" id="tpValorBruto" name="tpValor" value="B">
+          <label for="age1">Valor é BRUTO</label><br>
+          <input type="radio" id="tpValorParcela" name="tpValor" value="P">
+          <label for="age2">Valor é da PARCELA</label><br>
+        </div>      
+      
     </div>
 
     <input placeholder="Quantas parcelas?" class="w3-input w3-border form-control me-2" name="qtParcelas" step="0.01" type="number" id="qtParcelas" hidden>

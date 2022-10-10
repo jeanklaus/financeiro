@@ -18,7 +18,8 @@
   <div class="w3-sidebar w3-bar-block w3-light-grey w3-card" style="width:150px">
     <h5 class="w3-bar-item" style="color: rgb(0, 0, 0); text-shadow:2px 2px 2px rgb(49, 49, 50)"><%= global.user.nome %></h5>    
     <button class="w3-bar-item w3-button tablink" onclick="openMenu(event, 'Cadastro')">Cadastro</button>
-    <button class="w3-bar-item w3-button tablink" onclick="openMenu(event, 'Principal')">Principal</button>
+    <button class="w3-bar-item w3-button tablink" onclick="openMenu(event, 'Gastos')">Gastos</button>
+    <button class="w3-bar-item w3-button tablink" onclick="openMenu(event, 'Creditos')">Creditos</button>
     <a href="/" class="w3-bar-item w3-button">Sair</a>
   </div>
  
@@ -33,12 +34,14 @@
           <button style="border: 0px;" class="transp row funcionalidades"><a href="/OrigemCredito" class="btn btn-dark">Origem dos Creditos</a></button>     
         </div>
 
-        <div id="Principal" class="w3-container item" style="display:none;">         
+        <div id="Gastos" class="w3-container item" style="display:none;">         
           <button style="border: 0px;" class="transp row funcionalidades"><a href="/Carteira/ConsultaGastos" class="btn btn-dark">Consulta Gastos</a></button>
           <button style="border: 0px;" class="transp row funcionalidades"><a href="/Carteira/RegistrarGastos" class="btn btn-dark">Registrar Gastos</a></button>
-          <hr>
+        </div>
+
+        <div id="Creditos" class="w3-container item" style="display:none;"> 
           <button style="border: 0px;" class="transp row funcionalidades"><a href="/Carteira/ConsultaCreditos" class="btn btn-dark">Consulta Creditos</a></button>
-          <button style="border: 0px;" class="transp row funcionalidades"><a href="/Carteira/RegistrarCreditos" class="btn btn-dark">Registrar Recebimentos</a></button>
+          <button style="border: 0px;" class="transp row funcionalidades"><a href="/Carteira/RegistrarCreditos" class="btn btn-dark">Registrar Creditos</a></button>
         </div>
         
 

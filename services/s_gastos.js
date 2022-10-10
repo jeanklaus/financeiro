@@ -110,8 +110,8 @@ async function GravarOrcamento(valor,dt_vencimento,formaPagamento,motivo,contaBa
     }
 }
 
-//GRAVAR PARCELADO
-async function GravarParcelado(valor,dt_registro,dt_vencimento,formaPagamento,motivo,situacao,contaBancaria,qtParcelas)
+//GRAVAR PARCELADO COM VALOR BRUTO
+async function GravarParceladoBruto(valor,dt_registro,dt_vencimento,formaPagamento,motivo,situacao,contaBancaria,qtParcelas)
 {
     let vlParcela = valor / qtParcelas;
 
@@ -131,6 +131,30 @@ async function GravarParcelado(valor,dt_registro,dt_vencimento,formaPagamento,mo
         else
         {
             let values = [global.user.id,vlParcela,null,formaPagamento,motivo,1,contaBancaria]; 
+            await conn.query(sql, values);
+        } 
+    }  
+}
+
+//GRAVAR PARCELADO COM VALOR DAS PARCELA
+async function GravarParceladoParcela(valor,dt_registro,dt_vencimento,formaPagamento,motivo,situacao,contaBancaria,qtParcelas)
+{
+    const conn = await db.connect();
+
+    for(let i = 0; i < qtParcelas; i++)
+    {
+        let sql =  `INSERT INTO Gastos
+        (usuario,valor,dt_registro,dt_vencimento,formaPagamento,motivo,situacao,contaBancaria) 
+        VALUES (?,?,?,DATE_ADD("${dt_vencimento}", INTERVAL ${i} MONTH),?,?,?,?)`;
+
+        if(i == 0)
+        {
+            let values = [global.user.id,valor,dt_registro,formaPagamento,motivo,situacao,contaBancaria]; 
+            await conn.query(sql, values);
+        }  
+        else
+        {
+            let values = [global.user.id,valor,null,formaPagamento,motivo,1,contaBancaria]; 
             await conn.query(sql, values);
         } 
     }  
@@ -222,6 +246,6 @@ async function DelOrcamento(id){
     return result
 }
 
-module.exports = {getAll,getAll_Filtros,Gravar,getGastoID,Pagar,EditarValor,GravarParcelado,Consumir,DelOrcamento,GravarOrcamento}
+module.exports = {getAll,getAll_Filtros,Gravar,getGastoID,Pagar,EditarValor,GravarParceladoBruto,Consumir,DelOrcamento,GravarOrcamento,GravarParceladoParcela}
 
 

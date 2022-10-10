@@ -24,16 +24,19 @@ function checkName(nome,ids = []) {
 
 function verificaCheckParcela()
 {
-  let campo = document.getElementById("qtParcelas"); 
-  let checkbox = document.getElementById("parcelado"); 
+  let campoQtParcela = document.getElementById("qtParcelas"); 
+  let divTpValor = document.getElementById("divTpValor"); 
+  let checkbox = document.getElementById("parcelado");  
 
   if (checkbox.checked) 
   {
-    campo.hidden = false;  
+    divTpValor.hidden = false;  
+    campoQtParcela.hidden = false;  
   }
   else
   {
-    campo.hidden = true;  
+    divTpValor.hidden = true; 
+    campoQtParcela.hidden = true;   
   }
 }
 
