@@ -5,6 +5,7 @@ const route_motivoGastos = require('./routes/route_motivoGastos');
 const route_origemCredito = require('./routes/route_origemCredito');
 const route_carteira = require('./routes/route_carteira');
 const route_login = require('./routes/route_login');
+const route_fatura = require('./routes/route_fatura');
 
 //CONFIGURAÇÃO
 app.set('view engine','ejs');
@@ -50,6 +51,7 @@ app.get('/Menu', async (req,res) => {
 });
 
 //ROTAS
+app.use('/Fatura',route_fatura);
 app.use('/ContaBancaria',route_contaBancaria);
 app.use('/MotivoGastos',route_motivoGastos);
 app.use('/OrigemCredito',route_origemCredito);

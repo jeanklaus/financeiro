@@ -5,7 +5,7 @@ const ContaB = require('../services/s_contaBancaria')
 const MotivosGastos = require('../services/s_motivoGastos')
 
 
-let SELECT_GERAL = `SELECT g.id,g.valor,g.dt_registro,g.dt_vencimento,formaPagamento,m.descricao as motivo,s.descricao as situacao,c.descricao as conta,inOrcamentario,parcela 
+let SELECT_GERAL = `SELECT g.id,g.valor,g.dt_registro,g.dt_vencimento,formaPagamento,m.descricao as motivo,s.descricao as situacao,c.descricao as conta,inOrcamentario,parcela,inFatura 
 FROM Gastos as g
 INNER JOIN MotivoGastos as m ON m.id = g.motivo
 INNER JOIN SituacaoGastos as s ON s.id = g.situacao
@@ -59,7 +59,7 @@ async function getAll_Filtros(filtro){
 }
 
 //GRAVAR
-async function Gravar(valor,dt_registro,dt_vencimento,formaPagamento,motivo,situacao,contaBancaria,inAnoTodo)
+async function Gravar(valor,dt_registro,dt_vencimento,formaPagamento,motivo,situacao,contaBancaria,inAnoTodo,inFatura)
 {
     let mes = parseInt(DLL.getPedacoData(dt_vencimento,"MES"))
     let dia = DLL.getPedacoData(dt_vencimento,"DIA")
@@ -68,17 +68,17 @@ async function Gravar(valor,dt_registro,dt_vencimento,formaPagamento,motivo,situ
     const conn = await db.connect(); 
 
     const sql =  `INSERT INTO Gastos
-    (usuario,valor,dt_registro,dt_vencimento,formaPagamento,motivo,situacao,contaBancaria) 
-    VALUES (?,?,?,?,?,?,?,?)`;
+    (usuario,valor,dt_registro,dt_vencimento,formaPagamento,motivo,situacao,contaBancaria,inFatura) 
+    VALUES (?,?,?,?,?,?,?,?,?)`;
 
-    const values = [global.user.id,valor,dt_registro,dt_vencimento,formaPagamento,motivo,situacao,contaBancaria]; 
+    const values = [global.user.id,valor,dt_registro,dt_vencimento,formaPagamento,motivo,situacao,contaBancaria,inFatura]; 
     await conn.query(sql, values);
 
     if(inAnoTodo)    
     {
         for(let i = (mes + 1);i <= 12;i++)
         {
-            const values = [global.user.id,valor,null,`${ano}-${i}-${dia}`,formaPagamento,motivo,1,contaBancaria]; 
+            const values = [global.user.id,valor,null,`${ano}-${i}-${dia}`,formaPagamento,motivo,1,contaBancaria,inFatura]; 
             await conn.query(sql, values);
         }
     }
@@ -110,7 +110,7 @@ async function GravarOrcamento(valor,dt_vencimento,formaPagamento,motivo,contaBa
     }
 }
 //GRAVAR PARCELADO
-async function GravarParcelado(valor,dt_registro,dt_vencimento,formaPagamento,motivo,situacao,contaBancaria,qtParcelas,inBruto)
+async function GravarParcelado(valor,dt_registro,dt_vencimento,formaPagamento,motivo,situacao,contaBancaria,qtParcelas,inBruto,inFatura)
 {
     let vlRegistro = 0;
 
@@ -128,17 +128,17 @@ async function GravarParcelado(valor,dt_registro,dt_vencimento,formaPagamento,mo
     for(let i = 0; i < qtParcelas; i++)
     {
         let sql =  `INSERT INTO Gastos
-        (usuario,valor,dt_registro,dt_vencimento,formaPagamento,motivo,situacao,contaBancaria,parcela) 
-        VALUES (?,?,?,DATE_ADD("${dt_vencimento}", INTERVAL ${i} MONTH),?,?,?,?,'${i+1}/${qtParcelas}')`;
+        (usuario,valor,dt_registro,dt_vencimento,formaPagamento,motivo,situacao,contaBancaria,parcela,inFatura) 
+        VALUES (?,?,?,DATE_ADD("${dt_vencimento}", INTERVAL ${i} MONTH),?,?,?,?,'${i+1}/${qtParcelas}'),?`;
 
         if(i == 0)
         {
-            let values = [global.user.id,vlRegistro,dt_registro,formaPagamento,motivo,situacao,contaBancaria]; 
+            let values = [global.user.id,vlRegistro,dt_registro,formaPagamento,motivo,situacao,contaBancaria,inFatura]; 
             await conn.query(sql, values);
         }  
         else
         {
-            let values = [global.user.id,vlRegistro,null,formaPagamento,motivo,1,contaBancaria]; 
+            let values = [global.user.id,vlRegistro,null,formaPagamento,motivo,1,contaBancaria,inFatura]; 
             await conn.query(sql, values);
         } 
     }  

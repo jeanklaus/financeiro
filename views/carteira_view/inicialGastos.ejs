@@ -119,7 +119,7 @@
             <th>Dt Registro</th> 
             <th>Dt Vencimento</th>
             <th>Situação</th>  
-            <th></th>  
+            <th></th> 
           </tr>
         </thead>
         <tbody>          
@@ -160,10 +160,17 @@
                     <button name="DEL" value="<%= g.id %>" class=" btn-sm form-control btn-danger">X</button>
                   </div>
                 </td>
-              <% } else if(g.situacao != 'PAGO') { %> 
-                <td><button name="PAGAR" value="<%= g.id %>" class="btn-sm form-control btn-primary">Pagar</button></td>
-              <% } else { %>
-                <td></td>
+              <% } else if(g.situacao != 'PAGO' && !g.inFatura) { %> 
+                <td>
+                  <div class="btn-group">
+                    <button name="PAGAR" value="<%= g.id %>" class="me-1 btn-sm form-control btn-primary">Pagar</button>
+                    <button name="ADD_FATURA" value="<%= g.id %>" class="btn-sm form-control btn-info">ADD Fatura</button>
+                  </div>
+                </td>                  
+              <% } else if(g.inFatura) { %>
+                <td>FATURA</td>                
+              <% }else { %>
+                <td></td>                
               <% } %>
             </form>
 

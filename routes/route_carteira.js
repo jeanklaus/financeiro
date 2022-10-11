@@ -7,6 +7,7 @@ const MotivoGastos = require('../services/s_motivoGastos')
 const ContaBancaria = require('../services/s_contaBancaria')
 const Func = require('../public/funcoes');
 const DLL = require('../public/DLL');
+const Fatura = require('../services/s_fatura')
 
 const router = express.Router();
 router.use(bodyparser.urlencoded({ extended: false }));
@@ -142,7 +143,8 @@ router.post('/CofirmarRegistroGastos',async (req,res) => {
         let inAnoTodo = false;       
         let dataRegistro = null;
         let qtParcelas = 0;
-        let inValorBruto = false;
+        let inValorBruto = false;  
+        let inFatura = false;      
 
         if(!req.body.valor)
         {
@@ -182,6 +184,11 @@ router.post('/CofirmarRegistroGastos',async (req,res) => {
             inAnoTodo =  true;
         }
 
+        if(req.body.fatura)
+        {
+            inFatura = true;
+        }
+
         if(req.body.parcelado)//PARCELADO
         {
             if(!req.body.qtParcelas)
@@ -202,7 +209,7 @@ router.post('/CofirmarRegistroGastos',async (req,res) => {
             }
 
             await Gasto.GravarParcelado(req.body.valor,dataRegistro,req.body.dtVencimento,req.body.formaPagamento,
-            req.body.motivoGastos,situacao,req.body.conta,qtParcelas,inValorBruto)
+            req.body.motivoGastos,situacao,req.body.conta,qtParcelas,inValorBruto,inFatura)
                     
         }
         else if(req.body.orcamento)//ORCAMENTO
@@ -213,7 +220,7 @@ router.post('/CofirmarRegistroGastos',async (req,res) => {
         else//NORMAL
         {
             await Gasto.Gravar(req.body.valor,dataRegistro,req.body.dtVencimento,req.body.formaPagamento,
-            req.body.motivoGastos,situacao,req.body.conta,inAnoTodo)  
+            req.body.motivoGastos,situacao,req.body.conta,inAnoTodo,inFatura)  
         }     
 
         return res.render('carteira_view/feedGastos',{status:'success',txt:'Gasto gravado com sucesso!'})  
@@ -225,10 +232,22 @@ router.post('/CofirmarRegistroGastos',async (req,res) => {
     } 
 });
 
-//PAGAR - CONSUMIR - DELETAR ORCAMENTO
+//PAGAR - CONSUMIR - DELETAR ORCAMENTO - ADD  FATURA
 router.post('/PagarGasto',async (req,res) => {
     try
     { 
+        if(req.body.CONF_ADD_FATURA)
+        {
+            await Fatura.AddGasto(idGasto);
+            res.redirect('/Carteira/ConsultaGastos'); 
+        }  
+
+        if(req.body.ADD_FATURA)
+        {
+            idGasto = req.body.ADD_FATURA; 
+            return res.render('fatura_view/feedAdd') 
+        }  
+
         if(req.body.PAGAR)
         {
             idGasto = req.body.PAGAR;
