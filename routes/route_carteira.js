@@ -142,6 +142,7 @@ router.post('/CofirmarRegistroGastos',async (req,res) => {
         let inAnoTodo = false;       
         let dataRegistro = null;
         let qtParcelas = 0;
+        let inValorBruto = false;
 
         if(!req.body.valor)
         {
@@ -195,16 +196,14 @@ router.post('/CofirmarRegistroGastos',async (req,res) => {
 
             qtParcelas = req.body.qtParcelas;
 
-            if(req.body.tpValor == "B")//BRUTO
+            if(req.body.tpValor == "B")
             {
-                await Gasto.GravarParceladoBruto(req.body.valor,dataRegistro,req.body.dtVencimento,req.body.formaPagamento,
-                req.body.motivoGastos,situacao,req.body.conta,qtParcelas)
+                inValorBruto = true;
             }
-            else//PARCELA
-            {
-                await Gasto.GravarParceladoParcela(req.body.valor,dataRegistro,req.body.dtVencimento,req.body.formaPagamento,
-                req.body.motivoGastos,situacao,req.body.conta,qtParcelas)
-            }           
+
+            await Gasto.GravarParcelado(req.body.valor,dataRegistro,req.body.dtVencimento,req.body.formaPagamento,
+            req.body.motivoGastos,situacao,req.body.conta,qtParcelas,inValorBruto)
+                    
         }
         else if(req.body.orcamento)//ORCAMENTO
         {
