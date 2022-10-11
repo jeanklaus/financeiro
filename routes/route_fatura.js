@@ -34,9 +34,7 @@ router.get('/',async (req,res) => {
 
 router.post('/Click',async (req,res) => {
     try
-    {      
-        console.log(req.body)
-
+    {   
         if(req.body.DEL)
         {
             let id = req.body.DEL;
