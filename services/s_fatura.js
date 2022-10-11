@@ -60,7 +60,28 @@ async function Pagar()
    
     fatura.forEach(async gasto => {
        await Gastos.Pagar(gasto.id,parseFloat(gasto.valor));
+
+       let sql =  `DELETE FROM Fatura WHERE idGasto = ? AND usuario = ?`;
+       const values = [gasto.id,global.user.id];
+       await conn.query(sql, values); 
     });
 }
 
-module.exports = {getAll,AddGasto,Pagar}
+//REMOVER
+async function Remover(gasto)
+{
+    const conn = await db.connect();
+
+    let sql =  `DELETE FROM Fatura WHERE idGasto = ? AND usuario = ?`;
+    const values = [gasto,global.user.id];
+    await conn.query(sql, values); 
+
+    sql =  `  UPDATE Gastos 
+    SET inFatura = 0  
+    WHERE id = ?                     
+    AND usuario = ?`;
+
+    await conn.query(sql, values); 
+}
+
+module.exports = {getAll,AddGasto,Pagar,Remover}

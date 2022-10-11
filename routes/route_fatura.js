@@ -34,7 +34,16 @@ router.get('/',async (req,res) => {
 
 router.post('/Click',async (req,res) => {
     try
-    {        
+    {      
+        console.log(req.body)
+
+        if(req.body.DEL)
+        {
+            let id = req.body.DEL;
+            await Fatura.Remover(id);
+            return res.redirect('/Fatura')
+        }
+        
         if(req.body.PAGAR)
         {
             res.render("fatura_view/feedPagar")
@@ -43,7 +52,7 @@ router.post('/Click',async (req,res) => {
         if(req.body.CONFIRMAR)
         {
            await Fatura.Pagar();
-           res.render('fatura_view/feed',{status:'success',txt:'Fatura Paga!'})
+           res.render('fatura_view/feed',{status:'success',txt:'Fatura Paga!'});
         }
     }
     catch(erro)

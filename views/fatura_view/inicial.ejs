@@ -83,9 +83,6 @@
         <% } else { %> 
           <td style="color:rgb(250, 0, 0);"><%= g.situacao %></td>
         <% } %> 
-        </form>
-
-        <form action="/Fatura/Pagar" method="post">
 
           <% if(g.inOrcamentario) { %>
             <td></td>
@@ -94,8 +91,8 @@
           <% }else { %>
             <td></td>
           <% } %>
-          <td><button name="DEL" value="<%= g.id %>|<%= g.valor %>" class="btn-sm form-control btn-danger">X</button></td> 
-        </form>
+          <td><button name="DEL" value="<%= g.id %>" class="btn-sm form-control btn-danger">X</button></td> 
+        
 
       </tr>  
       <% }); %>             
