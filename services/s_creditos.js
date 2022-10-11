@@ -56,8 +56,7 @@ async function getAll_Filtros(filtro){
 //GRAVAR
 async function Gravar(valor,dt_recebimento,dt_previsao,origem,situacao,contaBancaria,inAnoTodo)
 {
-    let data = new Date(); 
-    let mes = data.getMonth() + 1;
+    let mes = parseInt(DLL.getPedacoData(dt_previsao,"MES"))
     let dia = DLL.getPedacoData(dt_previsao,"DIA")
     let ano = DLL.getPedacoData(dt_previsao,"ANO")
 

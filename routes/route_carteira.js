@@ -204,8 +204,7 @@ router.post('/CofirmarRegistroGastos',async (req,res) => {
             {
                 await Gasto.GravarParceladoParcela(req.body.valor,dataRegistro,req.body.dtVencimento,req.body.formaPagamento,
                 req.body.motivoGastos,situacao,req.body.conta,qtParcelas)
-            }
-           
+            }           
         }
         else if(req.body.orcamento)//ORCAMENTO
         {

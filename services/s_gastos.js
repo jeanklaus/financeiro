@@ -59,8 +59,7 @@ async function getAll_Filtros(filtro){
 //GRAVAR
 async function Gravar(valor,dt_registro,dt_vencimento,formaPagamento,motivo,situacao,contaBancaria,inAnoTodo)
 {
-    let data = new Date(); 
-    let mes = data.getMonth() + 1;
+    let mes = parseInt(DLL.getPedacoData(dt_vencimento,"MES"))
     let dia = DLL.getPedacoData(dt_vencimento,"DIA")
     let ano = DLL.getPedacoData(dt_vencimento,"ANO")
 
@@ -86,8 +85,7 @@ async function Gravar(valor,dt_registro,dt_vencimento,formaPagamento,motivo,situ
 //ORCAMENTO
 async function GravarOrcamento(valor,dt_vencimento,formaPagamento,motivo,contaBancaria,inAnoTodo)
 {
-    let data = new Date(); 
-    let mes = data.getMonth() + 1;
+    let mes = parseInt(DLL.getPedacoData(dt_vencimento,"MES"))
     let dia = DLL.getPedacoData(dt_vencimento,"DIA")
     let ano = DLL.getPedacoData(dt_vencimento,"ANO")
 
