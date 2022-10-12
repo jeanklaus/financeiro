@@ -82,6 +82,13 @@ async function getResumoAno(){
 //GRAVAR
 async function Gravar(valor,dt_registro,dt_vencimento,formaPagamento,motivo,situacao,contaBancaria,inAnoTodo,inFatura)
 {
+    let inFaturaBd = 0;
+
+    if(inFatura)
+    {
+        inFaturaBd = 1
+    }
+
     let mes = parseInt(DLL.getPedacoData(dt_vencimento,"MES"))
     let dia = DLL.getPedacoData(dt_vencimento,"DIA")
     let ano = DLL.getPedacoData(dt_vencimento,"ANO")
@@ -92,14 +99,14 @@ async function Gravar(valor,dt_registro,dt_vencimento,formaPagamento,motivo,situ
     (usuario,valor,dt_registro,dt_vencimento,formaPagamento,motivo,situacao,contaBancaria,inFatura) 
     VALUES (?,?,?,?,?,?,?,?,?)`;
 
-    const values = [global.user.id,valor,dt_registro,dt_vencimento,formaPagamento,motivo,situacao,contaBancaria,inFatura]; 
+    const values = [global.user.id,valor,dt_registro,dt_vencimento,formaPagamento,motivo,situacao,contaBancaria,inFaturaBd]; 
     await conn.query(sql, values);
 
     if(inAnoTodo)    
     {
         for(let i = (mes + 1);i <= 12;i++)
         {
-            const values = [global.user.id,valor,null,`${ano}-${i}-${dia}`,formaPagamento,motivo,1,contaBancaria,inFatura]; 
+            const values = [global.user.id,valor,null,`${ano}-${i}-${dia}`,formaPagamento,motivo,1,contaBancaria,inFaturaBd]; 
             await conn.query(sql, values);
         }
     }
@@ -134,6 +141,7 @@ async function GravarOrcamento(valor,dt_vencimento,formaPagamento,motivo,contaBa
 async function GravarParcelado(valor,dt_registro,dt_vencimento,formaPagamento,motivo,situacao,contaBancaria,qtParcelas,inBruto,inFatura)
 {
     let vlRegistro = 0;
+    let inFaturaBd = 0
 
     if(inBruto)
     {
@@ -144,22 +152,27 @@ async function GravarParcelado(valor,dt_registro,dt_vencimento,formaPagamento,mo
         vlRegistro = valor;
     }
 
+    if(inFatura)
+    {
+        inFaturaBd = 1
+    }
+
     const conn = await db.connect();
 
     for(let i = 0; i < qtParcelas; i++)
     {
         let sql =  `INSERT INTO Gastos
         (usuario,valor,dt_registro,dt_vencimento,formaPagamento,motivo,situacao,contaBancaria,parcela,inFatura) 
-        VALUES (?,?,?,DATE_ADD("${dt_vencimento}", INTERVAL ${i} MONTH),?,?,?,?,'${i+1}/${qtParcelas}'),?`;
+        VALUES (?,?,?,DATE_ADD("${dt_vencimento}", INTERVAL ${i} MONTH),?,?,?,?,'${i+1}/${qtParcelas}',?)`;
 
         if(i == 0)
         {
-            let values = [global.user.id,vlRegistro,dt_registro,formaPagamento,motivo,situacao,contaBancaria,inFatura]; 
+            let values = [global.user.id,vlRegistro,dt_registro,formaPagamento,motivo,situacao,contaBancaria,inFaturaBd]; 
             await conn.query(sql, values);
         }  
         else
         {
-            let values = [global.user.id,vlRegistro,null,formaPagamento,motivo,1,contaBancaria,inFatura]; 
+            let values = [global.user.id,vlRegistro,null,formaPagamento,motivo,1,contaBancaria,inFaturaBd]; 
             await conn.query(sql, values);
         } 
     }  
