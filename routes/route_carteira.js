@@ -28,6 +28,9 @@ let credito = {}
 
 //=============================================================
 
+
+
+
 //============ GASTOS ==========
 router.get('/ConsultaGastos',async (req,res) => {
     try
@@ -226,6 +229,28 @@ router.post('/CofirmarRegistroGastos',async (req,res) => {
         }     
 
         return res.render('carteira_view/feedGastos',{status:'success',txt:'Gasto gravado com sucesso!'})  
+    }
+    catch(erro)
+    {
+        global.conectado = false;      
+        res.render('feed',{erro})
+    } 
+});
+
+router.get('/ConsultaGastosResumoAnual',async (req,res) => {
+    try
+    {  
+       
+        let Gastos = await Gasto.getResumoAno(); 
+        let Motivos = await MotivoGastos.getAll();
+
+        let valorTotal = getCustoTotal(Gastos);
+        let valorTotalPendente = await getGastoTotalPendente();  
+        let valorTotalPendenteRecebimento = await getCreditoTotalPendente();   
+        let  valorTotalEstimativa = (valorTotalPendenteRecebimento + parseFloat(global.user.saldo)) - valorTotalPendente
+        let resumo = montarResumoAnual(Gastos);
+       
+        res.render('carteira_view/consultaGastosAnual',{resumo,Motivos,Gastos,valorTotal,valorTotalPendente,valorTotalPendenteRecebimento,valorTotalEstimativa});
     }
     catch(erro)
     {
@@ -613,6 +638,97 @@ async function getCreditoTotalPendente()
     }
 
     return resultado; 
+}
+
+function montarResumoAnual(gastos) 
+{
+    let lista = []
+
+    for (const g of gastos) 
+    {
+        if(verificaSeMotivoExisteLista(g.motivo,lista))
+        {
+            let i = getIndexObjLista(g.motivo,lista);
+            
+            switch (g.mesVencimento) {
+                case 1: lista[i].janeiro = g.valor; break;
+                case 2: lista[i].fevereiro = g.valor; break;
+                case 3: lista[i].marco = g.valor; break;
+                case 4: lista[i].abril = g.valor; break;
+                case 5: lista[i].maio = g.valor; break;
+                case 6: lista[i].junho = g.valor; break;
+                case 7: lista[i].julho = g.valor; break;
+                case 8: lista[i].agosto = g.valor; break;
+                case 9: lista[i].setembro = g.valor; break;
+                case 10: lista[i].outubro = g.valor; break;
+                case 11: lista[i].novembro = g.valor; break;
+                case 12: lista[i].dezembro = g.valor; break;
+            }
+        }
+        else
+        {
+            let obj = {}
+            obj.motivo = g.motivo
+            obj.janeiro = 0
+            obj.fevereiro = 0
+            obj.marco = 0
+            obj.abril = 0
+            obj.maio = 0
+            obj.junho = 0
+            obj.julho = 0
+            obj.agosto = 0
+            obj.setembro = 0
+            obj.outubro = 0
+            obj.novembro = 0
+            obj.dezembro = 0
+
+            switch (g.mesVencimento) {
+                case 1: obj.janeiro = g.valor; break;
+                case 2: obj.fevereiro = g.valor; break;
+                case 3: obj.marco = g.valor; break;
+                case 4: obj.abril = g.valor; break;
+                case 5: obj.maio = g.valor; break;
+                case 6: obj.junho = g.valor; break;
+                case 7: obj.julho = g.valor; break;
+                case 8: obj.agosto = g.valor; break;
+                case 9: obj.setembro = g.valor; break;
+                case 10: obj.outubro = g.valor; break;
+                case 11: obj.novembro = g.valor; break;
+                case 12: obj.dezembro = g.valor; break;
+            }
+
+            lista.push(obj);
+        }
+    } 
+   
+    return lista; 
+}
+
+function verificaSeMotivoExisteLista(motivo,lista)
+{
+    for (const l of lista) 
+    {
+      if(l.motivo == motivo)
+      {
+        return true;
+      }
+    }
+    return false;
+}
+
+function getIndexObjLista(motivo,lista)
+{
+    let index = 0;
+
+    for (const l of lista) 
+    {
+      if(l.motivo == motivo)
+      {
+        return index;
+      }
+
+      index++;
+    }
 }
 
 module.exports = router;

@@ -58,6 +58,27 @@ async function getAll_Filtros(filtro){
     return newrows; 
 }
 
+//SELECT RESUMO DO ANO
+async function getResumoAno(){   
+    const conn = await db.connect();  
+    const values = [global.user.id]; 
+
+    let sql =  `SELECT SUM(g.valor) as valor,(SELECT MONTH(g.dt_vencimento)) as mesVencimento,m.descricao as motivo
+    FROM Gastos as g
+    INNER JOIN MotivoGastos as m ON m.id = g.motivo
+    WHERE g.usuario = ?
+    GROUP BY motivo,mesVencimento`
+    const [rows] = await conn.query(sql,values);
+
+    let newrows = rows.map(registro => {        
+        registro.valor = parseFloat(registro.valor).toFixed(2);
+        return registro;
+    });
+   
+    return newrows; 
+}
+
+
 //GRAVAR
 async function Gravar(valor,dt_registro,dt_vencimento,formaPagamento,motivo,situacao,contaBancaria,inAnoTodo,inFatura)
 {
@@ -230,6 +251,6 @@ async function DelOrcamento(id){
     return result
 }
 
-module.exports = {getAll,getAll_Filtros,Gravar,getGastoID,Pagar,EditarValor,Consumir,DelOrcamento,GravarOrcamento,GravarParcelado}
+module.exports = {getAll,getAll_Filtros,Gravar,getGastoID,Pagar,EditarValor,Consumir,DelOrcamento,GravarOrcamento,GravarParcelado,getResumoAno}
 
 
