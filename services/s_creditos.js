@@ -79,6 +79,42 @@ async function Gravar(valor,dt_recebimento,dt_previsao,origem,situacao,contaBanc
     }
 }
 
+//GRAVAR PARCELADO
+async function GravarParcelado(valor,dt_recebimento,dt_previsao,origem,situacao,contaBancaria,qtParcelas,inBruto)
+{
+    let vlRegistro = 0;   
+
+    if(inBruto)
+    {
+        vlRegistro = valor / qtParcelas;
+    }
+    else
+    {
+        vlRegistro = valor;
+    }
+
+    const conn = await db.connect();  
+
+    for(let i = 0; i < qtParcelas; i++)
+    {
+        const sql =  `INSERT INTO Credito
+        (usuario,valor,dt_recebimento,dt_previsao,origemCredito,situacao,contaBancaria) 
+        VALUES (?,?,?,DATE_ADD("${dt_previsao}", INTERVAL ${i} MONTH),?,?,?)`;
+
+        if(i == 0)
+        {
+            const values = [global.user.id,vlRegistro,dt_recebimento,origem,situacao,contaBancaria]; 
+            await conn.query(sql, values);
+        }  
+        else
+        {
+            const values = [global.user.id,vlRegistro,dt_recebimento,origem,1,contaBancaria]; 
+            await conn.query(sql, values);
+        } 
+    }    
+}
+
+
 //SELECT 
 async function getSaldo(){   
     const conn = await db.connect();  
@@ -194,6 +230,6 @@ async function EditarValor(id,valor){
     await conn.query(sql, values);
 }
 
-module.exports = {getSaldo,DiminuiSaldo,AtualizaSaldo,getAll,getAll_Filtros,AumentaSaldo,Gravar,getCreditoID,Receber,EditarValor}
+module.exports = {getSaldo,DiminuiSaldo,AtualizaSaldo,getAll,getAll_Filtros,AumentaSaldo,Gravar,getCreditoID,Receber,EditarValor,GravarParcelado}
 
 

@@ -500,6 +500,8 @@ router.post('/CofirmarRegistroCreditos',async (req,res) => {
         let situacao = 1;//PENDENTE
         let inAnoTodo = false;
         let dataRecebimento = null;
+        let qtParcelas = 0;
+        let inValorBruto = false;
 
         if(!req.body.valor)
         {
@@ -534,8 +536,34 @@ router.post('/CofirmarRegistroCreditos',async (req,res) => {
             inAnoTodo =  true;
         }
 
-       await Credito.Gravar(req.body.valor,dataRecebimento,req.body.dtPrevisao,
-        req.body.origemCreditos,situacao,req.body.conta,inAnoTodo)
+        if(req.body.parcelado)//PARCELADO
+        {
+            if(!req.body.qtParcelas)
+            {
+                return res.render('feed',{erro:'Informe a quantidade de parcelas'}) 
+            }
+
+            if(!req.body.tpValor)
+            {
+                return res.render('feed',{erro:'Selecione um tipo de valor'}) 
+            }
+
+            qtParcelas = req.body.qtParcelas;
+
+            if(req.body.tpValor == "B")
+            {
+                inValorBruto = true;
+            }
+
+            await Credito.GravarParcelado(req.body.valor,dataRecebimento,req.body.dtPrevisao,
+            req.body.origemCreditos,situacao,req.body.conta,qtParcelas,inValorBruto)
+                    
+        }
+        else//NORMAL
+        {
+            await Credito.Gravar(req.body.valor,dataRecebimento,req.body.dtPrevisao,
+            req.body.origemCreditos,situacao,req.body.conta,inAnoTodo)
+        }
 
         return res.render('carteira_view/feedCreditos',{status:'success',txt:'Recebimento gravado com sucesso!'})  
 
