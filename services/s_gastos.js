@@ -63,7 +63,7 @@ async function getResumoAno(){
     const conn = await db.connect();  
     const values = [global.user.id]; 
 
-    let sql =  `SELECT SUM(g.valor) as valor,(SELECT MONTH(g.dt_vencimento)) as mesVencimento,m.descricao as motivo
+    let sql =  `SELECT SUM(g.valor) as valor,(SELECT MONTH(g.dt_vencimento)) as mesVencimento,(SELECT YEAR(g.dt_vencimento)) as ano,m.descricao as motivo
     FROM Gastos as g
     INNER JOIN MotivoGastos as m ON m.id = g.motivo
     WHERE g.usuario = ?

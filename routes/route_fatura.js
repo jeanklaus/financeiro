@@ -22,6 +22,28 @@ router.get('/',async (req,res) => {
         let Contas = await ContaBancaria.getAll();
 
 
+        let GastosFatura = await Fatura.getAllMesAtual() 
+        res.render('fatura_view/inicial',{GastosFatura,Motivos,Contas,filtros});
+    }
+    catch(erro)
+    {
+        global.conectado = false;      
+        res.render('feed',{erro});
+    } 
+});
+
+router.get('/Todos',async (req,res) => {
+    try    
+    {  
+        filtros = {}
+        filtros.motivoGastos = {}
+        filtros.conta = {}
+        filtros.Situacao = {}
+        wheres = []
+
+        let Motivos = await MotivoGastos.getAll();
+        let Contas = await ContaBancaria.getAll();
+
         let GastosFatura = await Fatura.getAll() 
         res.render('fatura_view/inicial',{GastosFatura,Motivos,Contas,filtros});
     }
@@ -31,6 +53,7 @@ router.get('/',async (req,res) => {
         res.render('feed',{erro});
     } 
 });
+
 
 router.post('/Click',async (req,res) => {
     try

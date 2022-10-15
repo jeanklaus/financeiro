@@ -105,6 +105,11 @@ function LoadDataHoje() {
   document.getElementById("data").value = ConverterData(formataData(data));
 }
 
+function LoadAnoAtual() {
+  let data = new Date();
+  document.getElementById("data").value = getPedacoData(ConverterData(formataData(data)),'ANO');
+}
+
 function buscaProdTabela(input, tbl, indiceColl) {
   var filter, table, tr, td, i;
 

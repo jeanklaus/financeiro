@@ -11,7 +11,7 @@ INNER JOIN ContaBancaria as c ON c.id = g.contaBancaria`;
 
 
 //SELECT 
-async function getAll(){   
+async function getAllMesAtual(){   
     const conn = await db.connect();  
     const values = [global.user.id]; 
 
@@ -19,6 +19,31 @@ async function getAll(){
     WHERE g.usuario = ${global.user.id}
     AND g.inFatura = 1
     AND (SELECT MONTH(g.dt_vencimento)) = (SELECT MONTH(now())) 
+    AND g.situacao != 3
+    ORDER BY g.dt_vencimento`
+    const [rows] = await conn.query(sql,values);
+
+    let newrows = rows.map(registro => {
+        if(registro.dt_registro)
+        {
+            registro.dt_registro = DLL.formataData(registro.dt_registro);
+        }      
+        registro.dt_vencimento = DLL.formataData(registro.dt_vencimento);
+        registro.valor = parseFloat(registro.valor).toFixed(2);
+        return registro;
+    });
+   
+    return newrows; 
+}
+
+//SELECT 
+async function getAll(){   
+    const conn = await db.connect();  
+    const values = [global.user.id]; 
+
+    let sql =  `${SELECT_GERAL}
+    WHERE g.usuario = ${global.user.id}
+    AND g.inFatura = 1     
     AND g.situacao != 3
     ORDER BY g.dt_vencimento`
     const [rows] = await conn.query(sql,values);
@@ -84,4 +109,4 @@ async function Remover(gasto)
     await conn.query(sql, values); 
 }
 
-module.exports = {getAll,AddGasto,Pagar,Remover}
+module.exports = {getAllMesAtual,AddGasto,Pagar,Remover,getAll}

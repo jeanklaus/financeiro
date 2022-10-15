@@ -32,652 +32,594 @@ let credito = {}
 
 
 //============ GASTOS ==========
-router.get('/ConsultaGastos',async (req,res) => {
-    try
-    {  
+router.get('/ConsultaGastos', async (req, res) => {
+    try {
         filtros = {}
         filtros.motivoGastos = {}
         filtros.conta = {}
         filtros.Situacao = {}
         wheres = []
 
-        let Gastos = await Gasto.getAll(); 
+        let Gastos = await Gasto.getAll();
         let valorTotal = getCustoTotal(Gastos);
-        let valorTotalPendente = await getGastoTotalPendente();  
-        let valorTotalPendenteRecebimento = await getCreditoTotalPendente();   
-        let  valorTotalEstimativa = (valorTotalPendenteRecebimento + parseFloat(global.user.saldo)) - valorTotalPendente
+        let valorTotalPendente = await getGastoTotalPendente();
+        let valorTotalPendenteRecebimento = await getCreditoTotalPendente();
+        let valorTotalEstimativa = (valorTotalPendenteRecebimento + parseFloat(global.user.saldo)) - valorTotalPendente
         let Motivos = await MotivoGastos.getAll();
         let Contas = await ContaBancaria.getAll();
-       
-        res.render('carteira_view/inicialGastos',{Gastos,valorTotal,Motivos,Contas,filtros,valorTotalPendente,valorTotalPendenteRecebimento,valorTotalEstimativa});
+
+        res.render('carteira_view/inicialGastos', { Gastos, valorTotal, Motivos, Contas, filtros, valorTotalPendente, valorTotalPendenteRecebimento, valorTotalEstimativa });
     }
-    catch(erro)
-    {
-        global.conectado = false;      
-        res.render('feed',{erro})
-    } 
+    catch (erro) {
+        global.conectado = false;
+        res.render('feed', { erro })
+    }
 });
 
-router.post('/ClickGastos',async (req,res) => {
-    try
-    {     
-        let Gastos = []       
+router.post('/ClickGastos', async (req, res) => {
+    try {
+        let Gastos = []
         let Motivos = await MotivoGastos.getAll();
         let Contas = await ContaBancaria.getAll();
         wheres = []
 
-        if(req.body.EDI)
-        {
-            let [id,valor] = req.body.EDI.split('|');
-            return res.render('carteira_view/editarGasto',{id,valor})
+        if (req.body.EDI) {
+            let [id, valor] = req.body.EDI.split('|');
+            return res.render('carteira_view/editarGasto', { id, valor })
         }
 
-        if(req.body.PESQUISAR)
-        {
-            if (req.body.motivoGastos) 
-            {
-                [filtros.motivoGastos.id,filtros.motivoGastos.descricao] = req.body.motivoGastos.split('|');
-                wheres.push(`motivo = ${filtros.motivoGastos.id}`);               
+        if (req.body.PESQUISAR) {
+            if (req.body.motivoGastos) {
+                [filtros.motivoGastos.id, filtros.motivoGastos.descricao] = req.body.motivoGastos.split('|');
+                wheres.push(`motivo = ${filtros.motivoGastos.id}`);
             }
 
-            if (req.body.formaPagamento) 
-            {
+            if (req.body.formaPagamento) {
                 filtros.formaPagamento = req.body.formaPagamento;
-                wheres.push(`formaPagamento = '${filtros.formaPagamento}'`);               
+                wheres.push(`formaPagamento = '${filtros.formaPagamento}'`);
             }
 
-            if (req.body.conta) 
-            {
-                [filtros.conta.id,filtros.conta.descricao] = req.body.conta.split('|');
-                wheres.push(`contaBancaria = ${filtros.conta.id}`);               
+            if (req.body.conta) {
+                [filtros.conta.id, filtros.conta.descricao] = req.body.conta.split('|');
+                wheres.push(`contaBancaria = ${filtros.conta.id}`);
             }
 
-            if (req.body.Situacao) 
-            {
-                [filtros.Situacao.id,filtros.Situacao.descricao] = req.body.Situacao.split('|');
-                wheres.push(`situacao = ${filtros.Situacao.id}`);               
+            if (req.body.Situacao) {
+                [filtros.Situacao.id, filtros.Situacao.descricao] = req.body.Situacao.split('|');
+                wheres.push(`situacao = ${filtros.Situacao.id}`);
             }
 
-            if (req.body.dataFim) 
-            {
+            if (req.body.dataFim) {
                 filtros.dataFim = req.body.dataFim;
                 wheres.push(`dt_vencimento <= '${req.body.dataFim}'`);
             }
 
-             if (req.body.dataIni) 
-            {
+            if (req.body.dataIni) {
                 filtros.dataIni = req.body.dataIni;
                 wheres.push(`dt_vencimento >= '${req.body.dataIni}'`);
             }
-            
+
             //======================================
-            Gastos = await Gasto.getAll_Filtros(Func.AnalisaFiltros(wheres)); 
-            let valorTotal = getCustoTotal(Gastos);  
-            let valorTotalPendente =  await getGastoTotalPendente(); 
-            let valorTotalPendenteRecebimento = await getCreditoTotalPendente();  
-            let  valorTotalEstimativa = (valorTotalPendenteRecebimento + parseFloat(global.user.saldo)) - valorTotalPendente 
-            return res.render('carteira_view/inicialGastos',{Gastos,valorTotal,Motivos,Contas,filtros,valorTotalPendente,valorTotalPendenteRecebimento,valorTotalEstimativa});           
-        }        
+            Gastos = await Gasto.getAll_Filtros(Func.AnalisaFiltros(wheres));
+            let valorTotal = getCustoTotal(Gastos);
+            let valorTotalPendente = await getGastoTotalPendente();
+            let valorTotalPendenteRecebimento = await getCreditoTotalPendente();
+            let valorTotalEstimativa = (valorTotalPendenteRecebimento + parseFloat(global.user.saldo)) - valorTotalPendente
+            return res.render('carteira_view/inicialGastos', { Gastos, valorTotal, Motivos, Contas, filtros, valorTotalPendente, valorTotalPendenteRecebimento, valorTotalEstimativa });
+        }
     }
-    catch(erro)
-    {
-        global.conectado = false;      
-        res.render('feed',{erro});
-    } 
+    catch (erro) {
+        global.conectado = false;
+        res.render('feed', { erro });
+    }
 });
 
-router.get('/RegistrarGastos',async (req,res) => {
-    try
-    { 
+router.get('/RegistrarGastos', async (req, res) => {
+    try {
         let Motivos = await MotivoGastos.getAll();
         let Contas = await ContaBancaria.getAll();
-      
-        res.render('carteira_view/registrarGastos',{Motivos,Contas});        
+
+        res.render('carteira_view/registrarGastos', { Motivos, Contas });
     }
-    catch(erro)
-    {
-        global.conectado = false;      
-        res.render('feed',{erro})
-    } 
+    catch (erro) {
+        global.conectado = false;
+        res.render('feed', { erro })
+    }
 });
 
-router.post('/CofirmarRegistroGastos',async (req,res) => {
-    try
-    { 
+router.post('/CofirmarRegistroGastos', async (req, res) => {
+    try {
         let situacao = 1;//PENDENTE
-        let inAnoTodo = false;       
+        let inAnoTodo = false;
         let dataRegistro = null;
         let qtParcelas = 0;
-        let inValorBruto = false;  
-        let inFatura = false;      
+        let inValorBruto = false;
+        let inFatura = false;
 
-        if(!req.body.valor)
-        {
-            return res.render('feed',{erro:'Informe o valor'})
+        if (!req.body.valor) {
+            return res.render('feed', { erro: 'Informe o valor' })
         }
 
-        if(!req.body.motivoGastos)
-        {
-            return res.render('feed',{erro:'Informe o motivo'}) 
+        if (!req.body.motivoGastos) {
+            return res.render('feed', { erro: 'Informe o motivo' })
         }
 
-        if(!req.body.dtVencimento)
-        {
-            return res.render('feed',{erro:'Informe a data de vencimento'}) 
+        if (!req.body.dtVencimento) {
+            return res.render('feed', { erro: 'Informe a data de vencimento' })
         }
 
-        if(!req.body.formaPagamento)
-        {
-            return res.render('feed',{erro:'Informe a forma de pagamento'}) 
+        if (!req.body.formaPagamento) {
+            return res.render('feed', { erro: 'Informe a forma de pagamento' })
         }
 
-        if(!req.body.conta)
-        {
-            return res.render('feed',{erro:'Informe a conta'}) 
+        if (!req.body.conta) {
+            return res.render('feed', { erro: 'Informe a conta' })
         }
 
-        if(req.body.pago)
-        {
-           situacao = 3;//PAGO
-           dataRegistro = new Date();
-           dataRegistro = DLL.ConverterData(DLL.formataData(dataRegistro))
-           await Credito.DiminuiSaldo(req.body.valor);
+        if (req.body.pago) {
+            situacao = 3;//PAGO
+            dataRegistro = new Date();
+            dataRegistro = DLL.ConverterData(DLL.formataData(dataRegistro))
+            await Credito.DiminuiSaldo(req.body.valor);
         }
 
-        if(req.body.fimAno)
-        {
-            inAnoTodo =  true;
+        if (req.body.fimAno) {
+            inAnoTodo = true;
         }
 
-        if(req.body.fatura)
-        {
+        if (req.body.fatura) {
             inFatura = true;
         }
 
-        if(req.body.parcelado)//PARCELADO
+        if (req.body.parcelado)//PARCELADO
         {
-            if(!req.body.qtParcelas)
-            {
-                return res.render('feed',{erro:'Informe a quantidade de parcelas'}) 
+            if (!req.body.qtParcelas) {
+                return res.render('feed', { erro: 'Informe a quantidade de parcelas' })
             }
 
-            if(!req.body.tpValor)
-            {
-                return res.render('feed',{erro:'Selecione um tipo de valor'}) 
+            if (!req.body.tpValor) {
+                return res.render('feed', { erro: 'Selecione um tipo de valor' })
             }
 
             qtParcelas = req.body.qtParcelas;
 
-            if(req.body.tpValor == "B")
-            {
+            if (req.body.tpValor == "B") {
                 inValorBruto = true;
             }
 
-            await Gasto.GravarParcelado(req.body.valor,dataRegistro,req.body.dtVencimento,req.body.formaPagamento,
-            req.body.motivoGastos,situacao,req.body.conta,qtParcelas,inValorBruto,inFatura)
-                    
+            await Gasto.GravarParcelado(req.body.valor, dataRegistro, req.body.dtVencimento, req.body.formaPagamento,
+                req.body.motivoGastos, situacao, req.body.conta, qtParcelas, inValorBruto, inFatura)
+
         }
-        else if(req.body.orcamento)//ORCAMENTO
+        else if (req.body.orcamento)//ORCAMENTO
         {
-            await Gasto.GravarOrcamento(req.body.valor,req.body.dtVencimento,req.body.formaPagamento,
-            req.body.motivoGastos,req.body.conta,inAnoTodo)  
-        } 
+            await Gasto.GravarOrcamento(req.body.valor, req.body.dtVencimento, req.body.formaPagamento,
+                req.body.motivoGastos, req.body.conta, inAnoTodo)
+        }
         else//NORMAL
         {
-            await Gasto.Gravar(req.body.valor,dataRegistro,req.body.dtVencimento,req.body.formaPagamento,
-            req.body.motivoGastos,situacao,req.body.conta,inAnoTodo,inFatura)  
-        }     
+            await Gasto.Gravar(req.body.valor, dataRegistro, req.body.dtVencimento, req.body.formaPagamento,
+                req.body.motivoGastos, situacao, req.body.conta, inAnoTodo, inFatura)
+        }
 
-        return res.render('carteira_view/feedGastos',{status:'success',txt:'Gasto gravado com sucesso!'})  
+        return res.render('carteira_view/feedGastos', { status: 'success', txt: 'Gasto gravado com sucesso!' })
     }
-    catch(erro)
-    {
-        global.conectado = false;      
-        res.render('feed',{erro})
-    } 
+    catch (erro) {
+        global.conectado = false;
+        res.render('feed', { erro })
+    }
 });
 
-router.get('/ConsultaGastosResumoAnual',async (req,res) => {
-    try
-    {  
-       
-        let Gastos = await Gasto.getResumoAno(); 
+router.get('/ConsultaGastosResumoAnual', async (req, res) => {
+    try {
+        let Gastos = await Gasto.getResumoAno();
         let Motivos = await MotivoGastos.getAll();
 
         let valorTotal = getCustoTotal(Gastos);
-        let valorTotalPendente = await getGastoTotalPendente();  
-        let valorTotalPendenteRecebimento = await getCreditoTotalPendente();   
-        let  valorTotalEstimativa = (valorTotalPendenteRecebimento + parseFloat(global.user.saldo)) - valorTotalPendente
+        let valorTotalPendente = await getGastoTotalPendente();
+        let valorTotalPendenteRecebimento = await getCreditoTotalPendente();
+        let valorTotalEstimativa = (valorTotalPendenteRecebimento + parseFloat(global.user.saldo)) - valorTotalPendente
+
         let resumo = montarResumoAnual(Gastos);
-       
-        res.render('carteira_view/consultaGastosAnual',{resumo,Motivos,Gastos,valorTotal,valorTotalPendente,valorTotalPendenteRecebimento,valorTotalEstimativa});
+
+        let data = new Date()
+        let anoSelect = DLL.getPedacoData(DLL.ConverterData(DLL.formataData(data)), 'ANO');
+
+        let totais = getTotalMesResumoAnual(resumo,anoSelect);
+        console.log(totais)
+
+        res.render('carteira_view/consultaGastosAnual', { totais,anoSelect, resumo, Motivos, Gastos, valorTotal, valorTotalPendente, valorTotalPendenteRecebimento, valorTotalEstimativa });
     }
-    catch(erro)
-    {
-        global.conectado = false;      
-        res.render('feed',{erro})
-    } 
+    catch (erro) {
+        global.conectado = false;
+        res.render('feed', { erro })
+    }
+});
+
+//consultando
+router.post('/ConsultandoGastosResumoAnual', async (req, res) => {
+    try {
+        let Gastos = await Gasto.getResumoAno();
+        let Motivos = await MotivoGastos.getAll();
+
+        let valorTotal = getCustoTotal(Gastos);
+        let valorTotalPendente = await getGastoTotalPendente();
+        let valorTotalPendenteRecebimento = await getCreditoTotalPendente();
+        let valorTotalEstimativa = (valorTotalPendenteRecebimento + parseFloat(global.user.saldo)) - valorTotalPendente
+
+        let resumo = montarResumoAnual(Gastos);
+
+        let data = new Date()
+        let anoSelect = DLL.getPedacoData(DLL.ConverterData(DLL.formataData(data)), 'ANO');
+
+        if (req.body.ano) {
+            anoSelect = req.body.ano;
+        }
+
+        let totais = getTotalMesResumoAnual(resumo,anoSelect);
+
+        res.render('carteira_view/consultaGastosAnual', { totais,anoSelect, resumo, Motivos, Gastos, valorTotal, valorTotalPendente, valorTotalPendenteRecebimento, valorTotalEstimativa });
+    }
+    catch (erro) {
+        global.conectado = false;
+        res.render('feed', { erro })
+    }
 });
 
 //PAGAR - CONSUMIR - DELETAR ORCAMENTO - ADD  FATURA
-router.post('/PagarGasto',async (req,res) => {
-    try
-    { 
-        if(req.body.CONF_ADD_FATURA)
-        {
+router.post('/PagarGasto', async (req, res) => {
+    try {
+        if (req.body.CONF_ADD_FATURA) {
             await Fatura.AddGasto(idGasto);
-            res.redirect('/Carteira/ConsultaGastos'); 
-        }  
+            res.redirect('/Carteira/ConsultaGastos');
+        }
 
-        if(req.body.ADD_FATURA)
-        {
-            idGasto = req.body.ADD_FATURA; 
-            return res.render('fatura_view/feedAdd') 
-        }  
+        if (req.body.ADD_FATURA) {
+            idGasto = req.body.ADD_FATURA;
+            return res.render('fatura_view/feedAdd')
+        }
 
-        if(req.body.PAGAR)
-        {
+        if (req.body.PAGAR) {
             idGasto = req.body.PAGAR;
             gasto = await Gasto.getGastoID(idGasto);
 
-            return res.render('carteira_view/feedDellGastos') 
-        }  
+            return res.render('carteira_view/feedDellGastos')
+        }
 
-        if(req.body.CONSUMIR)
-        {
+        if (req.body.CONSUMIR) {
             idGasto = req.body.CONSUMIR;
             gasto = await Gasto.getGastoID(idGasto);
 
-            return res.render('carteira_view/consumirGastos',{gasto}) 
-        } 
+            return res.render('carteira_view/consumirGastos', { gasto })
+        }
 
-        if(req.body.CONFIRMADO)
-        {
-            await Gasto.Pagar(idGasto,gasto.valor);
+        if (req.body.CONFIRMADO) {
+            await Gasto.Pagar(idGasto, gasto.valor);
             res.redirect('/Carteira/ConsultaGastos');
-        } 
+        }
 
-        if(req.body.CONF_CONSUMO)
-        {
-            if(!req.body.valor)
-            {
-                return res.render('feed',{erro:'Informe o valor'})
+        if (req.body.CONF_CONSUMO) {
+            if (!req.body.valor) {
+                return res.render('feed', { erro: 'Informe o valor' })
             }
 
-            if(!req.body.dataConsumo)
-            {
-                return res.render('feed',{erro:'Informe a data do consumo'})
+            if (!req.body.dataConsumo) {
+                return res.render('feed', { erro: 'Informe a data do consumo' })
             }
 
-            await Gasto.Consumir(gasto,req.body.valor,req.body.dataConsumo);
+            await Gasto.Consumir(gasto, req.body.valor, req.body.dataConsumo);
             res.redirect('/Carteira/ConsultaGastos');
-        } 
+        }
 
-        if(req.body.DEL)
-        {
+        if (req.body.DEL) {
             idGasto = req.body.DEL;
-            return res.render('carteira_view/feedDellOrcamento') 
-        }  
+            return res.render('carteira_view/feedDellOrcamento')
+        }
 
-        if(req.body.CONF_DELL_ORC)
-        {
+        if (req.body.CONF_DELL_ORC) {
             await Gasto.DelOrcamento(idGasto);
-            res.redirect('/Carteira/ConsultaGastos'); 
-        } 
+            res.redirect('/Carteira/ConsultaGastos');
+        }
     }
-    catch(erro)
-    {
-        global.conectado = false;      
-        res.render('feed',{erro})
-    } 
+    catch (erro) {
+        global.conectado = false;
+        res.render('feed', { erro })
+    }
 });
 
 //======= SALDO USUARIO ===========
-router.get('/DefinirSaldoUsuario',async (req,res) => {
-    try
-    { 
+router.get('/DefinirSaldoUsuario', async (req, res) => {
+    try {
         return res.render('carteira_view/definirSaldo')
     }
-    catch(erro)
-    {
-        global.conectado = false;      
-        res.render('feed',{erro})
-    } 
+    catch (erro) {
+        global.conectado = false;
+        res.render('feed', { erro })
+    }
 });
 
-router.post('/AlterarSaldo',async (req,res) => {
-    try
-    { 
-        if(req.body.saldo)
-        {
+router.post('/AlterarSaldo', async (req, res) => {
+    try {
+        if (req.body.saldo) {
             await Credito.AtualizaSaldo(req.body.saldo);
-            return res.render('carteira_view/feedSaldo',{status:'success',txt:'Saldo atualizado!'}) 
+            return res.render('carteira_view/feedSaldo', { status: 'success', txt: 'Saldo atualizado!' })
         }
-        else
-        {
-            return res.render('feed',{erro:'Informe o novo saldo'})
+        else {
+            return res.render('feed', { erro: 'Informe o novo saldo' })
         }
     }
-    catch(erro)
-    {
-        global.conectado = false;      
-        res.render('feed',{erro})
-    } 
+    catch (erro) {
+        global.conectado = false;
+        res.render('feed', { erro })
+    }
 });
 
-router.post('/ConfirmaEdicaoGasto',async (req,res) => {
-    try
-    { 
-        if(req.body.CONFIRMADO)
-        {
-            if(!req.body.valor)
-            {
-                return res.render('feed',{erro:'Informe o valor'}) 
+router.post('/ConfirmaEdicaoGasto', async (req, res) => {
+    try {
+        if (req.body.CONFIRMADO) {
+            if (!req.body.valor) {
+                return res.render('feed', { erro: 'Informe o valor' })
             }
 
-            let [id,] = req.body.CONFIRMADO.split('|'); 
-            let valor =  req.body.valor  
+            let [id,] = req.body.CONFIRMADO.split('|');
+            let valor = req.body.valor
 
-            await Gasto.EditarValor(id,valor);
+            await Gasto.EditarValor(id, valor);
             res.redirect('/Carteira/ConsultaGastos');
-        } 
+        }
     }
-    catch(erro)
-    {
-        global.conectado = false;      
-        res.render('feed',{erro})
-    } 
+    catch (erro) {
+        global.conectado = false;
+        res.render('feed', { erro })
+    }
 });
 
 //============ CREDITOS ==========
-router.get('/ConsultaCreditos',async (req,res) => {
-    try
-    {  
+router.get('/ConsultaCreditos', async (req, res) => {
+    try {
         filtros = {}
         filtros.origemCredito = {}
         filtros.conta = {}
         filtros.Situacao = {}
         wheres = []
 
-        let Creditos = await Credito.getAll(); 
+        let Creditos = await Credito.getAll();
         let valorTotal = getCustoTotal(Creditos);
         let valorTotalPendenteRecebimento = await getCreditoTotalPendente();
-        let valorTotalPendente = await getGastoTotalPendente();    
-        let  valorTotalEstimativa = (valorTotalPendenteRecebimento + parseFloat(global.user.saldo)) - valorTotalPendente
+        let valorTotalPendente = await getGastoTotalPendente();
+        let valorTotalEstimativa = (valorTotalPendenteRecebimento + parseFloat(global.user.saldo)) - valorTotalPendente
         let Origens = await Origem.getAll();
-        let Contas = await ContaBancaria.getAll();       
-       
-        res.render('carteira_view/inicialCreditos',{Creditos,valorTotal,Origens,Contas,filtros,valorTotalPendente,valorTotalPendenteRecebimento,valorTotalEstimativa});
+        let Contas = await ContaBancaria.getAll();
+
+        res.render('carteira_view/inicialCreditos', { Creditos, valorTotal, Origens, Contas, filtros, valorTotalPendente, valorTotalPendenteRecebimento, valorTotalEstimativa });
     }
-    catch(erro)
-    {
-        global.conectado = false;      
-        res.render('feed',{erro})
-    } 
+    catch (erro) {
+        global.conectado = false;
+        res.render('feed', { erro })
+    }
 });
 
-router.post('/ClickCreditos',async (req,res) => {
-    try
-    {     
-        let Creditos = []       
+router.post('/ClickCreditos', async (req, res) => {
+    try {
+        let Creditos = []
         let Origens = await Origem.getAll();
         let Contas = await ContaBancaria.getAll();
         wheres = []
 
-        if(req.body.EDI)
-        {
-            let [id,valor] = req.body.EDI.split('|');
-            return res.render('carteira_view/editarCredito',{id,valor})
+        if (req.body.EDI) {
+            let [id, valor] = req.body.EDI.split('|');
+            return res.render('carteira_view/editarCredito', { id, valor })
         }
 
-        if(req.body.PESQUISAR)
-        {
-            if (req.body.origemCredito) 
-            {
-                [filtros.origemCredito.id,filtros.origemCredito.descricao] = req.body.origemCredito.split('|');
-                wheres.push(`origemCredito = ${filtros.origemCredito.id}`);               
+        if (req.body.PESQUISAR) {
+            if (req.body.origemCredito) {
+                [filtros.origemCredito.id, filtros.origemCredito.descricao] = req.body.origemCredito.split('|');
+                wheres.push(`origemCredito = ${filtros.origemCredito.id}`);
             }
 
-            if (req.body.conta) 
-            {
-                [filtros.conta.id,filtros.conta.descricao] = req.body.conta.split('|');
-                wheres.push(`contaBancaria = ${filtros.conta.id}`);               
+            if (req.body.conta) {
+                [filtros.conta.id, filtros.conta.descricao] = req.body.conta.split('|');
+                wheres.push(`contaBancaria = ${filtros.conta.id}`);
             }
 
-            if (req.body.Situacao) 
-            {
-                [filtros.Situacao.id,filtros.Situacao.descricao] = req.body.Situacao.split('|');
-                wheres.push(`situacao = ${filtros.Situacao.id}`);               
+            if (req.body.Situacao) {
+                [filtros.Situacao.id, filtros.Situacao.descricao] = req.body.Situacao.split('|');
+                wheres.push(`situacao = ${filtros.Situacao.id}`);
             }
 
-            if (req.body.dataFim) 
-            {
+            if (req.body.dataFim) {
                 filtros.dataFim = req.body.dataFim;
                 wheres.push(`dt_previsao <= '${req.body.dataFim}'`);
             }
 
-             if (req.body.dataIni) 
-            {
+            if (req.body.dataIni) {
                 filtros.dataIni = req.body.dataIni;
                 wheres.push(`dt_previsao >= '${req.body.dataIni}'`);
             }
-            
+
             //======================================
-            Creditos = await Credito.getAll_Filtros(Func.AnalisaFiltros(wheres)); 
-            
-            let valorTotal = getCustoTotal(Creditos);  
+            Creditos = await Credito.getAll_Filtros(Func.AnalisaFiltros(wheres));
+
+            let valorTotal = getCustoTotal(Creditos);
             let valorTotalPendenteRecebimento = await getCreditoTotalPendente();
-            let valorTotalPendente = await getGastoTotalPendente(); 
-            let  valorTotalEstimativa = (valorTotalPendenteRecebimento + parseFloat(global.user.saldo)) - valorTotalPendente     
-            return res.render('carteira_view/inicialCreditos',{Creditos,valorTotal,Origens,Contas,filtros,valorTotalPendente,valorTotalPendenteRecebimento,valorTotalEstimativa});
-        } 
+            let valorTotalPendente = await getGastoTotalPendente();
+            let valorTotalEstimativa = (valorTotalPendenteRecebimento + parseFloat(global.user.saldo)) - valorTotalPendente
+            return res.render('carteira_view/inicialCreditos', { Creditos, valorTotal, Origens, Contas, filtros, valorTotalPendente, valorTotalPendenteRecebimento, valorTotalEstimativa });
+        }
     }
-    catch(erro)
-    {
-        global.conectado = false;      
-        res.render('feed',{erro});
-    } 
+    catch (erro) {
+        global.conectado = false;
+        res.render('feed', { erro });
+    }
 });
 
-router.get('/RegistrarCreditos',async (req,res) => {
-    try
-    { 
+router.get('/RegistrarCreditos', async (req, res) => {
+    try {
         let Origens = await Origem.getAll();
         let Contas = await ContaBancaria.getAll();
-      
-        res.render('carteira_view/registrarCreditos',{Origens,Contas});        
+
+        res.render('carteira_view/registrarCreditos', { Origens, Contas });
     }
-    catch(erro)
-    {
-        global.conectado = false;      
-        res.render('feed',{erro})
-    } 
+    catch (erro) {
+        global.conectado = false;
+        res.render('feed', { erro })
+    }
 });
 
-router.post('/CofirmarRegistroCreditos',async (req,res) => {
-    try
-    { 
+router.post('/CofirmarRegistroCreditos', async (req, res) => {
+    try {
         let situacao = 1;//PENDENTE
         let inAnoTodo = false;
         let dataRecebimento = null;
         let qtParcelas = 0;
         let inValorBruto = false;
 
-        if(!req.body.valor)
-        {
-            return res.render('feed',{erro:'Informe o valor'}) 
+        if (!req.body.valor) {
+            return res.render('feed', { erro: 'Informe o valor' })
         }
 
-        if(!req.body.origemCreditos)
-        {
-            return res.render('feed',{erro:'Informe a Origem dos Creditos'}) 
+        if (!req.body.origemCreditos) {
+            return res.render('feed', { erro: 'Informe a Origem dos Creditos' })
         }
 
-        if(!req.body.dtPrevisao)
-        {
-            return res.render('feed',{erro:'Informe a data de Previsao'}) 
+        if (!req.body.dtPrevisao) {
+            return res.render('feed', { erro: 'Informe a data de Previsao' })
         }
 
-        if(!req.body.conta)
-        {
-            return res.render('feed',{erro:'Informe a conta'}) 
+        if (!req.body.conta) {
+            return res.render('feed', { erro: 'Informe a conta' })
         }
 
-        if(req.body.recebido)
-        {
-           situacao = 2;//RECEBIDO
-           dataRecebimento = new Date();
-           dataRecebimento = DLL.ConverterData(DLL.formataData(dataRecebimento))
-           await Credito.AumentaSaldo(req.body.valor);
+        if (req.body.recebido) {
+            situacao = 2;//RECEBIDO
+            dataRecebimento = new Date();
+            dataRecebimento = DLL.ConverterData(DLL.formataData(dataRecebimento))
+            await Credito.AumentaSaldo(req.body.valor);
         }
 
-        if(req.body.fimAno)
-        {
-            inAnoTodo =  true;
+        if (req.body.fimAno) {
+            inAnoTodo = true;
         }
 
-        if(req.body.parcelado)//PARCELADO
+        if (req.body.parcelado)//PARCELADO
         {
-            if(!req.body.qtParcelas)
-            {
-                return res.render('feed',{erro:'Informe a quantidade de parcelas'}) 
+            if (!req.body.qtParcelas) {
+                return res.render('feed', { erro: 'Informe a quantidade de parcelas' })
             }
 
-            if(!req.body.tpValor)
-            {
-                return res.render('feed',{erro:'Selecione um tipo de valor'}) 
+            if (!req.body.tpValor) {
+                return res.render('feed', { erro: 'Selecione um tipo de valor' })
             }
 
             qtParcelas = req.body.qtParcelas;
 
-            if(req.body.tpValor == "B")
-            {
+            if (req.body.tpValor == "B") {
                 inValorBruto = true;
             }
 
-            await Credito.GravarParcelado(req.body.valor,dataRecebimento,req.body.dtPrevisao,
-            req.body.origemCreditos,situacao,req.body.conta,qtParcelas,inValorBruto)
-                    
+            await Credito.GravarParcelado(req.body.valor, dataRecebimento, req.body.dtPrevisao,
+                req.body.origemCreditos, situacao, req.body.conta, qtParcelas, inValorBruto)
+
         }
         else//NORMAL
         {
-            await Credito.Gravar(req.body.valor,dataRecebimento,req.body.dtPrevisao,
-            req.body.origemCreditos,situacao,req.body.conta,inAnoTodo)
+            await Credito.Gravar(req.body.valor, dataRecebimento, req.body.dtPrevisao,
+                req.body.origemCreditos, situacao, req.body.conta, inAnoTodo)
         }
 
-        return res.render('carteira_view/feedCreditos',{status:'success',txt:'Recebimento gravado com sucesso!'})  
+        return res.render('carteira_view/feedCreditos', { status: 'success', txt: 'Recebimento gravado com sucesso!' })
 
     }
-    catch(erro)
-    {
-        global.conectado = false;      
-        res.render('feed',{erro})
-    } 
+    catch (erro) {
+        global.conectado = false;
+        res.render('feed', { erro })
+    }
 });
 
-router.post('/ReceberCredito',async (req,res) => {
-    try
-    { 
-        if(req.body.RECEBER)
-        {
+router.post('/ReceberCredito', async (req, res) => {
+    try {
+        if (req.body.RECEBER) {
             idCredito = req.body.RECEBER;
             credito = await Credito.getCreditoID(idCredito);
 
-            return res.render('carteira_view/feedDellCreditos') 
-        }  
+            return res.render('carteira_view/feedDellCreditos')
+        }
 
-        if(req.body.CONFIRMADO)
-        {
-            await Credito.Receber(idCredito,credito.valor);
+        if (req.body.CONFIRMADO) {
+            await Credito.Receber(idCredito, credito.valor);
             res.redirect('/Carteira/ConsultaCreditos');
-        } 
+        }
     }
-    catch(erro)
-    {
-        global.conectado = false;      
-        res.render('feed',{erro})
-    } 
+    catch (erro) {
+        global.conectado = false;
+        res.render('feed', { erro })
+    }
 });
 
-router.post('/ConfirmaEdicaoCredito',async (req,res) => {
-    try
-    { 
-        if(req.body.CONFIRMADO)
-        {
-            if(!req.body.valor)
-            {
-                return res.render('feed',{erro:'Informe o valor'}) 
+router.post('/ConfirmaEdicaoCredito', async (req, res) => {
+    try {
+        if (req.body.CONFIRMADO) {
+            if (!req.body.valor) {
+                return res.render('feed', { erro: 'Informe o valor' })
             }
 
-            let [id,] = req.body.CONFIRMADO.split('|'); 
-            let valor =  req.body.valor  
+            let [id,] = req.body.CONFIRMADO.split('|');
+            let valor = req.body.valor
 
-            await Credito.EditarValor(id,valor);
+            await Credito.EditarValor(id, valor);
             res.redirect('/Carteira/ConsultaCreditos');
-        } 
+        }
     }
-    catch(erro)
-    {
-        global.conectado = false;      
-        res.render('feed',{erro})
-    } 
+    catch (erro) {
+        global.conectado = false;
+        res.render('feed', { erro })
+    }
 });
 
 //========================== LOCAL PROC ====================
-function getCustoTotal(lista) 
-{
+function getCustoTotal(lista) {
     let resultado = 0;
-   
-    for (const prod of lista) 
-    {
-        resultado += parseFloat(prod.valor)              
+
+    for (const prod of lista) {
+        resultado += parseFloat(prod.valor)
     }
 
-    return resultado; 
+    return resultado;
 }
 
-async function getGastoTotalPendente() 
-{
+async function getGastoTotalPendente() {
     let Gastos = await Gasto.getAll();
     let resultado = 0;
-   
-    for (const prod of Gastos) 
-    {
-        if(prod.situacao != 'PAGO')
-        {
-            resultado += parseFloat(prod.valor)   
-        }       
+
+    for (const prod of Gastos) {
+        if (prod.situacao != 'PAGO') {
+            resultado += parseFloat(prod.valor)
+        }
     }
 
-    return resultado; 
+    return resultado;
 }
 
-async function getCreditoTotalPendente() 
-{
+async function getCreditoTotalPendente() {
     let Creditos = await Credito.getAll();
     let resultado = 0;
-   
-    for (const prod of Creditos) 
-    {
-        if(prod.situacao != 'RECEBIDO')
-        {
-            resultado += parseFloat(prod.valor)   
-        }       
+
+    for (const prod of Creditos) {
+        if (prod.situacao != 'RECEBIDO') {
+            resultado += parseFloat(prod.valor)
+        }
     }
 
-    return resultado; 
+    return resultado;
 }
 
-function montarResumoAnual(gastos) 
-{
+function montarResumoAnual(gastos) {
     let lista = []
 
-    for (const g of gastos) 
-    {
-        if(verificaSeMotivoExisteLista(g.motivo,lista))
-        {
-            let i = getIndexObjLista(g.motivo,lista);
-            
+    for (const g of gastos) {
+        if (verificaSeMotivoExisteLista(g.motivo, g.ano, lista)) {
+            let i = getIndexObjLista(g.motivo, g.ano, lista);
+
             switch (g.mesVencimento) {
                 case 1: lista[i].janeiro = g.valor; break;
                 case 2: lista[i].fevereiro = g.valor; break;
@@ -693,10 +635,10 @@ function montarResumoAnual(gastos)
                 case 12: lista[i].dezembro = g.valor; break;
             }
         }
-        else
-        {
+        else {
             let obj = {}
             obj.motivo = g.motivo
+            obj.ano = g.ano
             obj.janeiro = 0
             obj.fevereiro = 0
             obj.marco = 0
@@ -727,35 +669,64 @@ function montarResumoAnual(gastos)
 
             lista.push(obj);
         }
-    } 
-   
-    return lista; 
+    }
+
+    return lista;
 }
 
-function verificaSeMotivoExisteLista(motivo,lista)
-{
-    for (const l of lista) 
-    {
-      if(l.motivo == motivo)
-      {
-        return true;
-      }
+function getTotalMesResumoAnual(lista, ano) {
+    let totais = {}
+    totais.janeiro = 0
+    totais.fevereiro = 0
+    totais.marco = 0
+    totais.abril = 0
+    totais.maio = 0
+    totais.junho = 0
+    totais.julho = 0
+    totais.agosto = 0
+    totais.setembro = 0
+    totais.outubro = 0
+    totais.novembro = 0
+    totais.dezembro = 0
+
+    for (const g of lista) {
+        if (g.ano == ano) {
+            totais.janeiro += parseFloat(g.janeiro);
+            totais.fevereiro += parseFloat(g.fevereiro);
+            totais.marco += parseFloat(g.marco);
+            totais.abril += parseFloat(g.abril);
+            totais.maio += parseFloat(g.maio);
+            totais.junho += parseFloat(g.junho);
+            totais.julho += parseFloat(g.julho);
+            totais.agosto += parseFloat(g.agosto);
+            totais.setembro += parseFloat(g.setembro);
+            totais.outubro += parseFloat(g.outubro);
+            totais.novembro += parseFloat(g.novembro);
+            totais.dezembro += parseFloat(g.dezembro);
+        }
+    }
+
+    return totais;
+}
+
+function verificaSeMotivoExisteLista(motivo, ano, lista) {
+    for (const l of lista) {
+        if (l.motivo == motivo && l.ano == ano) {
+            return true;
+        }
     }
     return false;
 }
 
-function getIndexObjLista(motivo,lista)
-{
+function getIndexObjLista(motivo, ano, lista) {
     let index = 0;
 
-    for (const l of lista) 
-    {
-      if(l.motivo == motivo)
-      {
-        return index;
-      }
+    for (const l of lista) {
+        if (l.motivo == motivo && l.ano == ano) {
+            return index;
+        }
 
-      index++;
+        index++;
     }
 }
 
