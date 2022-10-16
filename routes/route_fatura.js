@@ -3,6 +3,7 @@ const bodyparser = require('body-parser');
 const Fatura = require('../services/s_fatura')
 const MotivoGastos = require('../services/s_motivoGastos')
 const ContaBancaria = require('../services/s_contaBancaria')
+const DLL = require('../public/DLL');
 
 const router = express.Router();
 router.use(bodyparser.urlencoded({ extended: false }));
@@ -13,17 +14,19 @@ router.get('/',async (req,res) => {
     try    
     {  
         filtros = {}
-        filtros.motivoGastos = {}
         filtros.conta = {}
-        filtros.Situacao = {}
         wheres = []
 
         let Motivos = await MotivoGastos.getAll();
         let Contas = await ContaBancaria.getAll();
+        let GastosFatura = []
 
+        let data = new Date();
+        let mes = DLL.getPedacoData(DLL.ConverterData(DLL.formataData(data)),'MES')
+        let ano = DLL.getPedacoData(DLL.ConverterData(DLL.formataData(data)),'ANO')
+        let dataInicial = `${ano}-${mes}`
 
-        let GastosFatura = await Fatura.getAllMesAtual() 
-        res.render('fatura_view/inicial',{GastosFatura,Motivos,Contas,filtros});
+        res.render('fatura_view/inicial',{dataInicial,GastosFatura,Motivos,Contas,filtros});
     }
     catch(erro)
     {
@@ -32,49 +35,54 @@ router.get('/',async (req,res) => {
     } 
 });
 
-router.get('/Todos',async (req,res) => {
+//atualizar - pagar
+router.post('/Atualizar',async (req,res) => {
     try    
     {  
         filtros = {}
-        filtros.motivoGastos = {}
         filtros.conta = {}
-        filtros.Situacao = {}
         wheres = []
 
         let Motivos = await MotivoGastos.getAll();
         let Contas = await ContaBancaria.getAll();
 
-        let GastosFatura = await Fatura.getAll() 
-        res.render('fatura_view/inicial',{GastosFatura,Motivos,Contas,filtros});
-    }
-    catch(erro)
-    {
-        global.conectado = false;      
-        res.render('feed',{erro});
-    } 
-});
+        let data = new Date();
+        let mes = DLL.getPedacoData(DLL.ConverterData(DLL.formataData(data)),'MES')
+        let ano = DLL.getPedacoData(DLL.ConverterData(DLL.formataData(data)),'ANO')
+        let dataInicial = `${ano}-${mes}`
 
+        if(req.body.mes)
+        {
+            dataInicial = req.body.mes
+        }
 
-router.post('/Click',async (req,res) => {
-    try
-    {   
+        if(!req.body.conta)
+        {
+            return res.render('feed', { erro: 'Informe a conta' })
+        }
+        else
+        {
+            let [idconta,descricao] = req.body.conta.split('|')
+            filtros.conta.id = idconta;
+            filtros.conta.descricao = descricao;
+        }
+       
+        let GastosFatura = await Fatura.get(filtros.conta.id,dataInicial) 
+      
         if(req.body.DEL)
         {
             let id = req.body.DEL;
             await Fatura.Remover(id);
             return res.redirect('/Fatura')
         }
-        
+
         if(req.body.PAGAR)
         {
-            res.render("fatura_view/feedPagar")
+            await Fatura.Pagar(GastosFatura);
+            res.render('fatura_view/feed',{status:'success',txt:'Fatura Paga!'});
         }
 
-        if(req.body.CONFIRMAR)
-        {
-           await Fatura.Pagar();
-           res.render('fatura_view/feed',{status:'success',txt:'Fatura Paga!'});
-        }
+        res.render('fatura_view/inicial',{dataInicial,GastosFatura,Motivos,Contas,filtros});
     }
     catch(erro)
     {

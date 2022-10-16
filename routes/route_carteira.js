@@ -226,7 +226,7 @@ router.get('/ConsultaGastosResumoAnual', async (req, res) => {
         let anoSelect = DLL.getPedacoData(DLL.ConverterData(DLL.formataData(data)), 'ANO');
 
         let totais = getTotalMesResumoAnual(resumo,anoSelect);
-        console.log(totais)
+       
 
         res.render('carteira_view/consultaGastosAnual', { totais,anoSelect, resumo, Motivos, Gastos, valorTotal, valorTotalPendente, valorTotalPendenteRecebimento, valorTotalEstimativa });
     }

@@ -15,7 +15,7 @@
   <h2>Fatura</h2>
   <hr>
   <div class="btn-group">
-  <form action="/Fatura/Click" method="post">
+  <form action="/Fatura/Atualizar" method="post">
       <a href="/Menu" class="btn btn-info">Inicio</a>
   </div>
 </div>
@@ -24,22 +24,25 @@
   <nav class="navbar navbar-expand navbar-dark bg-dark">
   <div class="container">
   <div class="collapse navbar-collapse" id="mynavbar">
-
-    <select class="form-control me-2" name="motivoGastos" style="width: auto;">
-      <% if(filtros.motivoGastos.id) { %>
-        <option value="<%= filtros.motivoGastos.id %>|<%= filtros.motivoGastos.descricao %>" selected><%= filtros.motivoGastos.descricao %></option>
-      <% }else { %>
-        <option value="" disabled selected>Motivo</option>
-      <% } %>   
-      <% Motivos.forEach(m => { %>
-        <option value="<%= m.id %>|<%= m.descricao %>"><%= m.descricao %></option>
-      <% }); %>
-    </select>
     
-    <button class="btn btn-primary me-2" name="PESQUISAR" value="true">Pesquisar</button>
+    <input class="form-control me-2" type="month" id="bdaymonth" name="mes" value="<%= dataInicial %>">
+
+    <select class="form-control me-2" name="conta" style="width: auto;">
+      <% if(filtros.conta.id) { %>
+        <option value="<%= filtros.conta.id %>|<%= filtros.conta.descricao %>" selected><%= filtros.conta.descricao %></option>
+      <% }else { %>
+        <option value="" disabled selected>Contas</option>
+      <% } %>          
+      <% Contas.forEach(c => { %>
+        <option value="<%= c.id %>|<%= c.descricao %>">
+          <%= c.descricao %>
+        </option>
+        <% }); %>
+    </select>
+
+    <button class="btn btn-primary me-2" name="ATUALIZAR" value="true">Atualizar</button>
     
     <a href="/Menu" class="btn btn-primary me-2">Voltar</a>
-    <a href="/Fatura" class="btn btn-warning me-2">Rezetar</a>
     <button class="btn btn-success me-2" name="PAGAR" value="true">Pagar Fatura</button>
   </div>
   </div>
@@ -48,18 +51,14 @@
 
 
 <div class="container mt-3">
-  <table class="table table-dark table-striped table-sm">
+  <table class="table table-dark table-striped table-sm" style="width: auto;">
     <thead>
       <tr>  
         <th>Motivo</th>  
         <th>Valor</th> 
-        <th>Parcela</th> 
-        <th>Forma Pagamento</th> 
-        <th>Conta Bancaria</th> 
-        <th>Dt Registro</th> 
-        <th>Dt Vencimento</th>
-        <th>Situação</th>  
-        <th></th> 
+        <th>Conta Bancaria</th>    
+        <th>Mes</th>
+        <th>Ano</th>   
         <th></th> 
       </tr>
     </thead>
@@ -67,33 +66,11 @@
       <% GastosFatura.forEach(g => { %>
       <tr>
         <td><%= g.motivo %></td>  
-        <td>$ <%= g.valor %></td>  
-        <td><%= g.parcela %></td>  
-        <td><%= g.formaPagamento %></td>  
-        <td><%= g.conta %></td> 
-        <td><%= g.dt_registro %></td>  
-        <td><%= g.dt_vencimento %></td>
-
-        <% if(g.situacao == 'PAGO') { %>
-          <td style="color:rgb(0, 255, 0);"><%= g.situacao %></td>
-        <% } else if(g.situacao == 'ATRASADO'){ %> 
-          <td style="color:rgb(249, 224, 0);"><%= g.situacao %></td>
-        <% } else if(g.situacao == 'ORCAMENTO'){ %> 
-          <td style="color:rgb(0, 45, 248);"><%= g.situacao %></td>
-        <% } else { %> 
-          <td style="color:rgb(250, 0, 0);"><%= g.situacao %></td>
-        <% } %> 
-
-          <% if(g.inOrcamentario) { %>
-            <td></td>
-          <% } else if(g.situacao != 'PAGO' && !g.inFatura) { %> 
-            <td></td>
-          <% }else { %>
-            <td></td>
-          <% } %>
-          <td><button name="DEL" value="<%= g.id %>" class="btn-sm form-control btn-danger">X</button></td> 
-        
-
+        <td style="color:red ;">$ <%= g.valor %></td>
+        <td><%= g.conta %></td>
+        <td><%= g.mes %></td>
+        <td><%= g.ano %></td>
+        <td><button name="DEL" value="<%= g.id %>" class="btn-sm form-control btn-danger">X</button></td>
       </tr>  
       <% }); %>             
     </tbody>
