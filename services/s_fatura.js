@@ -57,6 +57,8 @@ async function AddGasto(gasto)
 //ADD GASTO NA FATURA 
 async function Pagar(fatura)
 {
+    const conn = await db.connect();
+
     fatura.forEach(async gasto => {
        await Gastos.Pagar(gasto.id,parseFloat(gasto.valor));
 
