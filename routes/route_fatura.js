@@ -79,10 +79,10 @@ router.post('/Atualizar',async (req,res) => {
         if(req.body.PAGAR)
         {
             await Fatura.Pagar(GastosFatura);
-            res.render('fatura_view/feed',{status:'success',txt:'Fatura Paga!'});
+            return res.render('fatura_view/feed',{status:'success',txt:'Fatura Paga!'});
         }
 
-        res.render('fatura_view/inicial',{dataInicial,GastosFatura,Motivos,Contas,filtros});
+        return res.render('fatura_view/inicial',{dataInicial,GastosFatura,Motivos,Contas,filtros});
     }
     catch(erro)
     {
