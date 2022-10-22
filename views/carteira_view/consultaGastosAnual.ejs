@@ -14,10 +14,7 @@
 
   <div class="w3-container">
     
-    <h1 class="w3-left">
-      <input id="ValorTotal"  style="text-shadow:1px 1px 2px rgb(135, 128, 128);width: 250px;" class="w3-input"
-        type="text" value="Resultado: $ <%= valorTotal.toFixed(2) %>" readonly>
-    </h1>
+   
 
     <h1 class="w3-left">
         <a href="/Carteira/DefinirSaldoUsuario" class="SemBorda"> 
@@ -61,12 +58,12 @@
  
      <!--GASTOS -->
     <div class="container mt-3">  
-      <table class="w3-small w3-card table w3-border w3-table table-hover TabelaDinamica table-striped" id="">
+      <table class="w3-small w3-card table w3-border w3-table table-hover TabelaDinamica table-striped">
         <thead>
           <tr> 
             <td>
               <a href="/MotivoGastos" class="SemBorda">          
-                <button name="" value="" class="w3-tiny w3-round  btn-primary">+</button> GASTOS
+                <button name="" value="" class="w3-tiny w3-round  btn-primary">+</button> GASTOS  
               </a>
             </td>     
             <th>Janeiro</th>  
@@ -88,7 +85,7 @@
           <% resumo.forEach(dado => { %>
             <%  if(dado.ano == anoSelect) { %>           
             <tr>
-              <td><%= dado.motivo %></td>
+              <td><b><%= dado.motivo %></b></td>
               <td><a href="/Carteira/RegistrarGastos<%= dado.motivo %>|01|<%= anoSelect %>" class="SemBorda cell"> <%= dado.janeiro %></a></td>
               <td><a href="/Carteira/RegistrarGastos<%= dado.motivo %>|02|<%= anoSelect %>" class="SemBorda cell"> <%= dado.fevereiro %></td>
               <td><a href="/Carteira/RegistrarGastos<%= dado.motivo %>|03|<%= anoSelect %>" class="SemBorda cell"> <%= dado.marco %></td>
@@ -109,78 +106,48 @@
             </tr> 
             <% } %>  
           <% }); %> 
-          <tr>
-            <td>-</td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <th></th>
-          </tr> 
-          <tr style="background-color: rgb(0, 0, 0);">
-            <td style="color:red ;">TOTAL</td>
-            <td style="color:red ;"><%= totais.janeiro.toFixed(2) %></td>
-            <td style="color:red ;"><%= totais.fevereiro.toFixed(2) %></td>
-            <td style="color:red ;"><%= totais.marco.toFixed(2) %></td>
-            <td style="color:red ;"><%= totais.abril.toFixed(2) %></td>
-            <td style="color:red ;"><%= totais.maio.toFixed(2) %></td>
-            <td style="color:red ;"><%= totais.junho.toFixed(2) %></td>
-            <td style="color:red ;"><%= totais.julho.toFixed(2) %></td>
-            <td style="color:red ;"><%= totais.agosto.toFixed(2) %></td>
-            <td style="color:red ;"><%= totais.setembro.toFixed(2) %></td>
-            <td style="color:red ;"><%= totais.outubro.toFixed(2) %></td>
-            <td style="color:red ;"><%= totais.novembro.toFixed(2) %></td>
-            <td style="color:red ;"><%= totais.dezembro.toFixed(2) %></td> 
+          <tr style="background-color: rgb(142, 140, 140);">
+            <td style="color:rgb(0, 0, 0) ; text-shadow:1px 1px 2px rgb(255, 0, 0);">TOTAL</td>
+            <td style="color:rgb(0, 0, 0) ; text-shadow:1px 1px 2px rgb(255, 0, 0);"><%= totais.janeiro.toFixed(2) %></td>
+            <td style="color:rgb(0, 0, 0) ; text-shadow:1px 1px 2px rgb(255, 0, 0);"><%= totais.fevereiro.toFixed(2) %></td>
+            <td style="color:rgb(0, 0, 0) ; text-shadow:1px 1px 2px rgb(255, 0, 0);"><%= totais.marco.toFixed(2) %></td>
+            <td style="color:rgb(0, 0, 0) ; text-shadow:1px 1px 2px rgb(255, 0, 0);"><%= totais.abril.toFixed(2) %></td>
+            <td style="color:rgb(0, 0, 0) ; text-shadow:1px 1px 2px rgb(255, 0, 0);"><%= totais.maio.toFixed(2) %></td>
+            <td style="color:rgb(0, 0, 0) ; text-shadow:1px 1px 2px rgb(255, 0, 0);"><%= totais.junho.toFixed(2) %></td>
+            <td style="color:rgb(0, 0, 0) ; text-shadow:1px 1px 2px rgb(255, 0, 0);"><%= totais.julho.toFixed(2) %></td>
+            <td style="color:rgb(0, 0, 0) ; text-shadow:1px 1px 2px rgb(255, 0, 0);"><%= totais.agosto.toFixed(2) %></td>
+            <td style="color:rgb(0, 0, 0) ; text-shadow:1px 1px 2px rgb(255, 0, 0);"><%= totais.setembro.toFixed(2) %></td>
+            <td style="color:rgb(0, 0, 0) ; text-shadow:1px 1px 2px rgb(255, 0, 0);"><%= totais.outubro.toFixed(2) %></td>
+            <td style="color:rgb(0, 0, 0) ; text-shadow:1px 1px 2px rgb(255, 0, 0);"><%= totais.novembro.toFixed(2) %></td>
+            <td style="color:rgb(0, 0, 0) ; text-shadow:1px 1px 2px rgb(255, 0, 0);"><%= totais.dezembro.toFixed(2) %></td> 
             <td></td>           
           </tr> 
         </tbody>
       </table>
     </div>
 
-     <!--CREDITOS 
-    <div class="container mt-3">
-      <table class="table table-dark table-striped table-sm" id="">
+     <!--CREDITOS -->
+     <div class="container mt-3">  
+      <table class="w3-small w3-card table w3-border w3-table table-hover TabelaDinamica table-striped">
         <thead>
-          <tr>
-            <td style="color:rgb(0, 255, 0);">TOTAL</td>
-            <td style="color:rgb(0, 255, 0) ;"><%= totais.janeiro.toFixed(2) %></td>
-            <td style="color:rgb(0, 255, 0) ;"><%= totais.fevereiro.toFixed(2) %></td>
-            <td style="color:rgb(0, 255, 0) ;"><%= totais.marco.toFixed(2) %></td>
-            <td style="color:rgb(0, 255, 0) ;"><%= totais.abril.toFixed(2) %></td>
-            <td style="color:rgb(0, 255, 0) ;"><%= totais.maio.toFixed(2) %></td>
-            <td style="color:rgb(0, 255, 0) ;"><%= totais.junho.toFixed(2) %></td>
-            <td style="color:rgb(0, 255, 0) ;"><%= totais.julho.toFixed(2) %></td>
-            <td style="color:rgb(0, 255, 0) ;"><%= totais.agosto.toFixed(2) %></td>
-            <td style="color:rgb(0, 255, 0) ;"><%= totais.setembro.toFixed(2) %></td>
-            <td style="color:rgb(0, 255, 0) ;"><%= totais.outubro.toFixed(2) %></td>
-            <td style="color:rgb(0, 255, 0) ;"><%= totais.novembro.toFixed(2) %></td>
-            <td style="color:rgb(0, 255, 0) ;"><%= totais.dezembro.toFixed(2) %></td>
+          <tr style="background-color:  rgb(142, 140, 140);">
+            <td style="color:rgb(0, 0, 0) ; text-shadow:1px 1px 2px rgb(145, 255, 0);">TOTAL</td>
+            <td style="color:rgb(0, 0, 0) ; text-shadow:1px 1px 2px rgb(145, 255, 0);"><%= totaisCredi.janeiro.toFixed(2) %></td>
+            <td style="color:rgb(0, 0, 0) ; text-shadow:1px 1px 2px rgb(145, 255, 0);"><%= totaisCredi.fevereiro.toFixed(2) %></td>
+            <td style="color:rgb(0, 0, 0) ; text-shadow:1px 1px 2px rgb(145, 255, 0);"><%= totaisCredi.marco.toFixed(2) %></td>
+            <td style="color:rgb(0, 0, 0) ; text-shadow:1px 1px 2px rgb(145, 255, 0);"><%= totaisCredi.abril.toFixed(2) %></td>
+            <td style="color:rgb(0, 0, 0) ; text-shadow:1px 1px 2px rgb(145, 255, 0);"><%= totaisCredi.maio.toFixed(2) %></td>
+            <td style="color:rgb(0, 0, 0) ; text-shadow:1px 1px 2px rgb(145, 255, 0);"><%= totaisCredi.junho.toFixed(2) %></td>
+            <td style="color:rgb(0, 0, 0) ; text-shadow:1px 1px 2px rgb(145, 255, 0);"><%= totaisCredi.julho.toFixed(2) %></td>
+            <td style="color:rgb(0, 0, 0) ; text-shadow:1px 1px 2px rgb(145, 255, 0);"><%= totaisCredi.agosto.toFixed(2) %></td>
+            <td style="color:rgb(0, 0, 0) ; text-shadow:1px 1px 2px rgb(145, 255, 0);"><%= totaisCredi.setembro.toFixed(2) %></td>
+            <td style="color:rgb(0, 0, 0) ; text-shadow:1px 1px 2px rgb(145, 255, 0);"><%= totaisCredi.outubro.toFixed(2) %></td>
+            <td style="color:rgb(0, 0, 0) ; text-shadow:1px 1px 2px rgb(145, 255, 0);"><%= totaisCredi.novembro.toFixed(2) %></td>
+            <td style="color:rgb(0, 0, 0) ; text-shadow:1px 1px 2px rgb(145, 255, 0);"><%= totaisCredi.dezembro.toFixed(2) %></td> 
+            <td></td>           
           </tr> 
-          <tr>
-            <td>-</td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr> 
-          <tr>  
-            <th></th>     
+          <tr> 
+            <td><a href="/OrigemCredito" class="SemBorda"> <button name="" value="" class="w3-tiny w3-round  btn-primary">+</button> GANHOS</a></td>     
             <th>Janeiro</th>  
             <th>Fevereiro</th> 
             <th>Março</th> 
@@ -193,32 +160,37 @@
             <th>Outubro</th>
             <th>Novembro</th>
             <th>Dezembro</th>
+            <th></th>
           </tr>
         </thead>
-        <tbody>  
-          <% resumo.forEach(dado => { %>
+        <tbody> 
+          <% resumoCredi.forEach(dado => { %>
             <%  if(dado.ano == anoSelect) { %>           
             <tr>
-              <td><%= dado.motivo %></td>
-              <td><%= dado.janeiro %></td>
-              <td><%= dado.fevereiro %></td>
-              <td><%= dado.marco %></td>
-              <td><%= dado.abril %></td>
-              <td><%= dado.maio %></td>
-              <td><%= dado.junho %></td>
-              <td><%= dado.julho %></td>
-              <td><%= dado.agosto %></td>
-              <td><%= dado.setembro %></td>
-              <td><%= dado.outubro %></td>
-              <td><%= dado.novembro %></td>
-              <td><%= dado.dezembro %></td>
+              <td><b><%= dado.motivo %></b></td>
+              <td><a href="/Carteira/RegistrarCreditos<%= dado.motivo %>|01|<%= anoSelect %>" class="SemBorda cell"> <%= dado.janeiro %></a></td>
+              <td><a href="/Carteira/RegistrarCreditos<%= dado.motivo %>|02|<%= anoSelect %>" class="SemBorda cell"> <%= dado.fevereiro %></td>
+              <td><a href="/Carteira/RegistrarCreditos<%= dado.motivo %>|03|<%= anoSelect %>" class="SemBorda cell"> <%= dado.marco %></td>
+              <td><a href="/Carteira/RegistrarCreditos<%= dado.motivo %>|04|<%= anoSelect %>" class="SemBorda cell"> <%= dado.abril %></td>
+              <td><a href="/Carteira/RegistrarCreditos<%= dado.motivo %>|05|<%= anoSelect %>" class="SemBorda cell"> <%= dado.maio %></td>
+              <td><a href="/Carteira/RegistrarCreditos<%= dado.motivo %>|06|<%= anoSelect %>" class="SemBorda cell"> <%= dado.junho %></td>
+              <td><a href="/Carteira/RegistrarCreditos<%= dado.motivo %>|07|<%= anoSelect %>" class="SemBorda cell"> <%= dado.julho %></td>
+              <td><a href="/Carteira/RegistrarCreditos<%= dado.motivo %>|08|<%= anoSelect %>" class="SemBorda cell"> <%= dado.agosto %></td>
+              <td><a href="/Carteira/RegistrarCreditos<%= dado.motivo %>|09|<%= anoSelect %>" class="SemBorda cell"> <%= dado.setembro %></td>
+              <td><a href="/Carteira/RegistrarCreditos<%= dado.motivo %>|10|<%= anoSelect %>" class="SemBorda cell"> <%= dado.outubro %></td>
+              <td><a href="/Carteira/RegistrarCreditos<%= dado.motivo %>|11|<%= anoSelect %>" class="SemBorda cell"> <%= dado.novembro %></td>
+              <td><a href="/Carteira/RegistrarCreditos<%= dado.motivo %>|12|<%= anoSelect %>" class="SemBorda cell"> <%= dado.dezembro %></td>
+                <td>
+                  <a href="/Carteira/ClickCreditos<%= dado.motivo %>" class="SemBorda">          
+                    <button class="w3-tiny w3-round btn-primary">>></button>
+                  </a>
+                </td>    
             </tr> 
             <% } %>  
           <% }); %> 
         </tbody>
       </table>
     </div>
-    -->
   </div>
 
 

@@ -21,14 +21,18 @@
     <br>
 
     <select class="form-control me-2" name="origemCreditos" style="width: auto;">
-      <option value="" disabled selected>Origem</option>
+      <% if(filtros.origemCredito.id) { %>
+        <option value="<%= filtros.origemCredito.id %>|<%= filtros.origemCredito.descricao %>" selected><%= filtros.origemCredito.descricao %></option>
+      <% }else { %>
+        <option value="" disabled selected>Origem Credito</option>
+      <% } %>   
       <% Origens.forEach(o => { %>
-        <option value="<%= o.id %>|<%= o.descricao %>"><%= o.descricao %></option>        
+        <option value="<%= o.id %>|<%= o.descricao %>"><%= o.descricao %></option>
       <% }); %>
     </select>
     <br>
 
-    <input class="w3-input w3-border form-control me-2" type="date" name="dtPrevisao">
+    <input class="w3-input w3-border form-control me-2" type="date" name="dtPrevisao" value="<%= ano %>-<%= mes %>-01">
     <br>
 
     <select class="form-control me-2" name="conta" style="width: auto;">      
@@ -60,8 +64,7 @@
 
     <input type="checkbox" name="recebido" id="checkbox"> Registrar essa como recebida?
     <hr>
-
-    <a href="/Menu" class="btn btn-primary">Voltar</a>
+    <a href="/Carteira/ConsultaGastosResumoAnual" class="btn btn-primary me-2">Voltar</a>
     <button type="submit" class="btn w3-green">Confirmar</button>    
   </form>
 </body>

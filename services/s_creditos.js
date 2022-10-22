@@ -115,6 +115,7 @@ async function GravarParcelado(valor,dt_recebimento,dt_previsao,origem,situacao,
 }
 
 
+
 //SELECT 
 async function getSaldo(){   
     const conn = await db.connect();  
@@ -230,6 +231,26 @@ async function EditarValor(id,valor){
     await conn.query(sql, values);
 }
 
-module.exports = {getSaldo,DiminuiSaldo,AtualizaSaldo,getAll,getAll_Filtros,AumentaSaldo,Gravar,getCreditoID,Receber,EditarValor,GravarParcelado}
+//SELECT RESUMO DO ANO
+async function getResumoAno(){   
+    const conn = await db.connect();  
+    const values = [global.user.id]; 
+
+    let sql =  `SELECT SUM(c.valor) as valor,(SELECT MONTH(c.dt_previsao)) as mes,(SELECT YEAR(c.dt_previsao)) as ano,o.descricao as motivo
+    FROM Credito as c
+    INNER JOIN OrigemCredito as o ON o.id = c.origemCredito
+    WHERE c.usuario = ?
+    GROUP BY motivo,mes`
+    const [rows] = await conn.query(sql,values);
+
+    let newrows = rows.map(registro => {        
+        registro.valor = parseFloat(registro.valor).toFixed(2);
+        return registro;
+    });
+   
+    return newrows; 
+}
+
+module.exports = {getResumoAno,getSaldo,DiminuiSaldo,AtualizaSaldo,getAll,getAll_Filtros,AumentaSaldo,Gravar,getCreditoID,Receber,EditarValor,GravarParcelado}
 
 
