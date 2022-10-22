@@ -16,11 +16,11 @@
 
   <input type="hidden" id="prioridade">
   <div class="w3-sidebar w3-bar-block w3-light-grey w3-card" style="width:150px">
-    <h5 class="w3-bar-item" style="color: rgb(0, 0, 0); text-shadow:2px 2px 2px rgb(49, 49, 50)"><%= global.user.nome %></h5>    
+    <h5 class="w3-bar-item" style="color: rgb(0, 0, 0); text-shadow:2px 2px 2px rgb(49, 49, 50)"><%= global.user.nome %></h5>  
+    <button class="w3-bar-item w3-button tablink" onclick="openMenu(event, 'GERAL')"><a href="/Carteira/ConsultaGastosResumoAnual" class="btn btn-dark">PAINEL</a></button>  
     <button class="w3-bar-item w3-button tablink" onclick="openMenu(event, 'Cadastro')">Cadastro</button>
-    <button class="w3-bar-item w3-button tablink" onclick="openMenu(event, 'Gastos')">Gastos</button>
     <button class="w3-bar-item w3-button tablink" onclick="openMenu(event, 'Creditos')">Creditos</button>
-    <button class="w3-bar-item w3-button tablink" onclick="openMenu(event, 'Fatura')">Fatura</button>
+    <button class="w3-bar-item w3-button tablink" onclick="openMenu(event, 'Fatura')">Fatura</button>    
     <a href="/" class="w3-bar-item w3-button">Sair</a>
   </div>
  
@@ -30,13 +30,11 @@
       <div class="w3-padding">
 
         <div id="Cadastro" class="w3-container item" style="display:none;">         
-          <button style="border: 0px;" class="transp row funcionalidades"><a href="/ContaBancaria" class="btn btn-dark">Contas Bancarias</a></button>  
-          <button style="border: 0px;" class="transp row funcionalidades"><a href="/MotivoGastos" class="btn btn-dark">Motivo dos Gastos</a></button> 
+          <button style="border: 0px;" class="transp row funcionalidades"><a href="/ContaBancaria" class="btn btn-dark">Contas Bancarias</a></button>
           <button style="border: 0px;" class="transp row funcionalidades"><a href="/OrigemCredito" class="btn btn-dark">Origem dos Creditos</a></button>     
         </div>
 
-        <div id="Gastos" class="w3-container item" style="display:none;">     
-          <button style="border: 0px;" class="transp row funcionalidades"><a href="/Carteira/ConsultaGastosResumoAnual" class="btn btn-dark">Consulta Gastos - resumo anual</a></button>    
+        <div id="Gastos" class="w3-container item" style="display:none;">
           <button style="border: 0px;" class="transp row funcionalidades"><a href="/Carteira/ConsultaGastos" class="btn btn-dark">Consulta Gastos</a></button>
           <button style="border: 0px;" class="transp row funcionalidades"><a href="/Carteira/RegistrarGastos" class="btn btn-dark">Registrar Gastos</a></button>
         </div>
@@ -64,16 +62,6 @@
           <% } %>
       <% } %>
     </div>
-
-    <form action="/Carteira/DefinirSaldoUsuario" method="get">
-    <div class="w3-display-topmiddle">
-      <h1>
-      <input id="ValorTotal"  style="text-shadow:1px 1px 2px rgb(96, 252, 0);width: 350px;" class="w3-input"
-        type="text" value="Saldo: $ <%= global.user.saldo %>" readonly>
-      </h1>
-    <button class="form-control btn-primary" style="border: 0px;">Definir Saldo</button>
-    </div>
-  </form>
 </body>
 <script>
   function openMenu(evt, menuNome) 

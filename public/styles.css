@@ -6,9 +6,51 @@
    
   }
 
+  .TabelaDinamica td:hover::after { 
+    background-color: rgb(178, 180, 178);
+    content: '';  
+    height: 10000px;    
+    left: 0;
+    position: absolute;  
+    top: -5000px;
+    width: 100%;
+    z-index: -1;        
+}
+
+.TabelaDinamica td:hover::before { 
+  background-color:rgb(178, 180, 178);
+  content: '';  
+  height: 100%;
+  left: -5000px;
+  position: absolute;  
+  top: 0;
+  width: 10000px;   
+  z-index: -2;        
+}
+.TabelaDinamica a {
+  color: black;
+}
+
+
+td, th {
+  border: 1px solid rgb(0, 0, 0);
+  padding: 10px;
+  position: relative;
+}
+
+
+  .SemBorda{
+    border: none;
+    outline: none;
+    text-decoration: none;
+    font-family: "Courier New", monospace;
+  }
+  .pointer {cursor: pointer;}
+  .cell {cursor: cell;}
+
   body
   {
-    background-color: rgb(165, 165, 165);
+    background-color: rgb(237, 237, 237);
   }
 
   #ValorTotal
@@ -72,3 +114,6 @@ input[data]
 {
   width: 180px;
 }
+
+
+

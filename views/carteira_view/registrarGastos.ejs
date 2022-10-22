@@ -21,14 +21,17 @@
     <br>
 
     <select class="form-control me-2" name="motivoGastos" style="width: auto;">
-      <option value="" disabled selected>Motivo</option>
+      <% if(filtros.motivoGastos.id) { %>
+        <option value="<%= filtros.motivoGastos.id %>|<%= filtros.motivoGastos.descricao %>" selected><%= filtros.motivoGastos.descricao %></option>
+      <% }else { %>
+        <option value="" disabled selected>Motivo</option>
+      <% } %>   
       <% Motivos.forEach(m => { %>
-        <option value="<%= m.id %>|<%= m.descricao %>"><%= m.descricao %></option>        
+        <option value="<%= m.id %>|<%= m.descricao %>"><%= m.descricao %></option>
       <% }); %>
     </select>
-    <br>
 
-    <input class="w3-input w3-border form-control me-2" type="date" name="dtVencimento">
+    <input class="w3-input w3-border form-control me-2" type="date" name="dtVencimento" value="<%= ano %>-<%= mes %>-01">
     <br>
 
     <select class="form-control me-2" name="formaPagamento" style="width: auto;">
@@ -78,7 +81,7 @@
 
     <hr>
 
-    <a href="/Menu" class="btn btn-primary">Voltar</a>
+    <a href="/Carteira/ConsultaGastosResumoAnual" class="btn btn-primary">Voltar</a>
     <button type="submit" class="btn w3-green">Confirmar</button>    
   </form>
 </body>

@@ -26,12 +26,11 @@ let idCredito = null;
 let gasto = {}
 let credito = {}
 
-//=============================================================
 
 
 
 
-//============ GASTOS ==========
+//=============================================================== GASTOS =========================================================================
 router.get('/ConsultaGastos', async (req, res) => {
     try {
         filtros = {}
@@ -62,7 +61,7 @@ router.post('/ClickGastos', async (req, res) => {
         let Motivos = await MotivoGastos.getAll();
         let Contas = await ContaBancaria.getAll();
         wheres = []
-
+      
         if (req.body.EDI) {
             let [id, valor] = req.body.EDI.split('|');
             return res.render('carteira_view/editarGasto', { id, valor })
@@ -114,12 +113,59 @@ router.post('/ClickGastos', async (req, res) => {
     }
 });
 
-router.get('/RegistrarGastos', async (req, res) => {
+router.get('/ClickGastos:motivo', async (req, res) => {
     try {
+        filtros = {}
+        filtros.motivoGastos = {}
+        filtros.conta = {}
+        filtros.Situacao = {}
+
+        let Gastos = []
+        let Motivos = await MotivoGastos.getAll();
+        let Contas = await ContaBancaria.getAll();
+        wheres = []
+        
+        let motivo = req.params.motivo
+        let idMotivo = await MotivoGastos.getID(motivo);
+       
+        if (motivo) {
+            filtros.motivoGastos.id = idMotivo
+            filtros.motivoGastos.descricao = motivo
+            wheres.push(`motivo = ${filtros.motivoGastos.id}`);
+        }
+
+        //======================================
+        Gastos = await Gasto.getAll_Filtros(Func.AnalisaFiltros(wheres));
+        let valorTotal = getCustoTotal(Gastos);
+        let valorTotalPendente = await getGastoTotalPendente();
+        let valorTotalPendenteRecebimento = await getCreditoTotalPendente();
+        let valorTotalEstimativa = (valorTotalPendenteRecebimento + parseFloat(global.user.saldo)) - valorTotalPendente
+        return res.render('carteira_view/inicialGastos', { Gastos, valorTotal, Motivos, Contas, filtros, valorTotalPendente, valorTotalPendenteRecebimento, valorTotalEstimativa });
+        
+    }
+    catch (erro) {
+        global.conectado = false;
+        res.render('feed', { erro });
+    }
+});
+
+router.get('/RegistrarGastos:lista', async (req, res) => {
+    try {
+        filtros = {}
+        filtros.motivoGastos = {}
         let Motivos = await MotivoGastos.getAll();
         let Contas = await ContaBancaria.getAll();
 
-        res.render('carteira_view/registrarGastos', { Motivos, Contas });
+        if(req.params.lista)
+        {
+            let [motivo,mes,ano] = req.params.lista.split('|')
+            let idMotivo = await MotivoGastos.getID(motivo);
+
+            filtros.motivoGastos.id = idMotivo
+            filtros.motivoGastos.descricao = motivo
+          
+            res.render('carteira_view/registrarGastos', { Motivos, Contas,filtros,mes,ano });
+        }
     }
     catch (erro) {
         global.conectado = false;
@@ -220,14 +266,12 @@ router.get('/ConsultaGastosResumoAnual', async (req, res) => {
         let valorTotalPendenteRecebimento = await getCreditoTotalPendente();
         let valorTotalEstimativa = (valorTotalPendenteRecebimento + parseFloat(global.user.saldo)) - valorTotalPendente
 
-        let resumo = montarResumoAnual(Gastos);
-
         let data = new Date()
         let anoSelect = DLL.getPedacoData(DLL.ConverterData(DLL.formataData(data)), 'ANO');
 
+        let resumo = await montarResumoAnual(Gastos,anoSelect);
         let totais = getTotalMesResumoAnual(resumo,anoSelect);
        
-
         res.render('carteira_view/consultaGastosAnual', { totais,anoSelect, resumo, Motivos, Gastos, valorTotal, valorTotalPendente, valorTotalPendenteRecebimento, valorTotalEstimativa });
     }
     catch (erro) {
@@ -239,6 +283,7 @@ router.get('/ConsultaGastosResumoAnual', async (req, res) => {
 //consultando
 router.post('/ConsultandoGastosResumoAnual', async (req, res) => {
     try {
+   
         let Gastos = await Gasto.getResumoAno();
         let Motivos = await MotivoGastos.getAll();
 
@@ -247,8 +292,6 @@ router.post('/ConsultandoGastosResumoAnual', async (req, res) => {
         let valorTotalPendenteRecebimento = await getCreditoTotalPendente();
         let valorTotalEstimativa = (valorTotalPendenteRecebimento + parseFloat(global.user.saldo)) - valorTotalPendente
 
-        let resumo = montarResumoAnual(Gastos);
-
         let data = new Date()
         let anoSelect = DLL.getPedacoData(DLL.ConverterData(DLL.formataData(data)), 'ANO');
 
@@ -256,6 +299,7 @@ router.post('/ConsultandoGastosResumoAnual', async (req, res) => {
             anoSelect = req.body.ano;
         }
 
+        let resumo = await montarResumoAnual(Gastos,anoSelect);
         let totais = getTotalMesResumoAnual(resumo,anoSelect);
 
         res.render('carteira_view/consultaGastosAnual', { totais,anoSelect, resumo, Motivos, Gastos, valorTotal, valorTotalPendente, valorTotalPendenteRecebimento, valorTotalEstimativa });
@@ -327,7 +371,27 @@ router.post('/PagarGasto', async (req, res) => {
     }
 });
 
-//======= SALDO USUARIO ===========
+router.post('/ConfirmaEdicaoGasto', async (req, res) => {
+    try {
+        if (req.body.CONFIRMADO) {
+            if (!req.body.valor) {
+                return res.render('feed', { erro: 'Informe o valor' })
+            }
+
+            let [id,] = req.body.CONFIRMADO.split('|');
+            let valor = req.body.valor
+
+            await Gasto.EditarValor(id, valor);
+            res.redirect('/Carteira/ConsultaGastosResumoAnual');
+        }
+    }
+    catch (erro) {
+        global.conectado = false;
+        res.render('feed', { erro })
+    }
+});
+
+//===================================================================== SALDO USUARIO ==============================================================
 router.get('/DefinirSaldoUsuario', async (req, res) => {
     try {
         return res.render('carteira_view/definirSaldo')
@@ -354,27 +418,7 @@ router.post('/AlterarSaldo', async (req, res) => {
     }
 });
 
-router.post('/ConfirmaEdicaoGasto', async (req, res) => {
-    try {
-        if (req.body.CONFIRMADO) {
-            if (!req.body.valor) {
-                return res.render('feed', { erro: 'Informe o valor' })
-            }
-
-            let [id,] = req.body.CONFIRMADO.split('|');
-            let valor = req.body.valor
-
-            await Gasto.EditarValor(id, valor);
-            res.redirect('/Carteira/ConsultaGastos');
-        }
-    }
-    catch (erro) {
-        global.conectado = false;
-        res.render('feed', { erro })
-    }
-});
-
-//============ CREDITOS ==========
+//======================================================================== CREDITOS ===============================================================
 router.get('/ConsultaCreditos', async (req, res) => {
     try {
         filtros = {}
@@ -576,7 +620,7 @@ router.post('/ConfirmaEdicaoCredito', async (req, res) => {
     }
 });
 
-//========================== LOCAL PROC ====================
+//======================================================================== LOCAL PROC =============================================================
 function getCustoTotal(lista) {
     let resultado = 0;
 
@@ -613,32 +657,79 @@ async function getCreditoTotalPendente() {
     return resultado;
 }
 
-function montarResumoAnual(gastos) {
+async function montarResumoAnual(gastos,anoSelect) {
     let lista = []
+    let Motivos = await MotivoGastos.getAll();
 
-    for (const g of gastos) {
-        if (verificaSeMotivoExisteLista(g.motivo, g.ano, lista)) {
-            let i = getIndexObjLista(g.motivo, g.ano, lista);
-
-            switch (g.mesVencimento) {
-                case 1: lista[i].janeiro = g.valor; break;
-                case 2: lista[i].fevereiro = g.valor; break;
-                case 3: lista[i].marco = g.valor; break;
-                case 4: lista[i].abril = g.valor; break;
-                case 5: lista[i].maio = g.valor; break;
-                case 6: lista[i].junho = g.valor; break;
-                case 7: lista[i].julho = g.valor; break;
-                case 8: lista[i].agosto = g.valor; break;
-                case 9: lista[i].setembro = g.valor; break;
-                case 10: lista[i].outubro = g.valor; break;
-                case 11: lista[i].novembro = g.valor; break;
-                case 12: lista[i].dezembro = g.valor; break;
+    for (const m of Motivos) 
+    {
+        for (const g of gastos) 
+        {
+            if(g.motivo == m.descricao && anoSelect == g.ano)
+            {
+                if (verificaSeMotivoExisteLista(m.descricao, g.ano, lista)) {
+                    let i = getIndexObjLista(m.descricao, g.ano, lista);
+        
+                    switch (g.mesVencimento) {
+                        case 1: lista[i].janeiro = g.valor; break;
+                        case 2: lista[i].fevereiro = g.valor; break;
+                        case 3: lista[i].marco = g.valor; break;
+                        case 4: lista[i].abril = g.valor; break;
+                        case 5: lista[i].maio = g.valor; break;
+                        case 6: lista[i].junho = g.valor; break;
+                        case 7: lista[i].julho = g.valor; break;
+                        case 8: lista[i].agosto = g.valor; break;
+                        case 9: lista[i].setembro = g.valor; break;
+                        case 10: lista[i].outubro = g.valor; break;
+                        case 11: lista[i].novembro = g.valor; break;
+                        case 12: lista[i].dezembro = g.valor; break;
+                    }
+                }
+                else 
+                {
+                    let obj = {}
+                    obj.motivo = m.descricao
+                    obj.ano = g.ano
+                    obj.janeiro = 0
+                    obj.fevereiro = 0
+                    obj.marco = 0
+                    obj.abril = 0
+                    obj.maio = 0
+                    obj.junho = 0
+                    obj.julho = 0
+                    obj.agosto = 0
+                    obj.setembro = 0
+                    obj.outubro = 0
+                    obj.novembro = 0
+                    obj.dezembro = 0
+        
+                    switch (g.mesVencimento) {
+                        case 1: obj.janeiro = g.valor; break;
+                        case 2: obj.fevereiro = g.valor; break;
+                        case 3: obj.marco = g.valor; break;
+                        case 4: obj.abril = g.valor; break;
+                        case 5: obj.maio = g.valor; break;
+                        case 6: obj.junho = g.valor; break;
+                        case 7: obj.julho = g.valor; break;
+                        case 8: obj.agosto = g.valor; break;
+                        case 9: obj.setembro = g.valor; break;
+                        case 10: obj.outubro = g.valor; break;
+                        case 11: obj.novembro = g.valor; break;
+                        case 12: obj.dezembro = g.valor; break;
+                    }
+        
+                    lista.push(obj);
+                }
             }
-        }
-        else {
+        }//fim for
+
+        let inExiste = verificaSomenteMotivo(m.descricao, lista)
+       
+        if(!inExiste)
+        {
             let obj = {}
-            obj.motivo = g.motivo
-            obj.ano = g.ano
+            obj.motivo = m.descricao
+            obj.ano = anoSelect
             obj.janeiro = 0
             obj.fevereiro = 0
             obj.marco = 0
@@ -651,22 +742,6 @@ function montarResumoAnual(gastos) {
             obj.outubro = 0
             obj.novembro = 0
             obj.dezembro = 0
-
-            switch (g.mesVencimento) {
-                case 1: obj.janeiro = g.valor; break;
-                case 2: obj.fevereiro = g.valor; break;
-                case 3: obj.marco = g.valor; break;
-                case 4: obj.abril = g.valor; break;
-                case 5: obj.maio = g.valor; break;
-                case 6: obj.junho = g.valor; break;
-                case 7: obj.julho = g.valor; break;
-                case 8: obj.agosto = g.valor; break;
-                case 9: obj.setembro = g.valor; break;
-                case 10: obj.outubro = g.valor; break;
-                case 11: obj.novembro = g.valor; break;
-                case 12: obj.dezembro = g.valor; break;
-            }
-
             lista.push(obj);
         }
     }
@@ -675,6 +750,7 @@ function montarResumoAnual(gastos) {
 }
 
 function getTotalMesResumoAnual(lista, ano) {
+   
     let totais = {}
     totais.janeiro = 0
     totais.fevereiro = 0
@@ -712,6 +788,15 @@ function getTotalMesResumoAnual(lista, ano) {
 function verificaSeMotivoExisteLista(motivo, ano, lista) {
     for (const l of lista) {
         if (l.motivo == motivo && l.ano == ano) {
+            return true;
+        }
+    }
+    return false;
+}
+
+function verificaSomenteMotivo(motivo, lista) {
+    for (const l of lista) {
+        if (l.motivo == motivo) {
             return true;
         }
     }

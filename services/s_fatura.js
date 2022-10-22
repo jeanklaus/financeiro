@@ -54,7 +54,7 @@ async function AddGasto(gasto)
     await conn.query(sql, values); 
 }
 
-//ADD GASTO NA FATURA 
+
 async function Pagar(fatura)
 {
     const conn = await db.connect();
