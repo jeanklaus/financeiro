@@ -49,7 +49,7 @@ router.get('/ConsultaGastosResumoAnual', async (req, res) => {
        
         let resumoCredi = await montarResumoAnualCredi(Creditos,anoSelect);
         let totaisCredi = getTotalMesResumoAnual(resumoCredi,anoSelect);
-
+       
 
         res.render('carteira_view/consultaGastosAnual', { totaisCredi,resumoCredi,totais,anoSelect, resumo, 
             valorTotal, valorTotalPendente, valorTotalPendenteRecebimento, valorTotalEstimativa});

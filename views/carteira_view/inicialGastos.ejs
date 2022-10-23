@@ -40,11 +40,9 @@
     
   </div>
 
-  <div class="container w3-left">
+  
     <form action="/Carteira/ClickGastos" method="post">
-    <nav class="navbar navbar-expand navbar-dark bg-dark">
-      <div class="container">
-      <div class="collapse navbar-collapse" id="mynavbar">
+      <nav class="navbar navbar-expand-sm bg-dark">
 
         <select class="form-control me-2" name="motivoGastos" style="width: auto;">
           <% if(filtros.motivoGastos.id) { %>
@@ -106,10 +104,10 @@
         <button class="btn btn-primary me-2" name="PESQUISAR" value="true">Pesquisar</button>
         
         <a href="/Carteira/ConsultaGastosResumoAnual" class="btn btn-success me-2">Voltar</a>       
-      </div>
-      </div>
-    </nav>
-  
+      
+     
+      </nav>
+  <div class="container w3-left">
     <div class="container mt-3">
       <table class="table table-dark table-striped table-sm">
         <thead>

@@ -28,25 +28,16 @@ td, th {
     text-decoration: none;
     font-family: "Courier New", monospace;
   }
+
   .pointer {cursor: pointer;}
   .cell {cursor: cell;}
 
-  body
-  {
-    background-color: rgb(237, 237, 237);
-  }
-
   #ValorTotal
   {
-    background-color: rgb(165, 165, 165);
+    
     font-size: 20px;
   }
-
-  .transp
-  {
-    background-color: rgb(165, 165, 165);
-  }
-
+  
   .rolagem
   {
     height: 250px;    
