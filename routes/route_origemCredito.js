@@ -86,4 +86,17 @@ router.post('/Click',async (req,res) => {
     } 
 });
 
+router.get('/AbrirAdicao',async (req,res) => {
+    try
+    {  
+        res.render("origemCredito_view/adicionar")        
+    }
+    catch(erro)
+    {
+        global.conectado = false;      
+        res.render('feed',{erro});
+    } 
+});
+
+
 module.exports = router;

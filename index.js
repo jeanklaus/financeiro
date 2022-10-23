@@ -33,11 +33,9 @@ app.get('/', (req,res) => {
 app.get('/Menu', async (req,res) => {
    try
     {
-        let avisos = []
-
         if(global.logado)
         {
-           res.render('home',{avisos});
+           res.redirect('/Carteira/ConsultaGastosResumoAnual');
         }
         else
         {

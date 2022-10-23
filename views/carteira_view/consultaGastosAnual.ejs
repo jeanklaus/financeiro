@@ -13,30 +13,31 @@
 <body>
 
   <div class="w3-container">
-    
-   
+
+    <h1 class="w3-left">          
+        <input id="ValorTotal"  style="text-shadow:1px 1px 2px rgb(255, 255, 255);width: 250px;" class="w3-input"
+        type="text" value="Usuario:<%= global.user.nome %>" readonly>     
+  </h1>
 
     <h1 class="w3-left">
-        <a href="/Carteira/DefinirSaldoUsuario" class="SemBorda"> 
-          
-          <input id="ValorTotal"  style="text-shadow:1px 1px 2px rgb(96, 252, 0);width: 250px;" class="w3-input pointer"
+        <a href="/Carteira/DefinirSaldoUsuario" class="SemBorda">           
+          <input id="ValorTotal"  style="text-shadow:1px 1px 2px rgb(96, 252, 0);width: 260px;" class="w3-input pointer"
           type="text" value="Saldo: $ <%= global.user.saldo %>" readonly>
-
         </a>
     </h1>
 
     <h1 class="w3-left">
-      <input id="ValorTotal"  style="text-shadow:1px 1px 2px rgb(238, 3, 3);width: 250px;" class="w3-input"
+      <input id="ValorTotal"  style="text-shadow:1px 1px 2px rgb(238, 3, 3);width: 260px;" class="w3-input"
         type="text" value="Devendo: $ <%= valorTotalPendente.toFixed(2) %>" readonly>
     </h1>
 
     <h1 class="w3-left">
-      <input id="ValorTotal"  style="text-shadow:1px 1px 2px rgb(37, 0, 248);width: 250px;" class="w3-input"
-        type="text" value="Pendente: $ <%= valorTotalPendenteRecebimento.toFixed(2) %>" readonly>
+      <input id="ValorTotal"  style="text-shadow:1px 1px 2px rgb(37, 0, 248);width: 260px;" class="w3-input"
+        type="text" value="A Receber: $ <%= valorTotalPendenteRecebimento.toFixed(2) %>" readonly>
     </h1>
 
     <h1 class="w3-left">
-      <input id="ValorTotal"  style="text-shadow:1px 1px 2px rgb(182, 236, 3);width: 250px;" class="w3-input"
+      <input id="ValorTotal"  style="text-shadow:1px 1px 2px rgb(182, 236, 3);width: 260px;" class="w3-input"
         type="text" value="Estimativa: $ <%= valorTotalEstimativa.toFixed(2) %>" readonly>
     </h1>    
   </div>
@@ -48,7 +49,9 @@
     <div class="collapse navbar-collapse" id="mynavbar">
         <input id="data" name="ano" class="form-control me-2" type="number" placeholder="YYYY" min="2022" max="2100" value="<%= anoSelect %>">
         <button class="btn btn-primary me-2" name="PESQUISAR" value="true">Atualizar</button>
-        <a href="/Menu" class="btn btn-primary me-2">Voltar</a>
+        <a href="/ContaBancaria" class="btn btn-primary me-2">Cadastrar Contas Bancarias</a>
+        <a href="/Fatura" class="btn btn-primary me-2">Consultar Faturas</a>
+        <a href="/" class="btn btn-primary me-2">Sair</a>
     </div>
     </div>
     </nav>
@@ -62,7 +65,7 @@
         <thead>
           <tr> 
             <td>
-              <a href="/MotivoGastos" class="SemBorda">          
+              <a href="/MotivoGastos/AbrirAdicao" class="SemBorda">          
                 <button name="" value="" class="w3-tiny w3-round  btn-primary">+</button> GASTOS  
               </a>
             </td>     
@@ -147,7 +150,7 @@
             <td></td>           
           </tr> 
           <tr> 
-            <td><a href="/OrigemCredito" class="SemBorda"> <button name="" value="" class="w3-tiny w3-round  btn-primary">+</button> GANHOS</a></td>     
+            <td><a href="/OrigemCredito/AbrirAdicao" class="SemBorda"> <button name="" value="" class="w3-tiny w3-round  btn-primary">+</button> GANHOS</a></td>     
             <th>Janeiro</th>  
             <th>Fevereiro</th> 
             <th>Março</th> 
