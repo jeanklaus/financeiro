@@ -11,15 +11,15 @@
 </head>
 <body>
   <div class="w3-container w3-red">
-    <h1>Excluir Propriedade</h1>  
-    <p>Aperte e confirmar se você deseja remover da lista essa propriedade.</p> 
+    <h1>Excluir</h1>  
+    <p>Confirma que deseja excluir esse credito</p> 
   </div>
   
-  <form class="w3-container" action="/Propriedade/_ExcluirPropriedade" method="post">   
+  <form class="w3-container" action="/OrigemCredito/Click" method="post"> 
     <label class="w3-text-black"><h2>Nome</h2></label>
-    <input class="w3-input w3-border w3-light-red" type="text" name="nome" value="<%= nome %>" disabled style="width: auto;" >
+    <input class="w3-input w3-border w3-light-red" type="text" name="nome" value="<%= credito %>" disabled style="width: auto;" >
     <hr>
-    <button class="w3-btn w3-red">Confirmar</button>
+    <button class="w3-btn w3-red" name="CONF_DEL" value="<%= id %>">Confirmar</button>
   </form>
 </body>
 </html>

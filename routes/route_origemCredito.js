@@ -22,10 +22,26 @@ router.get('/',async (req,res) => {
 
 router.post('/Click',async (req,res) => {
     try
-    {        
+    {            
+        if(req.body.DEL)
+        {
+            let credito = req.body.DEL
+            let id = await Origem.getID(credito)
+            return res.render("origemCredito_view/excluir",{credito,id})
+        }
+
+        if(req.body.CONF_DEL)
+        {
+            let id = req.body.CONF_DEL
+            await Origem.Del(id);
+            res.render('origemCredito_view/feed',{status:'success',txt:'Excluido com secesso!'})
+            return;
+        }
+
+
         if(req.body.ADD)
         {
-            res.render("origemCredito_view/adicionar")
+            return res.render("origemCredito_view/adicionar")
         }
 
         if(req.body.EDI)

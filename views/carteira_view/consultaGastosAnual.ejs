@@ -167,10 +167,11 @@
           </tr>
         </thead>
         <tbody> 
+          <form action="/OrigemCredito/Click" method="post">
           <% resumoCredi.forEach(dado => { %>
             <%  if(dado.ano == anoSelect) { %>           
             <tr>
-              <td><b><%= dado.motivo %></b></td>
+              <td><button name="DEL" value="<%= dado.motivo %>" class="w3-tiny w3-round  btn-danger">-</button> <b><%= dado.motivo %></b></td>
               <td><a href="/Carteira/RegistrarCreditos<%= dado.motivo %>|01|<%= anoSelect %>" class="SemBorda cell"> <%= dado.janeiro %></a></td>
               <td><a href="/Carteira/RegistrarCreditos<%= dado.motivo %>|02|<%= anoSelect %>" class="SemBorda cell"> <%= dado.fevereiro %></td>
               <td><a href="/Carteira/RegistrarCreditos<%= dado.motivo %>|03|<%= anoSelect %>" class="SemBorda cell"> <%= dado.marco %></td>
@@ -191,6 +192,7 @@
             </tr> 
             <% } %>  
           <% }); %> 
+        </form>
         </tbody>
       </table>
     </div>
