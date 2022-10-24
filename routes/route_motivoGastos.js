@@ -22,7 +22,22 @@ router.get('/',async (req,res) => {
 
 router.post('/Click',async (req,res) => {
     try
-    {        
+    {       
+        if(req.body.DEL)
+        {
+            let gasto = req.body.DEL
+            let id = await Motivo.getID(gasto)
+            res.render("motivoGastos_view/excluir",{gasto,id})
+        }
+
+        if(req.body.CONF_DEL)
+        {
+            let id = req.body.CONF_DEL
+            await Motivo.Del(id);
+            res.render('motivoGastos_view/feed',{status:'success',txt:'Excluido com secesso!'})
+            return;
+        }
+        
         if(req.body.ADD)
         {
             res.render("motivoGastos_view/adicionar")
@@ -97,5 +112,7 @@ router.get('/AbrirAdicao',async (req,res) => {
         res.render('feed',{erro});
     } 
 });
+
+
 
 module.exports = router;

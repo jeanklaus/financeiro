@@ -45,5 +45,19 @@ async function getID(descricao){
     return rows[0].id;
 }
 
+//DELETAR 
+async function Del(id)
+{
+    const conn = await db.connect();
+    let sql =  `DELETE FROM Gastos WHERE motivo = ? AND usuario = ?`;
 
-module.exports = {getAll,Gravar,Update,getID}
+    const values = [id,global.user.id];
+    await conn.query(sql, values);
+
+    sql =  `DELETE FROM MotivoGastos WHERE id = ? AND usuario = ?`;
+    await conn.query(sql, values);
+}
+
+
+
+module.exports = {getAll,Gravar,Update,getID,Del}
