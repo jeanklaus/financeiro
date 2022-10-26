@@ -46,34 +46,27 @@
 
   <form  action="/Carteira/ConsultandoGastosResumoAnual" method="POST">
     <nav class="navbar navbar-expand-sm bg-dark">
-        <input style="margin-left: 10px ;" id="data" name="ano" class="form-control me-2" type="number" placeholder="YYYY" min="2022" max="2100" value="<%= anoSelect %>">
-        <button class="btn btn-warning me-2" name="PESQUISAR" value="true">Atualizar</button>
-        <a href="/ContaBancaria" class="btn btn-primary me-2">Cadastrar Contas Bancarias</a>
-        <a href="/Fatura" class="btn btn-primary me-2">Consultar Faturas</a>
-        <a href="/" class="btn btn-danger me-2">Sair</a>
-    </nav>
-  
-  </form>
-  <!--GASTOS 
-  <nav class="navbar navbar-expand-sm bg-light navbar-light">
     <div class="container-fluid">
       <ul class="navbar-nav">
         <li class="nav-item">
-          <a class="nav-link active" href="#">Active</a>
+          <input style="margin-left: 10px ;" id="data" name="ano" class="form-control me-2" type="number" placeholder="YYYY" min="2022" max="2100" value="<%= anoSelect %>">
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">Link</a>
+          <button class="btn btn-warning me-2" name="PESQUISAR" value="true">Atualizar</button>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">Link</a>
+          <a href="/ContaBancaria" class="btn btn-primary me-2">Cadastrar Contas Bancarias</a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link disabled" href="#">Disabled</a>
+        <li class="nav-item">         
+          <a href="/Fatura" class="btn btn-primary me-2">Consultar Faturas</a>
+        </li>
+        <li class="nav-item">         
+          <a href="/" class="btn btn-danger me-2">Sair</a>
         </li>
       </ul>
     </div>
   </nav>
--->
+</form>
 
 
   <div class="w3-container w3-left">
