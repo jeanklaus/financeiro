@@ -34,7 +34,10 @@ td, th {
 
   #ValorTotal
   {
-    
+    border: none;
+    outline: none;
+    text-decoration: none;
+    font-family: "Courier New", monospace;
     font-size: 16px;
   }
   

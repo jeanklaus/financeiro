@@ -418,7 +418,7 @@ router.post('/AlterarSaldo', async (req, res) => {
     try {
         if (req.body.saldo) {
             await Credito.AtualizaSaldo(req.body.saldo);
-            return res.render('carteira_view/feedSaldo', { status: 'success', txt: 'Saldo atualizado!' })
+            return res.redirect('ConsultaGastosResumoAnual')
         }
         else {
             return res.render('feed', { erro: 'Informe o novo saldo' })
