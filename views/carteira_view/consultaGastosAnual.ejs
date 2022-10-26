@@ -88,6 +88,7 @@
             <%  if(dado.ano == anoSelect) { %>           
             <tr>
               <td><button name="DEL" value="<%= dado.motivo %>" class="w3-tiny w3-round  btn-danger">-</button> <b><%= dado.motivo %></b></td>
+          </form> 
               <td><a href="/Carteira/RegistrarGastos<%= dado.motivo %>|01|<%= anoSelect %>" class="SemBorda cell"> <%= dado.janeiro %></a></td>
               <td><a href="/Carteira/RegistrarGastos<%= dado.motivo %>|02|<%= anoSelect %>" class="SemBorda cell"> <%= dado.fevereiro %></td>
               <td><a href="/Carteira/RegistrarGastos<%= dado.motivo %>|03|<%= anoSelect %>" class="SemBorda cell"> <%= dado.marco %></td>
@@ -108,7 +109,7 @@
             </tr> 
             <% } %>  
           <% }); %>
-        </form> 
+        
           <tr style="background-color: rgb(142, 140, 140);">
             <td style="color:rgb(0, 0, 0) ; text-shadow:1px 1px 2px rgb(255, 0, 0);">TOTAL</td>
             <td style="color:rgb(0, 0, 0) ; text-shadow:1px 1px 2px rgb(255, 0, 0);"><%= totais.janeiro.toFixed(2) %></td>
@@ -172,6 +173,7 @@
             <%  if(dado.ano == anoSelect) { %>           
             <tr>
               <td><button name="DEL" value="<%= dado.motivo %>" class="w3-tiny w3-round  btn-danger">-</button> <b><%= dado.motivo %></b></td>
+          </form>
               <td><a href="/Carteira/RegistrarCreditos<%= dado.motivo %>|01|<%= anoSelect %>" class="SemBorda cell"> <%= dado.janeiro %></a></td>
               <td><a href="/Carteira/RegistrarCreditos<%= dado.motivo %>|02|<%= anoSelect %>" class="SemBorda cell"> <%= dado.fevereiro %></td>
               <td><a href="/Carteira/RegistrarCreditos<%= dado.motivo %>|03|<%= anoSelect %>" class="SemBorda cell"> <%= dado.marco %></td>
@@ -191,8 +193,7 @@
                 </td>    
             </tr> 
             <% } %>  
-          <% }); %> 
-        </form>
+          <% }); %>         
         </tbody>
       </table>
     </div>

@@ -35,7 +35,7 @@ td, th {
   #ValorTotal
   {
     
-    font-size: 20px;
+    font-size: 16px;
   }
   
   .rolagem
@@ -49,31 +49,9 @@ td, th {
     font-size: 25px;  
   }
 
-  .marca-dose
-  {
-    font-size: 25px;  
-  }
 
-  .dinheiroVermelho
-  {
-    font-size: 25px;
-    color: rgb(3, 3, 3);
-    text-shadow:1px 1px 2px rgb(255, 0, 0);
-  }
 
-  .dinheiroAzul
-  {
-    font-size: 25px;
-    color: rgb(3, 3, 3);
-    text-shadow:1px 1px 2px rgb(0, 191, 255);
-  }
-
-  .dinheiroVerde
-  {
-    font-size: 25px;
-    color: rgb(3, 3, 3);
-    text-shadow:1px 1px 2px rgb(3, 173, 11);
-  }
+  
 
   .form-control
   {
