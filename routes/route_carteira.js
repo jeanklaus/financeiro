@@ -184,8 +184,8 @@ router.post('/ClickGastos', async (req, res) => {
             let valorTotalEstimativa = (valorTotalPendenteRecebimento + parseFloat(global.user.saldo)) - valorTotalPendente
             return res.render('carteira_view/inicialGastos', { Gastos, valorTotal, Motivos, Contas, filtros, valorTotalPendente, valorTotalPendenteRecebimento, valorTotalEstimativa });
         }
-
-        return res.redirect('/Carteira/ConsultaGastos')
+        
+        return res.redirect(`ClickGastos${filtros.motivoGastos.descricao}`)
     }
     catch (erro) {
         global.conectado = false;
@@ -529,7 +529,7 @@ router.post('/ClickCreditos', async (req, res) => {
             return res.render('carteira_view/inicialCreditos', { Creditos, valorTotal, Origens, Contas, filtros, valorTotalPendente, valorTotalPendenteRecebimento, valorTotalEstimativa });
         }
 
-        return res.redirect('/Carteira/ConsultaCreditos')
+        return res.redirect(`ClickCreditos${filtros.origemCredito.descricao}`)
     }
     catch (erro) {
         global.conectado = false;
