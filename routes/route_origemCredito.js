@@ -22,26 +22,17 @@ router.get('/',async (req,res) => {
 
 router.post('/Click',async (req,res) => {
     try
-    {            
-        if(req.body.DEL)
-        {
-            let credito = req.body.DEL
-            let id = await Origem.getID(credito)
-            return res.render("origemCredito_view/excluir",{credito,id})
-        }
-
+    {    
         if(req.body.CONF_DEL)
         {
-            let id = req.body.CONF_DEL
-            await Origem.Del(id);
-            res.render('origemCredito_view/feed',{status:'success',txt:'Excluido com secesso!'})
-            return;
-        }
-
-
-        if(req.body.ADD)
-        {
-            return res.render("origemCredito_view/adicionar")
+            if(req.body.CREDITO)
+            {
+                let credito = req.body.CREDITO
+                let id = await Origem.getID(credito)
+                await Origem.Del(id);
+                res.redirect('/Carteira/ConsultaGastosResumoAnual')
+                return;
+            }
         }
 
         if(req.body.EDI)
@@ -54,16 +45,8 @@ router.post('/Click',async (req,res) => {
         {
            if(req.body.nome)
            {
-             let result = await Origem.Gravar(req.body.nome.toUpperCase())             
-             if(result.affectedRows > 0)
-             {
-                res.render('origemCredito_view/feed',{status:'success',txt:'Registro gravado com sucesso!'})
-                return;
-             } 
-             else
-             {
-                throw("Ocorreu um erro ao tentar gravar")
-             }            
+             await Origem.Gravar(req.body.nome.toUpperCase())             
+             res.redirect('/Carteira/ConsultaGastosResumoAnual')      
            }
            else
            {

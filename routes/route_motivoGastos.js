@@ -22,25 +22,17 @@ router.get('/',async (req,res) => {
 
 router.post('/Click',async (req,res) => {
     try
-    {       
-        if(req.body.DEL)
-        {
-            let gasto = req.body.DEL
-            let id = await Motivo.getID(gasto)
-            res.render("motivoGastos_view/excluir",{gasto,id})
-        }
-
+    {   
         if(req.body.CONF_DEL)
         {
-            let id = req.body.CONF_DEL
-            await Motivo.Del(id);
-            res.render('motivoGastos_view/feed',{status:'success',txt:'Excluido com secesso!'})
-            return;
-        }
-        
-        if(req.body.ADD)
-        {
-            res.render("motivoGastos_view/adicionar")
+            if(req.body.GASTO)
+            {                
+                let gasto = req.body.GASTO
+                let id = await Motivo.getID(gasto)
+                await Motivo.Del(id);
+                res.redirect('/Carteira/ConsultaGastosResumoAnual')
+                return;
+            }
         }
 
         if(req.body.EDI)
@@ -56,7 +48,7 @@ router.post('/Click',async (req,res) => {
              let result = await Motivo.Gravar(req.body.nome.toUpperCase())             
              if(result.affectedRows > 0)
              {
-                res.render('motivoGastos_view/feed',{status:'success',txt:'Registro gravado com sucesso!'})
+                res.redirect('/Carteira/ConsultaGastosResumoAnual')
                 return;
              } 
              else
@@ -93,6 +85,8 @@ router.post('/Click',async (req,res) => {
                 throw("O campo de descrição não pode estar vazio")                
            }          
         }
+
+       return res.redirect('/Carteira/ConsultaGastosResumoAnual') 
     }
     catch(erro)
     {

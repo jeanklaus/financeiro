@@ -264,6 +264,18 @@ async function DelOrcamento(id){
     return result
 }
 
-module.exports = {getAll,getAll_Filtros,Gravar,getGastoID,Pagar,EditarValor,Consumir,DelOrcamento,GravarOrcamento,GravarParcelado,getResumoAno}
+//DELETAR ORCAMENTO
+async function Dell(id){
+    const conn = await db.connect();
+    const sql =  `DELETE FROM Gastos WHERE id = ? AND usuario = ?`;
+
+    const values = [id,global.user.id];
+    await conn.query(sql, values);
+}
+
+
+
+module.exports = {getAll,getAll_Filtros,Gravar,getGastoID,Pagar,EditarValor,Consumir,
+    DelOrcamento,GravarOrcamento,GravarParcelado,getResumoAno,Dell}
 
 

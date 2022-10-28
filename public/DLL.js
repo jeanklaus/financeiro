@@ -110,6 +110,30 @@ function LoadAnoAtual() {
   document.getElementById("data").value = getPedacoData(ConverterData(formataData(data)),'ANO');
 }
 
+function setDescGastoDell(obj) { 
+ let input =  document.getElementById("DescGastoDell");
+ input.value = obj.value;
+}
+
+function setDescCreditoDell(obj) { 
+  let input =  document.getElementById("DescCreditoDell");
+  input.value = obj.value;
+ }
+
+ function setIdDell(obj,campoId) { 
+  let input =  document.getElementById(campoId);
+  input.value = obj.value;
+ }
+
+ function setValorEdi(obj,campoId,campoValor) { 
+  let inputValor =  document.getElementById(campoValor);
+  let inputId =  document.getElementById(campoId);
+  
+  let [id,valor] = obj.value.split('|'); 
+  inputValor.value = valor;
+  inputId.value = id;
+ }
+
 function buscaProdTabela(input, tbl, indiceColl) {
   var filter, table, tr, td, i;
 

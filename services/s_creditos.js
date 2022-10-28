@@ -114,8 +114,6 @@ async function GravarParcelado(valor,dt_recebimento,dt_previsao,origem,situacao,
     }    
 }
 
-
-
 //SELECT 
 async function getSaldo(){   
     const conn = await db.connect();  
@@ -251,6 +249,17 @@ async function getResumoAno(){
     return newrows; 
 }
 
-module.exports = {getResumoAno,getSaldo,DiminuiSaldo,AtualizaSaldo,getAll,getAll_Filtros,AumentaSaldo,Gravar,getCreditoID,Receber,EditarValor,GravarParcelado}
+//DELETAR
+async function Dell(id){
+    const conn = await db.connect();
+    const sql =  `DELETE FROM Credito WHERE id = ? AND usuario = ?`;
+
+    const values = [id,global.user.id];
+    await conn.query(sql, values);
+}
+
+
+module.exports = {getResumoAno,getSaldo,DiminuiSaldo,AtualizaSaldo,getAll,getAll_Filtros,AumentaSaldo,
+    Gravar,getCreditoID,Receber,EditarValor,GravarParcelado,Dell}
 
 

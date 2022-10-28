@@ -126,11 +126,23 @@ router.post('/ClickGastos', async (req, res) => {
         let Gastos = []
         let Motivos = await MotivoGastos.getAll();
         let Contas = await ContaBancaria.getAll();
-        wheres = []
-      
-        if (req.body.EDI) {
-            let [id, valor] = req.body.EDI.split('|');
-            return res.render('carteira_view/editarGasto', { id, valor })
+        wheres = []      
+
+        if(req.body.EDI) {
+            if(req.body.valor && req.body.id)
+            {
+                let valor = req.body.valor;
+                let id = req.body.id;
+                await Gasto.EditarValor(id,valor);
+            }
+        }
+
+        if (req.body.DEL) {          
+            if(req.body.id)
+            {
+                let id = req.body.id
+                await Gasto.Dell(id)
+            }
         }
 
         if (req.body.PESQUISAR) {
@@ -172,6 +184,8 @@ router.post('/ClickGastos', async (req, res) => {
             let valorTotalEstimativa = (valorTotalPendenteRecebimento + parseFloat(global.user.saldo)) - valorTotalPendente
             return res.render('carteira_view/inicialGastos', { Gastos, valorTotal, Motivos, Contas, filtros, valorTotalPendente, valorTotalPendenteRecebimento, valorTotalEstimativa });
         }
+
+        return res.redirect('/Carteira/ConsultaGastos')
     }
     catch (erro) {
         global.conectado = false;
@@ -462,9 +476,21 @@ router.post('/ClickCreditos', async (req, res) => {
         let Contas = await ContaBancaria.getAll();
         wheres = []
 
-        if (req.body.EDI) {
-            let [id, valor] = req.body.EDI.split('|');
-            return res.render('carteira_view/editarCredito', { id, valor })
+        if(req.body.EDI) {
+            if(req.body.valor && req.body.id)
+            {
+                let valor = req.body.valor;
+                let id = req.body.id;
+                await Credito.EditarValor(id,valor);
+            }
+        }
+
+        if (req.body.DEL) {          
+            if(req.body.id)
+            {
+                let id = req.body.id
+                await Credito.Dell(id)
+            }
         }
 
         if (req.body.PESQUISAR) {
@@ -502,6 +528,8 @@ router.post('/ClickCreditos', async (req, res) => {
             let valorTotalEstimativa = (valorTotalPendenteRecebimento + parseFloat(global.user.saldo)) - valorTotalPendente
             return res.render('carteira_view/inicialCreditos', { Creditos, valorTotal, Origens, Contas, filtros, valorTotalPendente, valorTotalPendenteRecebimento, valorTotalEstimativa });
         }
+
+        return res.redirect('/Carteira/ConsultaCreditos')
     }
     catch (erro) {
         global.conectado = false;
