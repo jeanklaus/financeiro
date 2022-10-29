@@ -6,12 +6,13 @@ async function getAll(){
     const conn = await db.connect();  
     const values = [global.user.id]; 
 
-    let sql =  `SELECT c.id,c.valor,c.dt_recebimento,o.descricao,c.dt_previsao,s.descricao as situacao,cc.descricao as conta 
+    let sql =  `SELECT c.id,c.valor,c.dt_recebimento,o.descricao,c.dt_previsao,s.descricao as situacao,cc.descricao as conta,(SELECT YEAR(c.dt_previsao)) as ano 
     FROM Credito as c
     INNER JOIN OrigemCredito as o ON o.id = c.origemCredito
     INNER JOIN SituacaoCredito as s ON s.id = c.situacao
     INNER JOIN ContaBancaria as cc ON cc.id = c.contaBancaria
-    WHERE c.usuario = ${global.user.id}`
+    WHERE c.usuario = ${global.user.id}
+    ORDER BY c.dt_previsao asc`
     const [rows] = await conn.query(sql,values);
 
     let newrows = rows.map(registro => {
@@ -234,7 +235,7 @@ async function getResumoAno(){
     const conn = await db.connect();  
     const values = [global.user.id]; 
 
-    let sql =  `SELECT SUM(c.valor) as valor,(SELECT MONTH(c.dt_previsao)) as mes,(SELECT YEAR(c.dt_previsao)) as ano,o.descricao as motivo
+    let sql =  `SELECT o.id,SUM(c.valor) as valor,(SELECT MONTH(c.dt_previsao)) as mes,(SELECT YEAR(c.dt_previsao)) as ano,o.descricao as motivo,c.situacao
     FROM Credito as c
     INNER JOIN OrigemCredito as o ON o.id = c.origemCredito
     WHERE c.usuario = ?

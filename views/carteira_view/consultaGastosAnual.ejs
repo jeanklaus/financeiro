@@ -13,6 +13,149 @@
 <body>
    <!-- ================================================== MODAL ============================================= -->
 
+   <div class="modal" id="modalJanelaCredito">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+
+          <!-- Modal Header -->
+          <div class="modal-header">
+            <h4 id="TituloJanelaCredi" class="modal-title"></h4>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+    
+          <!-- Modal body -->
+          <div class="modal-body">
+            <div class="form-group">              
+              
+              <div class="container mt-3">
+                <h2>Registro de Creditos</h2>
+                <br>
+
+                <!-- Nav pills -->
+                <ul class="nav nav-pills" role="tablist">
+                  <li class="nav-item">
+                    <a class="nav-link active" data-bs-toggle="pill" href="#Adicionar">Adicionar</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="pill" href="#Lista">Lista</a>
+                  </li>
+                </ul>
+              
+                <!-- Tab panes -->
+                <div class="tab-content">
+
+                  <div id="Adicionar" class="container tab-pane active"><br>
+
+                    <form class="w3-container was-validated" action="/Carteira/CofirmarRegistroCreditos" method="post">
+
+                      <label class="w3-text-black"><h4>Valor</h4></label>
+                      <input class="form-control" type="number" step="0.01" name="valor" id="valor" style="width: auto;" required>
+                      <br>
+                  
+                      <input id="campoOrigemCredito" class="form-control" type="text" name="origemCreditos" style="width: auto;" hidden readonly>                      
+
+                      <input id="campoDataCredito" class="w3-input w3-border form-control me-2" type="date" name="dtPrevisao" required>
+                      <br>
+                  
+                      <select class="form-control me-2" name="conta" style="width: auto;" required>      
+                        <option value="" disabled selected>Contas</option>              
+                        <% Contas.forEach(c => { %>
+                          <option value="<%= c.id %>|<%= c.descricao %>"><%= c.descricao %></option>
+                        <% }); %>
+                      </select>
+                      <br>                  
+                  
+                      <div id="parceladodiv">
+                        <input type="checkbox" name="parcelado" id="parcelado" onclick="checkName('parcelado',['fimAnodiv'])"> Esse valor é parcelado?
+                        <br>
+                          <div id="divTpValor" hidden>          
+                            <input type="radio" id="tpValorBruto" name="tpValor" value="B">
+                            <label for="age1">Valor é BRUTO</label><br>
+                            <input type="radio" id="tpValorParcela" name="tpValor" value="P">
+                            <label for="age2">Valor é da PARCELA</label><br>
+                          </div> 
+                      </div>
+                  
+                      <input placeholder="Quantas parcelas?" class="w3-input w3-border form-control me-2" name="qtParcelas" step="0.01" type="number" id="qtParcelas" hidden>
+                  
+                      <div id="fimAnodiv">
+                        <input type="checkbox" name="fimAno" id="fimAno" onclick="checkName('fimAno',['parceladodiv'])"> Gerar registro até fim do ano?
+                      </div> 
+                  
+                      <input type="checkbox" name="recebido" id="checkbox"> Registrar essa como recebida?
+                      <hr>
+                      <button type="submit" class="btn w3-green">Confirmar</button>    
+                    </form>                    
+                  </div>
+
+                  <div id="Lista" class="container tab-pane fade"><br>
+
+                    <input onchange="buscaProdTabela(this,'tblEditar',1)" id="nmMotivo" class="form-control" type="text" style="width: auto;" hidden>
+
+                    <div class="container mt-3">
+                      <table class="w3-small w3-card table w3-border w3-table table-hover TabelaDinamica table-striped" id="tblEditar">
+                        <thead>
+                          <tr>   
+                            <th></th> 
+                            <th hidden>DESC</th>
+                            <th>Valor</th>
+                            <th>Dt Prevista</th>
+                            <th>Situação</th>  
+                            <th></th>         
+                          </tr>
+                        </thead>
+                        <tbody>          
+                          <% ListaCreditos.forEach(c => { %>
+                           <tr> 
+                            <% if(anoSelect == c.ano){ %>
+                            <td><button onclick="setValorEdi(this,'idEditar','valorEditar')" data-bs-toggle="modal" data-bs-target="#modalEditarRegistroCredito" value="<%= c.id %>|<%= c.valor %>" class="w3-tiny w3-round btn-warning">E</button>
+                                <button onclick="setIdDell(this,'IdDell')"   data-bs-toggle="modal" data-bs-target="#modalExcluirRegistroCredito" value="<%= c.id %>" class="w3-tiny w3-round btn-danger">X</button></td>
+                            <td hidden><%= c.descricao %></td>
+                            <td>$ <%= c.valor %></td>                             
+                            <td><%= c.dt_previsao %></td>
+                            <% if(c.situacao == 'RECEBIDO') { %>
+                              <td style="color:rgb(0, 255, 0);"><%= c.situacao %></td>           
+                            <% } else { %> 
+                              <td style="color:rgb(250, 0, 0);"><%= c.situacao %></td>
+                            <% } %> 
+                            <form action="/Carteira/ReceberCredito" method="post">
+                              <% if(c.situacao != 'RECEBIDO') { %>
+                                <td><button name="RECEBER" value="<%= c.id %>" class="w3-tiny w3-round btn-primary">Receber</button></td>
+                              <% } else { %> 
+                                <td></td>
+                              <% } %>
+                            </form>
+                            <% } %>
+                          </tr>  
+                          <% }); %>             
+                        </tbody>
+                      </table>
+                    </div> 
+
+                  </div>
+
+                  <div id="menu2" class="container tab-pane fade"><br>
+                    <h3>Menu 2</h3>
+                    <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam.</p>
+                  </div>
+                </div>
+              </div>
+
+
+            </div>
+          </div>    
+          
+          <!-- Modal footer -->
+          <div class="modal-footer">
+            
+                  
+            <div class="btn btn-danger" data-bs-dismiss="modal">Fechar</div>           
+          </div>
+
+      </div>
+    </div>
+  </div>
+
    <div class="modal" id="modalExcluirCredito">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
@@ -36,13 +179,12 @@
           <div class="modal-footer">
             <button type="submit" class="btn btn-success" name="CONF_DEL" value="true">Confirmar</button> 
           </form>          
-            <button class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>           
+            <div class="btn btn-danger" data-bs-dismiss="modal">Cancelar</div>           
           </div>
 
       </div>
     </div>
   </div>
-
 
    <div class="modal" id="modalAdicionarCredito">
     <div class="modal-dialog modal-dialog-centered">
@@ -76,8 +218,6 @@
     </div>
   </div>
 
-
-
    <div class="modal" id="modalExcluirGasto">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
@@ -101,13 +241,12 @@
           <div class="modal-footer">
             <button type="submit" class="btn btn-success" name="CONF_DEL" value="true">Confirmar</button> 
           </form>          
-            <button class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>           
+            <div class="btn btn-danger" data-bs-dismiss="modal">Cancelar</div>           
           </div>
 
       </div>
     </div>
   </div>
-
 
    <div class="modal" id="modalAdicionarGastos">
     <div class="modal-dialog modal-dialog-centered">
@@ -143,7 +282,6 @@
     </div>
   </div>
 
-
   <div class="modal" id="modalSaldo">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
@@ -178,6 +316,68 @@
     </div>
   </div>
 
+  <div class="modal" id="modalExcluirRegistroCredito">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+
+        <form class="w3-container was-validated" action="/Carteira/ClickCreditos" method="post">  
+
+          <!-- Modal Header -->
+          <div class="modal-header">
+            <h4 class="modal-title">Excluir Registro</h4>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+    
+          <!-- Modal body -->
+          <div class="modal-body" hidden>
+            <div class="form-group">              
+              <input id="IdDell" class="form-control" type="text" name="id" style="width: auto;">                                    
+            </div>
+          </div>    
+        
+          <!-- Modal footer -->
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-success" name="DEL" value="true">Confirmar</button> 
+          </form>          
+            <div class="btn btn-danger" data-bs-dismiss="modal">Cancelar</div>           
+          </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="modalEditarRegistroCredito">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+
+        <form class="w3-container was-validated" action="/Carteira/ClickCreditos" method="post">  
+
+          <!-- Modal Header -->
+          <div class="modal-header">
+            <h4 class="modal-title">Editar Registro</h4>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+    
+          <!-- Modal body -->
+          <div class="modal-body">
+            <div class="form-group"> 
+              <input id="idEditar" class="form-control" type="text" name="id" style="width: auto;" hidden>             
+              <input id="valorEditar" class="form-control" type="text" name="valor" style="width: auto;" required> 
+              <div class="invalid-feedback">insira um valor</div>                                   
+            </div>
+          </div>    
+        
+          <!-- Modal footer -->
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-success" name="EDI" value="true">Confirmar</button> 
+        </form>          
+            <div class="btn btn-danger" data-bs-dismiss="modal">Cancelar</div>           
+          </div>
+
+      </div>
+    </div>
+  </div>
+
 
  <!-- ==================================================================================================================== -->
 
@@ -203,10 +403,12 @@
         type="text" value="A Receber: $ <%= valorTotalPendenteRecebimento.toFixed(2) %>" readonly>
     </h1>
 
+    <!-- 
     <h1 class="w3-left">
       <input id="ValorTotal"  style="text-shadow:1px 1px 2px rgb(182, 236, 3);width: 260px;" class="w3-input"
         type="text" value="Estimativa: $ <%= valorTotalEstimativa.toFixed(2) %>" readonly>
     </h1> 
+  -->
     <br>
    
   </div>
@@ -238,80 +440,103 @@
 
   <div class="w3-container w3-left">
  
-         <!--CREDITOS -->
-         <div class="container mt-3">  
-          <table class="w3-small w3-card table w3-border w3-table table-hover TabelaDinamica table-striped">
-            <thead>
-              <tr>            
-                <td><button data-bs-toggle="modal" data-bs-target="#modalAdicionarCredito" class="w3-tiny w3-round btn-primary">+</button> GANHOS</td>      
-                <th>Janeiro</th>  
-                <th>Fevereiro</th> 
-                <th>Março</th> 
-                <th>Abril</th> 
-                <th>Maio</th> 
-                <th>Junho</th> 
-                <th>Julho</th>
-                <th>Agosto</th>  
-                <th>Setembro</th> 
-                <th>Outubro</th>
-                <th>Novembro</th>
-                <th>Dezembro</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody> 
-              <form action="/OrigemCredito/Click" method="post">
-              <% resumoCredi.forEach(dado => { %>
-                <%  if(dado.ano == anoSelect) { %>           
-                <tr><td><button data-bs-toggle="modal" data-bs-target="#modalExcluirCredito" onclick="setDescCreditoDell(this)"
-                    value="<%= dado.motivo %>" class="w3-tiny w3-round  btn-danger">-</button> <b><%= dado.motivo %></b></td>
-              </form>
-                  <td><a href="/Carteira/RegistrarCreditos<%= dado.motivo %>|01|<%= anoSelect %>" class="SemBorda cell"> <%= dado.janeiro %></a></td>
-                  <td><a href="/Carteira/RegistrarCreditos<%= dado.motivo %>|02|<%= anoSelect %>" class="SemBorda cell"> <%= dado.fevereiro %></td>
-                  <td><a href="/Carteira/RegistrarCreditos<%= dado.motivo %>|03|<%= anoSelect %>" class="SemBorda cell"> <%= dado.marco %></td>
-                  <td><a href="/Carteira/RegistrarCreditos<%= dado.motivo %>|04|<%= anoSelect %>" class="SemBorda cell"> <%= dado.abril %></td>
-                  <td><a href="/Carteira/RegistrarCreditos<%= dado.motivo %>|05|<%= anoSelect %>" class="SemBorda cell"> <%= dado.maio %></td>
-                  <td><a href="/Carteira/RegistrarCreditos<%= dado.motivo %>|06|<%= anoSelect %>" class="SemBorda cell"> <%= dado.junho %></td>
-                  <td><a href="/Carteira/RegistrarCreditos<%= dado.motivo %>|07|<%= anoSelect %>" class="SemBorda cell"> <%= dado.julho %></td>
-                  <td><a href="/Carteira/RegistrarCreditos<%= dado.motivo %>|08|<%= anoSelect %>" class="SemBorda cell"> <%= dado.agosto %></td>
-                  <td><a href="/Carteira/RegistrarCreditos<%= dado.motivo %>|09|<%= anoSelect %>" class="SemBorda cell"> <%= dado.setembro %></td>
-                  <td><a href="/Carteira/RegistrarCreditos<%= dado.motivo %>|10|<%= anoSelect %>" class="SemBorda cell"> <%= dado.outubro %></td>
-                  <td><a href="/Carteira/RegistrarCreditos<%= dado.motivo %>|11|<%= anoSelect %>" class="SemBorda cell"> <%= dado.novembro %></td>
-                  <td><a href="/Carteira/RegistrarCreditos<%= dado.motivo %>|12|<%= anoSelect %>" class="SemBorda cell"> <%= dado.dezembro %></td>
-                    <td>
-                      <a href="/Carteira/ClickCreditos<%= dado.motivo %>" class="SemBorda">          
-                        <button class="w3-tiny w3-round btn-primary">>></button>
-                      </a>
-                    </td> 
-                </tr> 
-                <% } %>  
-              <% }); %>             
-              <tr style="background-color:  rgb(142, 140, 140);">
-                <td style="color:rgb(0, 0, 0) ; text-shadow:1px 1px 2px rgb(145, 255, 0);">TOTAL</td>
-                <td style="color:rgb(0, 0, 0) ; text-shadow:1px 1px 2px rgb(145, 255, 0);"><%= totaisCredi.janeiro.toFixed(2) %></td>
-                <td style="color:rgb(0, 0, 0) ; text-shadow:1px 1px 2px rgb(145, 255, 0);"><%= totaisCredi.fevereiro.toFixed(2) %></td>
-                <td style="color:rgb(0, 0, 0) ; text-shadow:1px 1px 2px rgb(145, 255, 0);"><%= totaisCredi.marco.toFixed(2) %></td>
-                <td style="color:rgb(0, 0, 0) ; text-shadow:1px 1px 2px rgb(145, 255, 0);"><%= totaisCredi.abril.toFixed(2) %></td>
-                <td style="color:rgb(0, 0, 0) ; text-shadow:1px 1px 2px rgb(145, 255, 0);"><%= totaisCredi.maio.toFixed(2) %></td>
-                <td style="color:rgb(0, 0, 0) ; text-shadow:1px 1px 2px rgb(145, 255, 0);"><%= totaisCredi.junho.toFixed(2) %></td>
-                <td style="color:rgb(0, 0, 0) ; text-shadow:1px 1px 2px rgb(145, 255, 0);"><%= totaisCredi.julho.toFixed(2) %></td>
-                <td style="color:rgb(0, 0, 0) ; text-shadow:1px 1px 2px rgb(145, 255, 0);"><%= totaisCredi.agosto.toFixed(2) %></td>
-                <td style="color:rgb(0, 0, 0) ; text-shadow:1px 1px 2px rgb(145, 255, 0);"><%= totaisCredi.setembro.toFixed(2) %></td>
-                <td style="color:rgb(0, 0, 0) ; text-shadow:1px 1px 2px rgb(145, 255, 0);"><%= totaisCredi.outubro.toFixed(2) %></td>
-                <td style="color:rgb(0, 0, 0) ; text-shadow:1px 1px 2px rgb(145, 255, 0);"><%= totaisCredi.novembro.toFixed(2) %></td>
-                <td style="color:rgb(0, 0, 0) ; text-shadow:1px 1px 2px rgb(145, 255, 0);"><%= totaisCredi.dezembro.toFixed(2) %></td> 
-                <td></td>           
-              </tr> 
-            </tbody>
-          </table>
-        </div>
+      <!--CREDITOS -->
+    <div class="container mt-3">  
+      <table class="w3-small w3-card table w3-border w3-table table-hover TabelaDinamica table-striped">
+        <thead>
+          <!--GASTOS 
+          <tr>
+            <td>LIQUIDO</td>
+            <td><%= (totaisCredi.janeiro - totais.janeiro).toFixed(2) %></td>
+            <td><%= (totaisCredi.fevereiro - totais.fevereiro).toFixed(2) %></td>
+            <td><%= (totaisCredi.marco - totais.marco).toFixed(2) %></td>
+            <td><%= (totaisCredi.abril -totais.abril).toFixed(2) %></td>
+            <td><%= (totaisCredi.maio - totais.maio).toFixed(2) %></td>
+            <td><%= (totaisCredi.junho - totais.junho).toFixed(2) %></td>
+            <td><%= (totaisCredi.julho - totais.julho).toFixed(2) %></td>
+            <td><%= (totaisCredi.agosto - totais.agosto).toFixed(2) %></td>
+            <td><%= (totaisCredi.setembro - totais.setembro ).toFixed(2) %></td>
+            <td><%= (totaisCredi.outubro - totais.outubro).toFixed(2) %></td>
+            <td><%= (totaisCredi.novembro - totais.novembro).toFixed(2) %></td>
+            <td><%= (totaisCredi.dezembro - totais.dezembro).toFixed(2) %></td> 
+            <td></td>           
+          </tr> 
+          
+          <tr>
+            <td style="color:rgb(0, 0, 0) ; text-shadow:1px 1px 2px rgb(145, 255, 0);">-</td> 
+          </tr> 
+          -->
+          <tr>            
+            <td><button data-bs-toggle="modal" data-bs-target="#modalAdicionarCredito" class="w3-tiny w3-round btn-primary">+</button> GANHOS</td>      
+            <th>Janeiro</th>  
+            <th>Fevereiro</th> 
+            <th>Março</th> 
+            <th>Abril</th> 
+            <th>Maio</th> 
+            <th>Junho</th> 
+            <th>Julho</th>
+            <th>Agosto</th>  
+            <th>Setembro</th> 
+            <th>Outubro</th>
+            <th>Novembro</th>
+            <th>Dezembro</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody> 
+          
+          <% resumoCredi.forEach(dado => { %>
+            <%  if(dado.ano == anoSelect) { %>           
+            <tr><td><button data-bs-toggle="modal" data-bs-target="#modalExcluirCredito" onclick="setDescCreditoDell(this)"
+                value="<%= dado.motivo %>" class="w3-tiny w3-round  btn-danger">-</button> <b><%= dado.motivo %></b></td>
+             
+              <td><button onclick="setDadosJanelaCredito(this)" value="<%= dado.id %>|<%= dado.motivo %>|01|<%= anoSelect %>" data-bs-toggle="modal" data-bs-target="#modalJanelaCredito" class="btn SemBorda cell"> <%= dado.janeiro %></button></td> 
+              <td><button onclick="setDadosJanelaCredito(this)" value="<%= dado.id %>|<%= dado.motivo %>|02|<%= anoSelect %>" data-bs-toggle="modal" data-bs-target="#modalJanelaCredito" class="btn SemBorda cell"> <%= dado.fevereiro %></button></td> 
+              <td><button onclick="setDadosJanelaCredito(this)" value="<%= dado.id %>|<%= dado.motivo %>|03|<%= anoSelect %>" data-bs-toggle="modal" data-bs-target="#modalJanelaCredito" class="btn SemBorda cell"> <%= dado.marco %></button></td> 
+              <td><button onclick="setDadosJanelaCredito(this)" value="<%= dado.id %>|<%= dado.motivo %>|04|<%= anoSelect %>" data-bs-toggle="modal" data-bs-target="#modalJanelaCredito" class="btn SemBorda cell"> <%= dado.abril %></button></td> 
+              <td><button onclick="setDadosJanelaCredito(this)" value="<%= dado.id %>|<%= dado.motivo %>|05|<%= anoSelect %>" data-bs-toggle="modal" data-bs-target="#modalJanelaCredito" class="btn SemBorda cell"> <%= dado.maio %></button></td> 
+              <td><button onclick="setDadosJanelaCredito(this)" value="<%= dado.id %>|<%= dado.motivo %>|06|<%= anoSelect %>" data-bs-toggle="modal" data-bs-target="#modalJanelaCredito" class="btn SemBorda cell"> <%= dado.junho %></button></td> 
+              <td><button onclick="setDadosJanelaCredito(this)" value="<%= dado.id %>|<%= dado.motivo %>|07|<%= anoSelect %>" data-bs-toggle="modal" data-bs-target="#modalJanelaCredito" class="btn SemBorda cell"> <%= dado.julho %></button></td> 
+              <td><button onclick="setDadosJanelaCredito(this)" value="<%= dado.id %>|<%= dado.motivo %>|08|<%= anoSelect %>" data-bs-toggle="modal" data-bs-target="#modalJanelaCredito" class="btn SemBorda cell"> <%= dado.agosto %></button></td> 
+              <td><button onclick="setDadosJanelaCredito(this)" value="<%= dado.id %>|<%= dado.motivo %>|09|<%= anoSelect %>" data-bs-toggle="modal" data-bs-target="#modalJanelaCredito" class="btn SemBorda cell"> <%= dado.setembro %></button></td> 
+              <td><button onclick="setDadosJanelaCredito(this)" value="<%= dado.id %>|<%= dado.motivo %>|10|<%= anoSelect %>" data-bs-toggle="modal" data-bs-target="#modalJanelaCredito" class="btn SemBorda cell"> <%= dado.outubro %></button></td> 
+              <td><button onclick="setDadosJanelaCredito(this)" value="<%= dado.id %>|<%= dado.motivo %>|11|<%= anoSelect %>" data-bs-toggle="modal" data-bs-target="#modalJanelaCredito" class="btn SemBorda cell"> <%= dado.novembro %></button></td> 
+              <td><button onclick="setDadosJanelaCredito(this)" value="<%= dado.id %>|<%= dado.motivo %>|12|<%= anoSelect %>" data-bs-toggle="modal" data-bs-target="#modalJanelaCredito" class="btn SemBorda cell"> <%= dado.dezembro %></button></td> 
+                <td>
+                  <a href="/Carteira/ClickCreditos<%= dado.motivo %>" class="SemBorda">          
+                    <button class="w3-tiny w3-round btn-primary">>></button>
+                  </a>
+                </td> 
+            </tr> 
+            <% } %>  
+          <% }); %>             
+          <tr style="background-color:  rgb(142, 140, 140);">
+            <td style="color:rgb(0, 0, 0) ; text-shadow:1px 1px 2px rgb(145, 255, 0);">A RECEBER</td>
+            <td style="color:rgb(0, 0, 0) ; text-shadow:1px 1px 2px rgb(145, 255, 0);"><%= totaisCredi.janeiro.toFixed(2) %></td>
+            <td style="color:rgb(0, 0, 0) ; text-shadow:1px 1px 2px rgb(145, 255, 0);"><%= totaisCredi.fevereiro.toFixed(2) %></td>
+            <td style="color:rgb(0, 0, 0) ; text-shadow:1px 1px 2px rgb(145, 255, 0);"><%= totaisCredi.marco.toFixed(2) %></td>
+            <td style="color:rgb(0, 0, 0) ; text-shadow:1px 1px 2px rgb(145, 255, 0);"><%= totaisCredi.abril.toFixed(2) %></td>
+            <td style="color:rgb(0, 0, 0) ; text-shadow:1px 1px 2px rgb(145, 255, 0);"><%= totaisCredi.maio.toFixed(2) %></td>
+            <td style="color:rgb(0, 0, 0) ; text-shadow:1px 1px 2px rgb(145, 255, 0);"><%= totaisCredi.junho.toFixed(2) %></td>
+            <td style="color:rgb(0, 0, 0) ; text-shadow:1px 1px 2px rgb(145, 255, 0);"><%= totaisCredi.julho.toFixed(2) %></td>
+            <td style="color:rgb(0, 0, 0) ; text-shadow:1px 1px 2px rgb(145, 255, 0);"><%= totaisCredi.agosto.toFixed(2) %></td>
+            <td style="color:rgb(0, 0, 0) ; text-shadow:1px 1px 2px rgb(145, 255, 0);"><%= totaisCredi.setembro.toFixed(2) %></td>
+            <td style="color:rgb(0, 0, 0) ; text-shadow:1px 1px 2px rgb(145, 255, 0);"><%= totaisCredi.outubro.toFixed(2) %></td>
+            <td style="color:rgb(0, 0, 0) ; text-shadow:1px 1px 2px rgb(145, 255, 0);"><%= totaisCredi.novembro.toFixed(2) %></td>
+            <td style="color:rgb(0, 0, 0) ; text-shadow:1px 1px 2px rgb(145, 255, 0);"><%= totaisCredi.dezembro.toFixed(2) %></td> 
+            <td></td>           
+          </tr> 
+        </tbody>
+      </table>
+    </div>
 
      <!--GASTOS -->
     <div class="container mt-3">  
       <table class="w3-small w3-card table w3-border w3-table table-hover TabelaDinamica table-striped">
         <thead>
+           
           <tr style="background-color: rgb(142, 140, 140);">
-            <td style="color:rgb(0, 0, 0) ; text-shadow:1px 1px 2px rgb(255, 0, 0);">TOTAL</td>
+            <td style="color:rgb(0, 0, 0) ; text-shadow:1px 1px 2px rgb(255, 0, 0);">DEVENDO</td>
             <td style="color:rgb(0, 0, 0) ; text-shadow:1px 1px 2px rgb(255, 0, 0);"><%= totais.janeiro.toFixed(2) %></td>
             <td style="color:rgb(0, 0, 0) ; text-shadow:1px 1px 2px rgb(255, 0, 0);"><%= totais.fevereiro.toFixed(2) %></td>
             <td style="color:rgb(0, 0, 0) ; text-shadow:1px 1px 2px rgb(255, 0, 0);"><%= totais.marco.toFixed(2) %></td>

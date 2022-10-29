@@ -1,4 +1,7 @@
 
+const Origem = require('../services/s_origemCredito')
+const MotivoGastos = require('../services/s_motivoGastos')
+
 function checkName(nome,ids = []) {
   
   let checkbox = document.getElementById(nome); 
@@ -231,6 +234,22 @@ function getPedacoData(data,qual)//yyyy-mm-dd
   {
     return ano;
   }
+}
+
+function setDadosJanelaCredito(obj) { 
+
+  let inputTitulo =  document.getElementById("TituloJanelaCredi");
+  let inputData =  document.getElementById("campoDataCredito");
+  let inputMotivo =  document.getElementById("campoOrigemCredito");  
+  let inputFiltroMotivoEdicao =  document.getElementById("nmMotivo");  
+
+  let [id,motivo,mes,ano] = obj.value.split('|') 
+
+  inputTitulo.textContent = `${motivo} - ${mes}/${ano}`
+  inputMotivo.value = `${id}|${motivo}`
+  inputData.value = `${ano}-${mes}-01`
+  inputFiltroMotivoEdicao.value = motivo
+  inputFiltroMotivoEdicao.onchange();
 }
 
 module.exports = { formataData, ConverterData,AnalisaFiltros,getPedacoData }

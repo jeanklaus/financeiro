@@ -68,7 +68,7 @@
           <!-- Modal footer -->
           <div class="modal-footer">
             <button type="submit" class="btn btn-success" name="EDI" value="true">Confirmar</button> 
-          </form>          
+        </form>          
             <div class="btn btn-danger" data-bs-dismiss="modal">Cancelar</div>           
           </div>
 
@@ -101,10 +101,12 @@
         type="text" value="A Receber: $ <%= valorTotalPendenteRecebimento.toFixed(2) %>" readonly>
     </h1>
 
+    <!--
     <h1 class="w3-left">
       <input id="ValorTotal"  style="text-shadow:1px 1px 2px rgb(182, 236, 3);width: 260px;" class="w3-input"
         type="text" value="Estimativa: $ <%= valorTotalEstimativa.toFixed(2)  %>" readonly>
     </h1>
+   -->
     
   </div>
 
@@ -143,7 +145,7 @@
         <option value="" disabled selected>Situação</option>
       <% } %>  
       <option value="1|PENDENTE">A RECEBER</option>
-      <option value="2|ATRASADO">RECEBIDO</option> 
+      <option value="2|RECEBIDO">RECEBIDO</option> 
     </select>
 
     <% if(filtros.dataIni) { %>

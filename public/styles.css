@@ -27,6 +27,9 @@ td, th {
     outline: none;
     text-decoration: none;
     font-family: "Courier New", monospace;
+    font-size: 12px;
+    padding: 0px;
+    margin: 0px;
   }
 
   .pointer {cursor: pointer;}
