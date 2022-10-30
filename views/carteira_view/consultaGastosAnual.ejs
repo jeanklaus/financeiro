@@ -105,9 +105,9 @@
                   <!-- LISTA -->
                   <div id="ListaGasto" class="container tab-pane fade"><br>
 
-                    <input onchange="buscaProdTabela(this,'tblEditarGasto',1)" id="nmMotivoGasto" hidden>
-                    <input onchange="buscaProdTabelaExato(this,'tblEditarGasto',2)" id="mesRegistroGasto" hidden>
-                     
+                  <input onchange="FiltroTabela('nmMotivoGasto','mesRegistroGasto','tblEditarGasto',1,2)" id="nmMotivoGasto" hidden>
+                  <input onchange="FiltroTabela('nmMotivoGasto','mesRegistroGasto','tblEditarGasto',1,2)" id="mesRegistroGasto" hidden>
+
                         <table class="w3-small w3-card table w3-border w3-table table-hover TabelaDinamica table-striped" id="tblEditarGasto">
                           <thead>
                             <tr>  
@@ -257,8 +257,8 @@
                     <!-- LISTA -->
                   <div id="Lista" class="container tab-pane fade"><br>
 
-                    <input onchange="buscaProdTabela(this,'tblEditarCredito',1)" id="nmMotivoCredito" hidden>
-                    <input onchange="buscaProdTabelaExato(this,'tblEditarCredito',2)" id="mesRegistroCredito" hidden>
+                    <input onchange="FiltroTabela('nmMotivoCredito','mesRegistroCredito','tblEditarCredito',1,2)" id="nmMotivoCredito" hidden>
+                    <input onchange="FiltroTabela('nmMotivoCredito','mesRegistroCredito','tblEditarCredito',1,2)" id="mesRegistroCredito" hidden>
 
                     <div class="">
                       <table class="w3-small w3-card table w3-border w3-table table-hover TabelaDinamica table-striped" id="tblEditarCredito">

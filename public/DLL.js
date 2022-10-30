@@ -148,48 +148,29 @@ function setDescCreditoDell(obj) {
   inputValor.value = valor;
 
   let data = new Date();
-  inputData.value = data;
+  inputData.value = ConverterData(formataData(data))
  }
 
-function buscaProdTabela(input, tbl, indiceColl) {
-  var filter, table, tr, td, i;
+function FiltroTabela(campoMotivo,campoMes, tbl, indiceCollMotivo,indiceCollMes) 
+{
+  let table, tr, tdMotivo,tbMes, i;
 
-  filter = input.value.toUpperCase();
+  let filtroMotivo =  document.getElementById(campoMotivo).value.toUpperCase();
+  let filtroMes =  document.getElementById(campoMes).value.toUpperCase();
+
   table = document.getElementById(tbl);
-
   tr = table.getElementsByTagName("tr");
 
   for (i = 0; i < tr.length; i++) {
-    td = tr[i].getElementsByTagName("td")[indiceColl];
+    tdMotivo = tr[i].getElementsByTagName("td")[indiceCollMotivo];
+    tbMes = tr[i].getElementsByTagName("td")[indiceCollMes];
 
-    if (td) {
-      txtValue = td.textContent || td.innerText;
+    if (tdMotivo || tbMes) 
+    {
+      let txtValueMotivo = tdMotivo.textContent || tdMotivo.innerText;
+      let txtValueMes    = tbMes.textContent || tbMes.innerText;
 
-      if (txtValue.toUpperCase().indexOf(filter) > -1) {
-        tr[i].style.display = "";
-      }
-      else {
-        tr[i].style.display = "none";
-      }
-    }
-  }
-}
-
-function buscaProdTabelaExato(input, tbl, indiceColl) {
-  var filter, table, tr, td, i;
-
-  filter = input.value.toUpperCase();
-  table = document.getElementById(tbl);
-
-  tr = table.getElementsByTagName("tr");
-
-  for (i = 0; i < tr.length; i++) {
-    td = tr[i].getElementsByTagName("td")[indiceColl];
-
-    if (td) {
-      txtValue = td.textContent || td.innerText;
-
-      if (txtValue.toUpperCase() == filter) {
+      if (filtroMotivo == txtValueMotivo && filtroMes == txtValueMes) {
         tr[i].style.display = "";
       }
       else {
@@ -290,7 +271,7 @@ function setDadosJanelaCredito(obj) {
   inputFiltroMotivoEdicao.value = motivo
   inputMesRegistroCredito.value = parseInt(mes)
   inputFiltroMotivoEdicao.onchange();
-  inputMesRegistroCredito.onchange();
+  inputFiltroMotivoEdicao.onchange();
 }
 
 function setDadosJanelaGasto(obj) { 
