@@ -39,7 +39,8 @@ router.get('/ConsultaGastosResumoAnual', async (req, res) => {
 
         let Origens = await Origem.getAll();
         let Contas = await ContaBancaria.getAll();    
-        let ListaCreditos = await Credito.getAll();    
+        let ListaCreditos = await Credito.getAll(); 
+        let ListaGastos = await Gasto.getAll();   
 
         let data = new Date()
         let anoSelect = DLL.getPedacoData(DLL.ConverterData(DLL.formataData(data)), 'ANO');
@@ -52,16 +53,16 @@ router.get('/ConsultaGastosResumoAnual', async (req, res) => {
         let valorTotal = getCustoTotal(Gastos);
         let resumo = await montarResumoAnual(Gastos, anoSelect);
         let totais = getTotalMesResumoAnual(resumo, anoSelect);
-
+     
         //CREDITOS
         let Creditos = await Credito.getResumoAno();
-
+        
         let resumoCredi = await montarResumoAnualCredi(Creditos, anoSelect);
         let totaisCredi = getTotalMesResumoAnual(resumoCredi, anoSelect);  
-
+       
         res.render('carteira_view/consultaGastosAnual', {
             totaisCredi, resumoCredi, totais, anoSelect, resumo,
-            valorTotal, valorTotalPendente, valorTotalPendenteRecebimento, valorTotalEstimativa,filtros,Origens,Contas,ListaCreditos,
+            valorTotal, valorTotalPendente, valorTotalPendenteRecebimento, valorTotalEstimativa,filtros,Origens,Contas,ListaCreditos,ListaGastos
        });
     }
     catch (erro) {
@@ -81,7 +82,8 @@ router.post('/ConsultandoGastosResumoAnual', async (req, res) => {
 
         let Origens = await Origem.getAll();
         let Contas = await ContaBancaria.getAll();
-        let ListaCreditos = await Credito.getAll(); 
+        let ListaCreditos = await Credito.getAll();
+        let ListaGastos = await Gasto.getAll();  
 
         let data = new Date()
         let anoSelect = DLL.getPedacoData(DLL.ConverterData(DLL.formataData(data)), 'ANO');
@@ -108,7 +110,7 @@ router.post('/ConsultandoGastosResumoAnual', async (req, res) => {
 
         res.render('carteira_view/consultaGastosAnual', {
             totaisCredi, resumoCredi, totais, anoSelect, resumo,
-            valorTotal, valorTotalPendente, valorTotalPendenteRecebimento, valorTotalEstimativa,filtros,Origens,Contas,ListaCreditos
+            valorTotal, valorTotalPendente, valorTotalPendenteRecebimento, valorTotalEstimativa,filtros,Origens,Contas,ListaCreditos,ListaGastos
         });
     }
     catch (erro) {
@@ -204,7 +206,15 @@ router.post('/ClickGastos', async (req, res) => {
             return res.render('carteira_view/inicialGastos', { Gastos, valorTotal, Motivos, Contas, filtros, valorTotalPendente, valorTotalPendenteRecebimento, valorTotalEstimativa });
         }
 
-        return res.redirect(`ClickGastos${filtros.motivoGastos.descricao}`)
+        if(filtros.motivoGastos.descricao)
+        {
+            return res.redirect(`ClickGastos${filtros.motivoGastos.descricao}`)
+        }
+        else
+        {
+            return res.redirect('ConsultaGastosResumoAnual')
+        }
+        
     }
     catch (erro) {
         global.conectado = false;
@@ -343,10 +353,10 @@ router.post('/CofirmarRegistroGastos', async (req, res) => {
         else//NORMAL
         {
             await Gasto.Gravar(req.body.valor, dataRegistro, req.body.dtVencimento, req.body.formaPagamento,
-                req.body.motivoGastos, situacao, req.body.conta, inAnoTodo, inFatura)
+            req.body.motivoGastos, situacao, req.body.conta, inAnoTodo, inFatura)
         }
 
-        return res.render('carteira_view/feedGastos', { status: 'success', txt: 'Gasto gravado com sucesso!' })
+        return res.redirect('ConsultaGastosResumoAnual')
     }
     catch (erro) {
         global.conectado = false;
@@ -359,7 +369,7 @@ router.post('/PagarGasto', async (req, res) => {
     try {
         if (req.body.CONF_ADD_FATURA) {
             await Fatura.AddGasto(idGasto);
-            res.redirect('/Carteira/ConsultaGastos');
+            return res.redirect('ConsultaGastosResumoAnual')
         }
 
         if (req.body.ADD_FATURA) {
@@ -367,36 +377,21 @@ router.post('/PagarGasto', async (req, res) => {
             return res.render('fatura_view/feedAdd')
         }
 
-        if (req.body.PAGAR) {
+        if (req.body.PAGAR)
+        {
             idGasto = req.body.PAGAR;
             gasto = await Gasto.getGastoID(idGasto);
-
-            return res.render('carteira_view/feedDellGastos')
+            await Gasto.Pagar(idGasto, gasto.valor);
+            return res.redirect('ConsultaGastosResumoAnual')
         }
 
-        if (req.body.CONSUMIR) {
-            idGasto = req.body.CONSUMIR;
+        if (req.body.CONSUMIR) 
+        {
+            idGasto = req.body.idRegistroOrcGasto;
             gasto = await Gasto.getGastoID(idGasto);
 
-            return res.render('carteira_view/consumirGastos', { gasto })
-        }
-
-        if (req.body.CONFIRMADO) {
-            await Gasto.Pagar(idGasto, gasto.valor);
-            res.redirect('/Carteira/ConsultaGastos');
-        }
-
-        if (req.body.CONF_CONSUMO) {
-            if (!req.body.valor) {
-                return res.render('feed', { erro: 'Informe o valor' })
-            }
-
-            if (!req.body.dataConsumo) {
-                return res.render('feed', { erro: 'Informe a data do consumo' })
-            }
-
             await Gasto.Consumir(gasto, req.body.valor, req.body.dataConsumo);
-            res.redirect('/Carteira/ConsultaGastos');
+            return res.redirect('ConsultaGastosResumoAnual')
         }
 
         if (req.body.DEL) {
@@ -804,6 +799,7 @@ async function montarResumoAnual(gastos, anoSelect) {
                 else {
                     let obj = {}
                     obj.motivo = m.descricao
+                    obj.id = g.id
                     obj.ano = g.ano
                     obj.janeiro = 0
                     obj.fevereiro = 0
@@ -843,6 +839,7 @@ async function montarResumoAnual(gastos, anoSelect) {
         if (!inExiste) {
             let obj = {}
             obj.motivo = m.descricao
+            obj.id = await MotivoGastos.getID(m.descricao)
             obj.ano = anoSelect
             obj.janeiro = 0
             obj.fevereiro = 0

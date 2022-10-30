@@ -137,6 +137,20 @@ function setDescCreditoDell(obj) {
   inputId.value = id;
  }
 
+ function setValorConsumo(obj,campoId,campoValor,campoData) { 
+  let inputId =  document.getElementById(campoId);
+  let inputValor =  document.getElementById(campoValor);
+  let inputData =  document.getElementById(campoData);
+
+  let [id,valor] = obj.value.split('|'); 
+
+  inputId.value = id;
+  inputValor.value = valor;
+
+  let data = new Date();
+  inputData.value = data;
+ }
+
 function buscaProdTabela(input, tbl, indiceColl) {
   var filter, table, tr, td, i;
 
@@ -152,6 +166,30 @@ function buscaProdTabela(input, tbl, indiceColl) {
       txtValue = td.textContent || td.innerText;
 
       if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = "";
+      }
+      else {
+        tr[i].style.display = "none";
+      }
+    }
+  }
+}
+
+function buscaProdTabelaExato(input, tbl, indiceColl) {
+  var filter, table, tr, td, i;
+
+  filter = input.value.toUpperCase();
+  table = document.getElementById(tbl);
+
+  tr = table.getElementsByTagName("tr");
+
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[indiceColl];
+
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+
+      if (txtValue.toUpperCase() == filter) {
         tr[i].style.display = "";
       }
       else {
@@ -241,15 +279,37 @@ function setDadosJanelaCredito(obj) {
   let inputTitulo =  document.getElementById("TituloJanelaCredi");
   let inputData =  document.getElementById("campoDataCredito");
   let inputMotivo =  document.getElementById("campoOrigemCredito");  
-  let inputFiltroMotivoEdicao =  document.getElementById("nmMotivo");  
+  let inputFiltroMotivoEdicao =  document.getElementById("nmMotivoCredito");  
+  let inputMesRegistroCredito =  document.getElementById("mesRegistroCredito");  
 
   let [id,motivo,mes,ano] = obj.value.split('|') 
 
   inputTitulo.textContent = `${motivo} - ${mes}/${ano}`
-  inputMotivo.value = `${id}|${motivo}`
+  inputMotivo.value = `${id}|${motivo}` 
   inputData.value = `${ano}-${mes}-01`
   inputFiltroMotivoEdicao.value = motivo
+  inputMesRegistroCredito.value = parseInt(mes)
   inputFiltroMotivoEdicao.onchange();
+  inputMesRegistroCredito.onchange();
+}
+
+function setDadosJanelaGasto(obj) { 
+
+  let inputTitulo =  document.getElementById("TituloJanelaGasto");
+  let inputData =  document.getElementById("campoDataGasto");
+  let inputMotivo =  document.getElementById("campoMotivoGasto");  
+  let inputFiltroMotivoEdicao =  document.getElementById("nmMotivoGasto");
+  let inputMesRegistroGasto =  document.getElementById("mesRegistroGasto");
+
+  let [id,motivo,mes,ano] = obj.value.split('|') 
+
+  inputTitulo.textContent = `${motivo} - ${mes}/${ano}`
+  inputMotivo.value = `${id}|${motivo}` 
+  inputData.value = `${ano}-${mes}-01`
+  inputFiltroMotivoEdicao.value = motivo
+  inputMesRegistroGasto.value = parseInt(mes)
+  inputFiltroMotivoEdicao.onchange();
+  inputMesRegistroGasto.onchange();
 }
 
 module.exports = { formataData, ConverterData,AnalisaFiltros,getPedacoData }

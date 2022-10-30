@@ -6,7 +6,7 @@ async function getAll(){
     const conn = await db.connect();  
     const values = [global.user.id]; 
 
-    let sql =  `SELECT c.id,c.valor,c.dt_recebimento,o.descricao,c.dt_previsao,s.descricao as situacao,cc.descricao as conta,(SELECT YEAR(c.dt_previsao)) as ano 
+    let sql =  `SELECT c.id,c.valor,c.dt_recebimento,o.descricao,c.dt_previsao,s.descricao as situacao,cc.descricao as conta,(SELECT YEAR(c.dt_previsao)) as ano,(SELECT MONTH(c.dt_previsao)) as mes 
     FROM Credito as c
     INNER JOIN OrigemCredito as o ON o.id = c.origemCredito
     INNER JOIN SituacaoCredito as s ON s.id = c.situacao

@@ -5,7 +5,8 @@ const ContaB = require('../services/s_contaBancaria')
 const MotivosGastos = require('../services/s_motivoGastos')
 
 
-let SELECT_GERAL = `SELECT g.id,g.valor,g.dt_registro,g.dt_vencimento,formaPagamento,m.descricao as motivo,s.descricao as situacao,c.descricao as conta,inOrcamentario,parcela,inFatura 
+let SELECT_GERAL = `SELECT g.id,g.valor,g.dt_registro,g.dt_vencimento,formaPagamento,m.descricao as motivo,s.descricao as situacao,
+c.descricao as conta,inOrcamentario,parcela,inFatura,(SELECT YEAR(g.dt_vencimento)) as ano ,(SELECT MONTH(g.dt_vencimento)) as mes
 FROM Gastos as g
 INNER JOIN MotivoGastos as m ON m.id = g.motivo
 INNER JOIN SituacaoGastos as s ON s.id = g.situacao
@@ -63,7 +64,7 @@ async function getResumoAno(){
     const conn = await db.connect();  
     const values = [global.user.id]; 
 
-    let sql =  `SELECT SUM(g.valor) as valor,(SELECT MONTH(g.dt_vencimento)) as mesVencimento,(SELECT YEAR(g.dt_vencimento)) as ano,m.descricao as motivo,inOrcamentario,g.situacao
+    let sql =  `SELECT m.id,SUM(g.valor) as valor,(SELECT MONTH(g.dt_vencimento)) as mesVencimento,(SELECT YEAR(g.dt_vencimento)) as ano,m.descricao as motivo,inOrcamentario,g.situacao
     FROM Gastos as g
     INNER JOIN MotivoGastos as m ON m.id = g.motivo
     WHERE g.usuario = ?
@@ -88,7 +89,7 @@ async function Gravar(valor,dt_registro,dt_vencimento,formaPagamento,motivo,situ
     {
         inFaturaBd = 1
     }
-
+  
     let mes = parseInt(DLL.getPedacoData(dt_vencimento,"MES"))
     let dia = DLL.getPedacoData(dt_vencimento,"DIA")
     let ano = DLL.getPedacoData(dt_vencimento,"ANO")

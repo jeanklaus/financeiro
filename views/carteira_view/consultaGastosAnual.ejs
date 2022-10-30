@@ -13,25 +13,192 @@
 <body>
    <!-- ================================================== MODAL ============================================= -->
 
+    <!-- JANELA GASTOS -->
+   <div class="modal" id="modalJanelaGasto">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        
+          <div class="modal-header">
+            <h4 id="TituloJanelaGasto" class="modal-title"></h4>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>   
+         
+          <div class="modal-body">
+            <div class="form-group">            
+              
+              <div class="container mt-3">
+                <h4>Registro de Gastos</h4>
+                <br>
+                
+                <ul class="nav nav-pills" role="tablist">
+                  <li class="nav-item">
+                    <a class="nav-link active" data-bs-toggle="pill" href="#AdicionarGasto">Adicionar</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="pill" href="#ListaGasto">Lista</a>
+                  </li>                  
+                </ul>
+                
+                <div class="tab-content">
+
+                  <!-- ADD -->
+                  <div id="AdicionarGasto" class="container tab-pane active"><br>
+                    <form class="w3-container was-validated" action="/Carteira/CofirmarRegistroGastos" method="post">
+
+                      <input placeholder="Valor" class="form-control" type="number" step="0.01" name="valor" style="width: auto;" required>
+                      <br>
+                  
+                      <input id="campoMotivoGasto" class="form-control" type="text" name="motivoGastos" style="width: auto;" hidden readonly> 
+                  
+                      <input id="campoDataGasto" class="w3-input w3-border form-control me-2" type="date" name="dtVencimento" required>
+                      <br>
+                  
+                      <select class="form-control me-2" name="formaPagamento" style="width: auto;" required>
+                        <option value="" disabled selected>Forma de Pagamento</option>           
+                        <option value="DINHEIRO">DINHEIRO</option>
+                        <option value="CARTAO">CARTAO</option>
+                      </select>
+                      <br>
+                  
+                      <select class="form-control me-2" name="conta" style="width: auto;" required>      
+                        <option value="" disabled selected>Contas</option>              
+                        <% Contas.forEach(c => { %>
+                          <option value="<%= c.id %>|<%= c.descricao %>"><%= c.descricao %></option>
+                        <% }); %>
+                      </select>
+                      <br>
+                  
+                      <div id="orcamentodiv">
+                        <input type="checkbox" name="orcamento" id="orcamento" onclick="checkName('orcamento',['parceladodiv','pagodiv','faturadiv'])"> Esse registro é para um ORÇAMENTO?
+                      </div>
+                  
+                      <div id="parceladodiv">
+                        <input type="checkbox" name="parcelado" id="parcelado" onclick="checkName('parcelado',['fimAnodiv','orcamentodiv'])"> Esse valor é parcelado?
+                        <br>
+                          <div id="divTpValor" hidden>          
+                            <input type="radio" id="tpValorBruto" name="tpValor" value="B">
+                            <label for="age1">Valor é BRUTO</label><br>
+                            <input type="radio" id="tpValorParcela" name="tpValor" value="P">
+                            <label for="age2">Valor é da PARCELA</label><br>
+                          </div>      
+                        
+                      </div>
+                  
+                      <input placeholder="Quantas parcelas?" class="w3-input w3-border form-control me-2" name="qtParcelas" step="0.01" type="number" id="qtParcelas" hidden>
+                  
+                      <div id="fimAnodiv">
+                        <input type="checkbox" name="fimAno" id="fimAno" onclick="checkName('fimAno',['parceladodiv'])"> Gerar registro até fim do ano?
+                      </div>    
+                  
+                      <div id="pagodiv">
+                        <input type="checkbox" name="pago" id="pago"> Registrar essa como paga?
+                      </div>
+                  
+                      <div id="faturadiv">
+                        <input type="checkbox" name="fatura" id="fatura"> Incluir na fatura?
+                      </div>
+                      <br>
+                      <button type="submit" class="btn w3-green">Confirmar</button>    
+                    </form>          
+                  </div>
+
+                  <!-- LISTA -->
+                  <div id="ListaGasto" class="container tab-pane fade"><br>
+
+                    <input onchange="buscaProdTabela(this,'tblEditarGasto',1)" id="nmMotivoGasto" hidden>
+                    <input onchange="buscaProdTabelaExato(this,'tblEditarGasto',2)" id="mesRegistroGasto" hidden>
+                     
+                        <table class="w3-small w3-card table w3-border w3-table table-hover TabelaDinamica table-striped" id="tblEditarGasto">
+                          <thead>
+                            <tr>  
+                              <th></th> 
+                              <th hidden></th>   
+                              <th hidden></th>                      
+                              <th>Valor</th> 
+                              <th>Dt Venc.</th>
+                              <th>Situação</th>  
+                              <th></th> 
+                            </tr>
+                          </thead>
+                          <tbody>          
+                            <% ListaGastos.forEach(g => { %>
+                              <% if(anoSelect == g.ano){ %>
+                              <td><button onclick="setValorEdi(this,'idEditarGasto','valorEditarGasto')" data-bs-toggle="modal" data-bs-target="#modalEditarRegistroGasto" value="<%= g.id %>|<%= g.valor %>" class="w3-tiny w3-round btn-warning">E</button>
+                                <button onclick="setIdDell(this,'IdDellGasto')"  data-bs-toggle="modal" data-bs-target="#modalExcluirRegistroGasto" value="<%= g.id %>" class="w3-tiny w3-round btn-danger">X</button></td>         
+                              <td hidden><%= g.motivo %></td>
+                              <td hidden><%= g.mes %></td>
+                              <td><%= g.valor %></td> 
+                              <td><%= g.dt_vencimento %></td>
+                    
+                              <% if(g.situacao == 'PAGO') { %>
+                                <td style="color:rgb(0, 255, 0);"><%= g.situacao %></td>
+                              <% } else if(g.situacao == 'ATRASADO'){ %> 
+                                <td style="color:rgb(249, 224, 0);"><%= g.situacao %></td>
+                              <% } else if(g.situacao == 'ORCAMENTO'){ %> 
+                                <td style="color:rgb(0, 45, 248);"><%= g.situacao %></td>
+                              <% } else { %> 
+                                <td style="color:rgb(250, 0, 0);"><%= g.situacao %></td>
+                              <% } %> 
+                  
+                                <% if(g.inOrcamentario) { %>
+                                  <td>
+                                    <div class="btn-group">
+                                      <button onclick="setValorConsumo(this,'idConsumoGasto','valorConsumoGasto','dataConsumoGasto')" data-bs-toggle="modal" data-bs-target="#modalConsumirOrcamentoGasto" value="<%= g.id %>|<%= g.valor %>" class="w3-tiny w3-round btn-info">Consumir</button>                                     
+                                    </div>
+                                  </td>
+                                <% } else if(g.situacao != 'PAGO' && !g.inFatura) { %> 
+                              <form action="/Carteira/PagarGasto" method="post">
+                                  <td>
+                                    <div class="btn-group">
+                                      <button name="PAGAR" value="<%= g.id %>" class="w3-tiny w3-round btn-primary">Pagar</button>
+                                      <button name="ADD_FATURA" value="<%= g.id %>" class="w3-tiny w3-round btn-info">Fatura</button>
+                                    </div>
+                                  </td>                  
+                                <% } else if(g.inFatura) { %>
+                                  <td>FATURA</td>                
+                                <% }else { %>
+                                  <td></td>                
+                                <% } %>
+                              </form>
+                  
+                            </tr>  
+                            <% } %>
+                            <% }); %>             
+                          </tbody>
+                        </table>
+
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div> 
+          
+          <div class="modal-footer">
+            <div class="btn btn-danger" data-bs-dismiss="modal">Fechar</div>           
+          </div>
+
+      </div>
+    </div>
+  </div>
+
+   <!-- JANELA CREDITOS -->
    <div class="modal" id="modalJanelaCredito">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
-
-          <!-- Modal Header -->
+        
           <div class="modal-header">
             <h4 id="TituloJanelaCredi" class="modal-title"></h4>
             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
           </div>
-    
-          <!-- Modal body -->
+         
           <div class="modal-body">
             <div class="form-group">              
               
               <div class="container mt-3">
-                <h2>Registro de Creditos</h2>
+                <h4>Registro de Creditos</h4>
                 <br>
-
-                <!-- Nav pills -->
+               
                 <ul class="nav nav-pills" role="tablist">
                   <li class="nav-item">
                     <a class="nav-link active" data-bs-toggle="pill" href="#Adicionar">Adicionar</a>
@@ -40,16 +207,15 @@
                     <a class="nav-link" data-bs-toggle="pill" href="#Lista">Lista</a>
                   </li>
                 </ul>
-              
-                <!-- Tab panes -->
+                
                 <div class="tab-content">
 
+                    <!-- ADD  -->
                   <div id="Adicionar" class="container tab-pane active"><br>
 
                     <form class="w3-container was-validated" action="/Carteira/CofirmarRegistroCreditos" method="post">
-
-                      <label class="w3-text-black"><h4>Valor</h4></label>
-                      <input class="form-control" type="number" step="0.01" name="valor" id="valor" style="width: auto;" required>
+                     
+                      <input placeholder="Valor" class="form-control" type="number" step="0.01" name="valor" id="valor" style="width: auto;" required>
                       <br>
                   
                       <input id="campoOrigemCredito" class="form-control" type="text" name="origemCreditos" style="width: auto;" hidden readonly>                      
@@ -88,16 +254,19 @@
                     </form>                    
                   </div>
 
+                    <!-- LISTA -->
                   <div id="Lista" class="container tab-pane fade"><br>
 
-                    <input onchange="buscaProdTabela(this,'tblEditar',1)" id="nmMotivo" class="form-control" type="text" style="width: auto;" hidden>
+                    <input onchange="buscaProdTabela(this,'tblEditarCredito',1)" id="nmMotivoCredito" hidden>
+                    <input onchange="buscaProdTabelaExato(this,'tblEditarCredito',2)" id="mesRegistroCredito" hidden>
 
-                    <div class="container mt-3">
-                      <table class="w3-small w3-card table w3-border w3-table table-hover TabelaDinamica table-striped" id="tblEditar">
+                    <div class="">
+                      <table class="w3-small w3-card table w3-border w3-table table-hover TabelaDinamica table-striped" id="tblEditarCredito">
                         <thead>
                           <tr>   
                             <th></th> 
-                            <th hidden>DESC</th>
+                            <th hidden></th>
+                            <th hidden></th>
                             <th>Valor</th>
                             <th>Dt Prevista</th>
                             <th>Situação</th>  
@@ -109,8 +278,9 @@
                            <tr> 
                             <% if(anoSelect == c.ano){ %>
                             <td><button onclick="setValorEdi(this,'idEditar','valorEditar')" data-bs-toggle="modal" data-bs-target="#modalEditarRegistroCredito" value="<%= c.id %>|<%= c.valor %>" class="w3-tiny w3-round btn-warning">E</button>
-                                <button onclick="setIdDell(this,'IdDell')"   data-bs-toggle="modal" data-bs-target="#modalExcluirRegistroCredito" value="<%= c.id %>" class="w3-tiny w3-round btn-danger">X</button></td>
+                                <button onclick="setIdDell(this,'IdDell')" data-bs-toggle="modal" data-bs-target="#modalExcluirRegistroCredito" value="<%= c.id %>" class="w3-tiny w3-round btn-danger">X</button></td>
                             <td hidden><%= c.descricao %></td>
+                            <td hidden><%= c.mes %></td>
                             <td>$ <%= c.valor %></td>                             
                             <td><%= c.dt_previsao %></td>
                             <% if(c.situacao == 'RECEBIDO') { %>
@@ -133,23 +303,117 @@
                     </div> 
 
                   </div>
-
-                  <div id="menu2" class="container tab-pane fade"><br>
-                    <h3>Menu 2</h3>
-                    <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam.</p>
-                  </div>
+                  
                 </div>
               </div>
 
+            </div>
+          </div> 
+         
+          <div class="modal-footer">
+            <div class="btn btn-danger" data-bs-dismiss="modal">Fechar</div>           
+          </div>
 
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="modalExcluirRegistroGasto">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+
+        <form class="w3-container was-validated" action="/Carteira/ClickGastos" method="post">
+
+          <!-- Modal Header -->
+          <div class="modal-header">
+            <h4 class="modal-title">Excluir Registro</h4>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+    
+          <!-- Modal body -->
+          <div class="modal-body" hidden>
+            <div class="form-group">              
+              <input id="IdDellGasto" class="form-control" type="text" name="id" style="width: auto;">                                    
             </div>
           </div>    
-          
+        
           <!-- Modal footer -->
           <div class="modal-footer">
-            
-                  
-            <div class="btn btn-danger" data-bs-dismiss="modal">Fechar</div>           
+            <button type="submit" class="btn btn-success" name="DEL" value="true">Confirmar</button> 
+          </form>          
+            <div class="btn btn-danger" data-bs-dismiss="modal">Cancelar</div>           
+          </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="modalConsumirOrcamentoGasto">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+
+        <form class="w3-container was-validated" action="/Carteira/PagarGasto" method="post">
+
+          <div class="modal-header">
+            <h4 class="modal-title">Consumir Orcamento</h4>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+         
+          <div class="modal-body">
+            <div class="form-group"> 
+
+              <label class="w3-text-black"><h4>Saldo</h4></label>
+              <input id="valorConsumoGasto" class="form-control" type="number" step="0.01" style="width: auto;" readonly>
+              <br>
+              
+              <input placeholder="Valor Usado" class="form-control" type="number" step="0.01" name="valor" id="valor" style="width: auto;" required>
+              <br>
+
+              <input id="idConsumoGasto" class="form-control" type="text" name="idRegistroOrcGasto" style="width: auto;" hidden> 
+              <input id="dataConsumoGasto" class="w3-input w3-border form-control me-2" type="date"  name="dataConsumo">
+              <br>
+             
+              <button name="CONSUMIR" value="true" class="btn w3-green">Confirmar Consumo</button>
+            </div>
+          </div>    
+        
+         
+          <div class="modal-footer">
+           
+          </form>          
+            <div class="btn btn-danger" data-bs-dismiss="modal">Cancelar</div>           
+          </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="modalEditarRegistroGasto">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+
+        <form class="w3-container was-validated" action="/Carteira/ClickGastos" method="post">
+
+          <!-- Modal Header -->
+          <div class="modal-header">
+            <h4 class="modal-title">Editar Registro</h4>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+    
+          <!-- Modal body -->
+          <div class="modal-body">
+            <div class="form-group"> 
+              <input id="idEditarGasto" class="form-control" type="text" name="id" style="width: auto;" hidden>             
+              <input id="valorEditarGasto" class="form-control" type="text" name="valor" style="width: auto;" required> 
+              <div class="invalid-feedback">insira um valor</div>                                   
+            </div>
+          </div>    
+        
+          <!-- Modal footer -->
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-success" name="EDI" value="true">Confirmar</button> 
+          </form>          
+            <div class="btn btn-danger" data-bs-dismiss="modal">Cancelar</div>           
           </div>
 
       </div>
@@ -573,20 +837,20 @@
             <%  if(dado.ano == anoSelect) { %>           
             <tr>
               <td><button data-bs-toggle="modal" data-bs-target="#modalExcluirGasto" onclick="setDescGastoDell(this)"
-              value="<%= dado.motivo %>" class="w3-tiny w3-round  btn-danger">-</button> <b><%= dado.motivo %></b></td>   
+              value="<%= dado.motivo %>" class="w3-tiny w3-round  btn-danger">-</button> <b><%= dado.motivo %></b></td> 
 
-              <td><a href="/Carteira/RegistrarGastos<%= dado.motivo %>|01|<%= anoSelect %>" class="SemBorda cell"> <%= dado.janeiro %></a></td>
-              <td><a href="/Carteira/RegistrarGastos<%= dado.motivo %>|02|<%= anoSelect %>" class="SemBorda cell"> <%= dado.fevereiro %></td>
-              <td><a href="/Carteira/RegistrarGastos<%= dado.motivo %>|03|<%= anoSelect %>" class="SemBorda cell"> <%= dado.marco %></td>
-              <td><a href="/Carteira/RegistrarGastos<%= dado.motivo %>|04|<%= anoSelect %>" class="SemBorda cell"> <%= dado.abril %></td>
-              <td><a href="/Carteira/RegistrarGastos<%= dado.motivo %>|05|<%= anoSelect %>" class="SemBorda cell"> <%= dado.maio %></td>
-              <td><a href="/Carteira/RegistrarGastos<%= dado.motivo %>|06|<%= anoSelect %>" class="SemBorda cell"> <%= dado.junho %></td>
-              <td><a href="/Carteira/RegistrarGastos<%= dado.motivo %>|07|<%= anoSelect %>" class="SemBorda cell"> <%= dado.julho %></td>
-              <td><a href="/Carteira/RegistrarGastos<%= dado.motivo %>|08|<%= anoSelect %>" class="SemBorda cell"> <%= dado.agosto %></td>
-              <td><a href="/Carteira/RegistrarGastos<%= dado.motivo %>|09|<%= anoSelect %>" class="SemBorda cell"> <%= dado.setembro %></td>
-              <td><a href="/Carteira/RegistrarGastos<%= dado.motivo %>|10|<%= anoSelect %>" class="SemBorda cell"> <%= dado.outubro %></td>
-              <td><a href="/Carteira/RegistrarGastos<%= dado.motivo %>|11|<%= anoSelect %>" class="SemBorda cell"> <%= dado.novembro %></td>
-              <td><a href="/Carteira/RegistrarGastos<%= dado.motivo %>|12|<%= anoSelect %>" class="SemBorda cell"> <%= dado.dezembro %></td>
+              <td><button onclick="setDadosJanelaGasto(this)" value="<%= dado.id %>|<%= dado.motivo %>|01|<%= anoSelect %>" data-bs-toggle="modal" data-bs-target="#modalJanelaGasto" class="btn SemBorda cell"> <%= dado.janeiro %></a></td>
+              <td><button onclick="setDadosJanelaGasto(this)" value="<%= dado.id %>|<%= dado.motivo %>|02|<%= anoSelect %>" data-bs-toggle="modal" data-bs-target="#modalJanelaGasto" class="btn SemBorda cell"> <%= dado.fevereiro %></td>
+              <td><button onclick="setDadosJanelaGasto(this)" value="<%= dado.id %>|<%= dado.motivo %>|03|<%= anoSelect %>" data-bs-toggle="modal" data-bs-target="#modalJanelaGasto" class="btn SemBorda cell"> <%= dado.marco %></td>
+              <td><button onclick="setDadosJanelaGasto(this)" value="<%= dado.id %>|<%= dado.motivo %>|04|<%= anoSelect %>" data-bs-toggle="modal" data-bs-target="#modalJanelaGasto" class="btn SemBorda cell"> <%= dado.abril %></td>
+              <td><button onclick="setDadosJanelaGasto(this)" value="<%= dado.id %>|<%= dado.motivo %>|05|<%= anoSelect %>" data-bs-toggle="modal" data-bs-target="#modalJanelaGasto" class="btn SemBorda cell"> <%= dado.maio %></td>
+              <td><button onclick="setDadosJanelaGasto(this)" value="<%= dado.id %>|<%= dado.motivo %>|06|<%= anoSelect %>" data-bs-toggle="modal" data-bs-target="#modalJanelaGasto" class="btn SemBorda cell"> <%= dado.junho %></td>
+              <td><button onclick="setDadosJanelaGasto(this)" value="<%= dado.id %>|<%= dado.motivo %>|07|<%= anoSelect %>" data-bs-toggle="modal" data-bs-target="#modalJanelaGasto" class="btn SemBorda cell"> <%= dado.julho %></td>
+              <td><button onclick="setDadosJanelaGasto(this)" value="<%= dado.id %>|<%= dado.motivo %>|08|<%= anoSelect %>" data-bs-toggle="modal" data-bs-target="#modalJanelaGasto" class="btn SemBorda cell"> <%= dado.agosto %></td>
+              <td><button onclick="setDadosJanelaGasto(this)" value="<%= dado.id %>|<%= dado.motivo %>|09|<%= anoSelect %>" data-bs-toggle="modal" data-bs-target="#modalJanelaGasto" class="btn SemBorda cell"> <%= dado.setembro %></td>
+              <td><button onclick="setDadosJanelaGasto(this)" value="<%= dado.id %>|<%= dado.motivo %>|10|<%= anoSelect %>" data-bs-toggle="modal" data-bs-target="#modalJanelaGasto" class="btn SemBorda cell"> <%= dado.outubro %></td>
+              <td><button onclick="setDadosJanelaGasto(this)" value="<%= dado.id %>|<%= dado.motivo %>|11|<%= anoSelect %>" data-bs-toggle="modal" data-bs-target="#modalJanelaGasto" class="btn SemBorda cell"> <%= dado.novembro %></td>
+              <td><button onclick="setDadosJanelaGasto(this)" value="<%= dado.id %>|<%= dado.motivo %>|12|<%= anoSelect %>" data-bs-toggle="modal" data-bs-target="#modalJanelaGasto" class="btn SemBorda cell"> <%= dado.dezembro %></td>
                 <td>
                   <a href="/Carteira/ClickGastos<%= dado.motivo %>" class="SemBorda">          
                     <button class="w3-tiny w3-round btn-primary">>></button>
