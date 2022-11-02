@@ -22,8 +22,8 @@ router.get('/',async (req,res) => {
         let GastosFatura = []
 
         let data = new Date();
-        let mes = DLL.getPedacoData(DLL.ConverterData(DLL.formataData(data)),'MES')
-        let ano = DLL.getPedacoData(DLL.ConverterData(DLL.formataData(data)),'ANO')
+        let mes = data.getMonth() + 1
+        let ano = data.getFullYear()
         let dataInicial = `${ano}-${mes}`
 
         res.render('fatura_view/inicial',{dataInicial,GastosFatura,Motivos,Contas,filtros});
@@ -47,8 +47,8 @@ router.post('/Atualizar',async (req,res) => {
         let Contas = await ContaBancaria.getAll();
 
         let data = new Date();
-        let mes = DLL.getPedacoData(DLL.ConverterData(DLL.formataData(data)),'MES')
-        let ano = DLL.getPedacoData(DLL.ConverterData(DLL.formataData(data)),'ANO')
+        let mes = data.getMonth() + 1
+        let ano = data.getFullYear()
         let dataInicial = `${ano}-${mes}`
 
         if(req.body.mes)

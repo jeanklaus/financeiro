@@ -705,53 +705,50 @@
   <div class="w3-container w3-left">
  
      <!--LIQUIDO MES  -->
-              <div id="demo" class="collapse">
+      <div id="demo" class="collapse">
 
-                <table class="w3-small w3-card table w3-border w3-table table-hover TabelaDinamica table-striped">
-                  <thead>
-                    <tr>            
-                      <th></th>      
-                      <th>Janeiro</th>  
-                      <th>Fevereiro</th> 
-                      <th>Março</th> 
-                      <th>Abril</th> 
-                      <th>Maio</th> 
-                      <th>Junho</th> 
-                      <th>Julho</th>
-                      <th>Agosto</th>  
-                      <th>Setembro</th> 
-                      <th>Outubro</th>
-                      <th>Novembro</th>
-                      <th>Dezembro</th>
-                    </tr>
-                  </thead>
-                  <tbody> 
-                    
-                    <!--TABELA -->
-                      <tr>
-                        <th><b>SALDO INICIAL</b></th>
-                        <% for(let i = 1; i <= 12;i++){ %>
-                          <td><%= liquidez.inicial[i].toFixed(2) %></td> 
-                        <% } %>             
-                      </tr>
-                      <tr>
-                        <th><b>SALDO LIQUIDO</b></th>
-                        <% for(let i = 1; i <= 12;i++){ %>
-                          <td><%= liquidez.liquido[i].toFixed(2) %></td> 
-                        <% } %>             
-                      </tr>
-                      <tr>
-                        <th><b>SALDO FINAL</b></th>
-                        <% for(let i = 1; i <= 12;i++){ %>
-                          <td><%= liquidez.final[i].toFixed(2) %></td> 
-                        <% } %>             
-                      </tr>
-                  </tbody>
-                </table>   
-              </div> 
-           
-
-
+        <table class="w3-small w3-card table w3-border w3-table table-hover TabelaDinamica table-striped">
+          <thead>
+            <tr>            
+              <th></th>      
+              <th>Janeiro</th>  
+              <th>Fevereiro</th> 
+              <th>Março</th> 
+              <th>Abril</th> 
+              <th>Maio</th> 
+              <th>Junho</th> 
+              <th>Julho</th>
+              <th>Agosto</th>  
+              <th>Setembro</th> 
+              <th>Outubro</th>
+              <th>Novembro</th>
+              <th>Dezembro</th>
+            </tr>
+          </thead>
+          <tbody> 
+            
+            <!--TABELA -->
+              <tr>
+                <th><b>SALDO INICIAL</b></th>
+                <% for(let i = 1; i <= 12;i++){ %>
+                  <td><%= liquidez.inicial[i].toFixed(2) %></td> 
+                <% } %>             
+              </tr>
+              <tr>
+                <th><b>SALDO LIQUIDO</b></th>
+                <% for(let i = 1; i <= 12;i++){ %>
+                  <td><%= liquidez.liquido[i].toFixed(2) %></td> 
+                <% } %>             
+              </tr>
+              <tr>
+                <th><b>SALDO FINAL</b></th>
+                <% for(let i = 1; i <= 12;i++){ %>
+                  <td><%= liquidez.final[i].toFixed(2) %></td> 
+                <% } %>             
+              </tr>
+          </tbody>
+        </table>   
+      </div> 
 
       <!--CREDITOS -->
     <div class="container mt-3">  

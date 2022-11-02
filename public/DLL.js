@@ -110,7 +110,7 @@ function LoadDataHoje() {
 
 function LoadAnoAtual() {
   let data = new Date();
-  document.getElementById("data").value = getPedacoData(ConverterData(formataData(data)),'ANO');
+  document.getElementById("data").value = data.getFullYear();
 }
 
 function setDescGastoDell(obj) { 

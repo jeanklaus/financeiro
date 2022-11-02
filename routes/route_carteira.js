@@ -8,6 +8,7 @@ const ContaBancaria = require('../services/s_contaBancaria')
 const Func = require('../public/funcoes');
 const DLL = require('../public/DLL');
 const Fatura = require('../services/s_fatura')
+const LocalProc = require('../public/localProcCarteira');
 
 const router = express.Router();
 router.use(bodyparser.urlencoded({ extended: false }));
@@ -25,8 +26,6 @@ let idGasto = null;
 let idCredito = null;
 let gasto = {}
 let credito = {}
-
-
 //=============================================================== PAINEL =========================================================================
 router.get('/ConsultaGastosResumoAnual', async (req, res) => {
     try {
@@ -43,23 +42,23 @@ router.get('/ConsultaGastosResumoAnual', async (req, res) => {
         let ListaGastos = await Gasto.getAll();   
 
         let data = new Date()
-        let anoSelect = DLL.getPedacoData(DLL.ConverterData(DLL.formataData(data)), 'ANO');
-        let valorTotalPendente = await getGastoTotalPendente(anoSelect);
-        let valorTotalPendenteRecebimento = await getCreditoTotalPendente(anoSelect);
+        let anoSelect = data.getFullYear()
+        let valorTotalPendente = await LocalProc.getGastoTotalPendente(anoSelect,ListaGastos);
+        let valorTotalPendenteRecebimento = await LocalProc.getCreditoTotalPendente(anoSelect,ListaCreditos);
         let valorTotalEstimativa = (valorTotalPendenteRecebimento + parseFloat(global.user.saldo)) - valorTotalPendente
 
         //GASTOS
         let Gastos = await Gasto.getResumoAno();
-        let valorTotal = getCustoTotal(Gastos);
-        let resumo = await montarResumoAnual(Gastos, anoSelect);
-        let totais = getTotalMesResumoAnual(resumo, anoSelect);
+        let valorTotal = LocalProc.getCustoTotal(Gastos);
+        let resumo = await LocalProc.montarResumoAnual(Gastos, anoSelect);
+        let totais = LocalProc.getTotalMesResumoAnual(resumo, anoSelect);
      
         //CREDITOS
         let Creditos = await Credito.getResumoAno();        
-        let resumoCredi = await montarResumoAnualCredi(Creditos, anoSelect);
-        let totaisCredi = getTotalMesResumoAnual(resumoCredi, anoSelect); 
+        let resumoCredi =  await LocalProc.montarResumoAnualCredi(Creditos, anoSelect);
+        let totaisCredi = LocalProc.getTotalMesResumoAnual(resumoCredi, anoSelect); 
         
-        let liquidez = await getValorLiquidoMes(anoSelect);
+        let liquidez = await LocalProc.getValorLiquidoMes(anoSelect,ListaCreditos,ListaGastos);
     
         res.render('carteira_view/consultaGastosAnual', {
             totaisCredi, resumoCredi, totais, anoSelect, resumo,
@@ -88,29 +87,29 @@ router.post('/ConsultandoGastosResumoAnual', async (req, res) => {
         let ListaGastos = await Gasto.getAll();  
 
         let data = new Date()
-        let anoSelect = DLL.getPedacoData(DLL.ConverterData(DLL.formataData(data)), 'ANO');
+        let anoSelect = data.getFullYear();
 
         if (req.body.ano) {
             anoSelect = req.body.ano;
         }
 
-        let valorTotalPendente = await getGastoTotalPendente(anoSelect);
-        let valorTotalPendenteRecebimento = await getCreditoTotalPendente(anoSelect);
+        let valorTotalPendente = await LocalProc.getGastoTotalPendente(anoSelect,ListaGastos);
+        let valorTotalPendenteRecebimento = await LocalProc.getCreditoTotalPendente(anoSelect,ListaCreditos);
         let valorTotalEstimativa = (valorTotalPendenteRecebimento + parseFloat(global.user.saldo)) - valorTotalPendente
 
         //GASTOS
         let Gastos = await Gasto.getResumoAno();
-        let valorTotal = getCustoTotal(Gastos);
-        let resumo = await montarResumoAnual(Gastos, anoSelect);
-        let totais = getTotalMesResumoAnual(resumo, anoSelect);
+        let valorTotal = LocalProc.getCustoTotal(Gastos);
+        let resumo = await LocalProc.montarResumoAnual(Gastos, anoSelect);
+        let totais = LocalProc.getTotalMesResumoAnual(resumo, anoSelect);
 
         //CREDITOS
         let Creditos = await Credito.getResumoAno();
 
-        let resumoCredi = await montarResumoAnualCredi(Creditos, anoSelect);
-        let totaisCredi = getTotalMesResumoAnual(resumoCredi, anoSelect);
+        let resumoCredi = await LocalProc.montarResumoAnualCredi(Creditos, anoSelect);
+        let totaisCredi = LocalProc.getTotalMesResumoAnual(resumoCredi, anoSelect);
 
-        let liquidez = await getValorLiquidoMes(anoSelect);
+        let liquidez = await LocalProc.getValorLiquidoMes(anoSelect,ListaCreditos,ListaGastos);
 
         res.render('carteira_view/consultaGastosAnual', {
             totaisCredi, resumoCredi, totais, anoSelect, resumo,
@@ -732,285 +731,5 @@ router.post('/ConfirmaEdicaoCredito', async (req, res) => {
         res.render('feed', { erro })
     }
 });
-
-//======================================================================== LOCAL PROC =============================================================
-function getCustoTotal(lista) {
-    let resultado = 0;
-
-    for (const prod of lista) {
-        resultado += parseFloat(prod.valor)
-    }
-
-    return resultado;
-}
-
-async function getGastoTotalPendente(ano) {
-    let Gastos = await Gasto.getAll();
-    let resultado = 0;
-   
-    for (const prod of Gastos) {       
-        let anoGasto =  DLL.getPedacoData(DLL.ConverterData(prod.dt_vencimento),"ANO")
-
-        if (prod.situacao != 'PAGO' && anoGasto == ano) {
-          
-            resultado += parseFloat(prod.valor)
-        }
-    }
-
-    return resultado;
-}
-
-async function getCreditoTotalPendente(ano) {
-    let Creditos = await Credito.getAll();
-    let resultado = 0;
-
-    for (const prod of Creditos) {
-
-        let anoCredi =  DLL.getPedacoData(DLL.ConverterData(prod.dt_previsao),"ANO")
-
-        if (prod.situacao != 'RECEBIDO' && anoCredi == ano) {
-            resultado += parseFloat(prod.valor)
-        }
-    }
-
-    return resultado;
-}
-
-async function montarResumoAnual(gastos, anoSelect) {
-    let lista = []
-    let Motivos = await MotivoGastos.getAll();
-   
-    for (const m of Motivos) {
-        for (const g of gastos) {
-            if (g.motivo == m.descricao && anoSelect == g.ano) {
-                if (verificaSeMotivoExisteLista(m.descricao, g.ano, lista)) {
-                    let i = getIndexObjLista(m.descricao, g.ano, lista);
-
-                    lista[i].mes[g.mes] = g.valor;
-                }
-                else {
-                    let obj = {}
-                    obj.motivo = m.descricao
-                    obj.id = g.id
-                    obj.ano = g.ano
-                  
-                    obj.mes = []
-                    for(let i = 1; i <= 12;i++)
-                    {
-                        obj.mes[i] = 0
-                    }
-
-                    obj.mes[g.mes] = g.valor;                   
-
-                    lista.push(obj);
-                }
-            }
-        }//fim for
-
-        let inExiste = verificaSomenteMotivo(m.descricao, lista)
-
-        if (!inExiste) {
-            let obj = {}
-            obj.motivo = m.descricao
-            obj.id = await MotivoGastos.getID(m.descricao)
-            obj.ano = anoSelect         
-            obj.mes = []
-
-            for(let i = 1; i <= 12;i++)
-            {
-                obj.mes[i] = 0
-            }            
-            lista.push(obj);
-        }
-    }
-
-    return lista;
-}
-
-async function montarResumoAnualCredi(creditos, anoSelect) {
-    let lista = []
-    let Motivos = await Origem.getAll();
-   
-    for (const m of Motivos) {
-        for (const g of creditos) {
-            if (g.motivo == m.descricao && anoSelect == g.ano) {
-                if (verificaSeMotivoExisteLista(m.descricao, g.ano, lista)) {
-                    let i = getIndexObjLista(m.descricao, g.ano, lista);
-
-                    lista[i].mes[g.mes] = g.valor;
-                }
-                else {
-                    let obj = {}
-                    obj.motivo = m.descricao
-                    obj.id = g.id
-                    obj.ano = g.ano
-                    
-                    obj.mes = []
-                    for(let i = 1; i <= 12;i++)
-                    {
-                        obj.mes[i] = 0
-                    }
-
-                    obj.mes[g.mes] = g.valor;
-                    lista.push(obj);
-                }
-            }
-        }//fim for
-
-        let inExiste = verificaSomenteMotivo(m.descricao, lista)
-
-        if (!inExiste) {
-            let obj = {}
-            obj.motivo = m.descricao
-            obj.id = await Origem.getID(m.descricao)
-            obj.ano = anoSelect
-            obj.mes = []
-
-            for(let i = 1; i <= 12;i++)
-            {
-                obj.mes[i] = 0
-            }
-           
-            lista.push(obj);
-        }
-    }
-
-    return lista;
-}
-
-function getTotalMesResumoAnual(lista, ano) {
-
-    let totais = {}
-    totais.mes = []
-   
-    for(let i = 1; i <= 12;i++)
-    {
-        totais.mes[i] = 0;
-    }
-
-    for (const g of lista) {
-        if (g.ano == ano) {
-
-            for(let i = 1; i <= 12;i++)
-            {
-                totais.mes[i] += parseFloat(g.mes[i]);
-            }
-        }
-    }
-    
-    return totais;
-}
-
-function verificaSeMotivoExisteLista(motivo, ano, lista) {
-    for (const l of lista) {
-        if (l.motivo == motivo && l.ano == ano) {
-            return true;
-        }
-    }
-    return false;
-}
-
-function verificaSomenteMotivo(motivo, lista) {
-    for (const l of lista) {
-        if (l.motivo == motivo) {
-            return true;
-        }
-    }
-    return false;
-}
-
-function getIndexObjLista(motivo, ano, lista) {
-    let index = 0;
-
-    for (const l of lista) {
-        if (l.motivo == motivo && l.ano == ano) {
-            return index;
-        }
-
-        index++;
-    }
-}
-
-async function getValorLiquidoMes(ano)
-{
-    let liquidez = {}
-
-    let saldoInicial = 0;
-    liquidez.inicial = []
-    liquidez.liquido = []
-    liquidez.final = []
-
-    for(let i = 1; i <= 12;i++)
-    {
-        liquidez.inicial[i] = saldoInicial
-
-        let liquido = await getCreditoTotalMes(i,ano) - await getGastoTotalMes(i,ano) 
-
-        liquidez.liquido[i] = liquido;
-        liquidez.final[i] = liquido + (saldoInicial);
-        saldoInicial = liquidez.final[i];
-    }
- 
-
-   return liquidez
-}
-
-async function getGastoTotalPendenteMes(mes,ano) {
-    let Gastos = await Gasto.getAll();
-    let resultado = 0;
-   
-    for (const prod of Gastos) {  
-
-        if (prod.situacao != 'PAGO' && prod.ano == ano && prod.mes == mes) {
-          
-            resultado += parseFloat(prod.valor)
-        }
-    }
-
-    return resultado;
-}
-
-async function getCreditoTotalPendenteMes(mes,ano) {
-    let Creditos = await Credito.getAll();
-    let resultado = 0;
-
-    for (const prod of Creditos) {
-
-        if (prod.situacao != 'RECEBIDO' && prod.ano == ano && prod.mes == mes) {
-            resultado += parseFloat(prod.valor)
-        }
-    }
-
-    return resultado;
-}
-
-async function getGastoTotalMes(mes,ano) {
-    let Gastos = await Gasto.getAll();
-    let resultado = 0;
-   
-    for (const prod of Gastos) {  
-
-        if (prod.ano == ano && prod.mes == mes) {
-          
-            resultado += parseFloat(prod.valor)
-        }
-    }
-
-    return resultado;
-}
-
-async function getCreditoTotalMes(mes,ano) {
-    let Creditos = await Credito.getAll();
-    let resultado = 0;
-
-    for (const prod of Creditos) {
-
-        if (prod.ano == ano && prod.mes == mes) {
-            resultado += parseFloat(prod.valor)
-        }
-    }
-
-    return resultado;
-}
 
 module.exports = router;
