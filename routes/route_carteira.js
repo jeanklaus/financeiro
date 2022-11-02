@@ -43,9 +43,6 @@ router.get('/ConsultaGastosResumoAnual', async (req, res) => {
 
         let data = new Date()
         let anoSelect = data.getFullYear()
-        let valorTotalPendente = await LocalProc.getGastoTotalPendente(anoSelect,ListaGastos);
-        let valorTotalPendenteRecebimento = await LocalProc.getCreditoTotalPendente(anoSelect,ListaCreditos);
-        let valorTotalEstimativa = (valorTotalPendenteRecebimento + parseFloat(global.user.saldo)) - valorTotalPendente
 
         //GASTOS
         let Gastos = await Gasto.getResumoAno();
@@ -62,8 +59,7 @@ router.get('/ConsultaGastosResumoAnual', async (req, res) => {
     
         res.render('carteira_view/consultaGastosAnual', {
             totaisCredi, resumoCredi, totais, anoSelect, resumo,
-            valorTotal, valorTotalPendente, valorTotalPendenteRecebimento, 
-            valorTotalEstimativa,filtros,Origens,Contas,ListaCreditos,ListaGastos,liquidez
+            valorTotal,filtros,Origens,Contas,ListaCreditos,ListaGastos,liquidez
        });
     }
     catch (erro) {
@@ -93,10 +89,6 @@ router.post('/ConsultandoGastosResumoAnual', async (req, res) => {
             anoSelect = req.body.ano;
         }
 
-        let valorTotalPendente = await LocalProc.getGastoTotalPendente(anoSelect,ListaGastos);
-        let valorTotalPendenteRecebimento = await LocalProc.getCreditoTotalPendente(anoSelect,ListaCreditos);
-        let valorTotalEstimativa = (valorTotalPendenteRecebimento + parseFloat(global.user.saldo)) - valorTotalPendente
-
         //GASTOS
         let Gastos = await Gasto.getResumoAno();
         let valorTotal = LocalProc.getCustoTotal(Gastos);
@@ -113,8 +105,7 @@ router.post('/ConsultandoGastosResumoAnual', async (req, res) => {
 
         res.render('carteira_view/consultaGastosAnual', {
             totaisCredi, resumoCredi, totais, anoSelect, resumo,
-            valorTotal, valorTotalPendente, valorTotalPendenteRecebimento, valorTotalEstimativa,
-            filtros,Origens,Contas,ListaCreditos,ListaGastos,liquidez
+            valorTotal,filtros,Origens,Contas,ListaCreditos,ListaGastos,liquidez
         });
     }
     catch (erro) {
@@ -133,14 +124,11 @@ router.get('/ConsultaGastos', async (req, res) => {
         wheres = []
 
         let Gastos = await Gasto.getAll();
-        let valorTotal = getCustoTotal(Gastos);
-        let valorTotalPendente = await getGastoTotalPendente();
-        let valorTotalPendenteRecebimento = await getCreditoTotalPendente();
-        let valorTotalEstimativa = (valorTotalPendenteRecebimento + parseFloat(global.user.saldo)) - valorTotalPendente
+        let valorTotal = LocalProc.getCustoTotal(Gastos);
         let Motivos = await MotivoGastos.getAll();
         let Contas = await ContaBancaria.getAll();
 
-        res.render('carteira_view/inicialGastos', { Gastos, valorTotal, Motivos, Contas, filtros, valorTotalPendente, valorTotalPendenteRecebimento, valorTotalEstimativa });
+        res.render('carteira_view/inicialGastos', { Gastos, valorTotal, Motivos, Contas, filtros });
     }
     catch (erro) {
         global.conectado = false;
@@ -203,11 +191,8 @@ router.post('/ClickGastos', async (req, res) => {
 
             //======================================
             Gastos = await Gasto.getAll_Filtros(Func.AnalisaFiltros(wheres));
-            let valorTotal = getCustoTotal(Gastos);
-            let valorTotalPendente = await getGastoTotalPendente();
-            let valorTotalPendenteRecebimento = await getCreditoTotalPendente();
-            let valorTotalEstimativa = (valorTotalPendenteRecebimento + parseFloat(global.user.saldo)) - valorTotalPendente
-            return res.render('carteira_view/inicialGastos', { Gastos, valorTotal, Motivos, Contas, filtros, valorTotalPendente, valorTotalPendenteRecebimento, valorTotalEstimativa });
+            let valorTotal = LocalProc.getCustoTotal(Gastos);
+            return res.render('carteira_view/inicialGastos', { Gastos, valorTotal, Motivos, Contas, filtros });
         }
 
         if(filtros.motivoGastos.descricao)
@@ -249,11 +234,8 @@ router.get('/ClickGastos:motivo', async (req, res) => {
 
         //======================================
         Gastos = await Gasto.getAll_Filtros(Func.AnalisaFiltros(wheres));
-        let valorTotal = getCustoTotal(Gastos);
-        let valorTotalPendente = await getGastoTotalPendente();
-        let valorTotalPendenteRecebimento = await getCreditoTotalPendente();
-        let valorTotalEstimativa = (valorTotalPendenteRecebimento + parseFloat(global.user.saldo)) - valorTotalPendente
-        return res.render('carteira_view/inicialGastos', { Gastos, valorTotal, Motivos, Contas, filtros, valorTotalPendente, valorTotalPendenteRecebimento, valorTotalEstimativa });
+        let valorTotal = LocalProc.getCustoTotal(Gastos);
+        return res.render('carteira_view/inicialGastos', { Gastos, valorTotal, Motivos, Contas, filtros });
 
     }
     catch (erro) {
@@ -471,14 +453,11 @@ router.get('/ConsultaCreditos', async (req, res) => {
         wheres = []
 
         let Creditos = await Credito.getAll();
-        let valorTotal = getCustoTotal(Creditos);
-        let valorTotalPendenteRecebimento = await getCreditoTotalPendente();
-        let valorTotalPendente = await getGastoTotalPendente();
-        let valorTotalEstimativa = (valorTotalPendenteRecebimento + parseFloat(global.user.saldo)) - valorTotalPendente
+        let valorTotal = LocalProc.getCustoTotal(Creditos);       
         let Origens = await Origem.getAll();
         let Contas = await ContaBancaria.getAll();
 
-        res.render('carteira_view/inicialCreditos', { Creditos, valorTotal, Origens, Contas, filtros, valorTotalPendente, valorTotalPendenteRecebimento, valorTotalEstimativa });
+        res.render('carteira_view/inicialCreditos', { Creditos, valorTotal, Origens, Contas, filtros });
     }
     catch (erro) {
         global.conectado = false;
@@ -536,12 +515,9 @@ router.post('/ClickCreditos', async (req, res) => {
 
             //======================================
             Creditos = await Credito.getAll_Filtros(Func.AnalisaFiltros(wheres));
-
-            let valorTotal = getCustoTotal(Creditos);
-            let valorTotalPendenteRecebimento = await getCreditoTotalPendente();
-            let valorTotalPendente = await getGastoTotalPendente();
-            let valorTotalEstimativa = (valorTotalPendenteRecebimento + parseFloat(global.user.saldo)) - valorTotalPendente
-            return res.render('carteira_view/inicialCreditos', { Creditos, valorTotal, Origens, Contas, filtros, valorTotalPendente, valorTotalPendenteRecebimento, valorTotalEstimativa });
+            let valorTotal = LocalProc.getCustoTotal(Creditos);
+          
+            return res.render('carteira_view/inicialCreditos', { Creditos, valorTotal, Origens, Contas, filtros });
         }
 
 
@@ -571,7 +547,6 @@ router.get('/ClickCreditos:motivo', async (req, res) => {
         let Contas = await ContaBancaria.getAll();
         wheres = []
 
-
         let motivo = req.params.motivo
         let id = await Origem.getID(motivo)
 
@@ -584,11 +559,9 @@ router.get('/ClickCreditos:motivo', async (req, res) => {
         //======================================
         Creditos = await Credito.getAll_Filtros(Func.AnalisaFiltros(wheres));
 
-        let valorTotal = getCustoTotal(Creditos);
-        let valorTotalPendenteRecebimento = await getCreditoTotalPendente();
-        let valorTotalPendente = await getGastoTotalPendente();
-        let valorTotalEstimativa = (valorTotalPendenteRecebimento + parseFloat(global.user.saldo)) - valorTotalPendente
-        return res.render('carteira_view/inicialCreditos', { Creditos, valorTotal, Origens, Contas, filtros, valorTotalPendente, valorTotalPendenteRecebimento, valorTotalEstimativa });
+        let valorTotal = LocalProc.getCustoTotal(Creditos);
+       
+        return res.render('carteira_view/inicialCreditos', { Creditos, valorTotal, Origens, Contas, filtros });
 
     }
     catch (erro) {
