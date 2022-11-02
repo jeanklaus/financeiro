@@ -58,11 +58,14 @@ router.get('/ConsultaGastosResumoAnual', async (req, res) => {
         let Creditos = await Credito.getResumoAno();
         
         let resumoCredi = await montarResumoAnualCredi(Creditos, anoSelect);
-        let totaisCredi = getTotalMesResumoAnual(resumoCredi, anoSelect);  
-       
+        let totaisCredi = getTotalMesResumoAnual(resumoCredi, anoSelect); 
+        
+        let liquido = await getValorLiquidoMes(anoSelect);
+    
         res.render('carteira_view/consultaGastosAnual', {
             totaisCredi, resumoCredi, totais, anoSelect, resumo,
-            valorTotal, valorTotalPendente, valorTotalPendenteRecebimento, valorTotalEstimativa,filtros,Origens,Contas,ListaCreditos,ListaGastos
+            valorTotal, valorTotalPendente, valorTotalPendenteRecebimento, 
+            valorTotalEstimativa,filtros,Origens,Contas,ListaCreditos,ListaGastos,liquido
        });
     }
     catch (erro) {
@@ -108,9 +111,12 @@ router.post('/ConsultandoGastosResumoAnual', async (req, res) => {
         let resumoCredi = await montarResumoAnualCredi(Creditos, anoSelect);
         let totaisCredi = getTotalMesResumoAnual(resumoCredi, anoSelect);
 
+        let liquido = await getValorLiquidoMes(anoSelect);
+
         res.render('carteira_view/consultaGastosAnual', {
             totaisCredi, resumoCredi, totais, anoSelect, resumo,
-            valorTotal, valorTotalPendente, valorTotalPendenteRecebimento, valorTotalEstimativa,filtros,Origens,Contas,ListaCreditos,ListaGastos
+            valorTotal, valorTotalPendente, valorTotalPendenteRecebimento, valorTotalEstimativa,
+            filtros,Origens,Contas,ListaCreditos,ListaGastos,liquido
         });
     }
     catch (erro) {
@@ -774,60 +780,28 @@ async function getCreditoTotalPendente(ano) {
 async function montarResumoAnual(gastos, anoSelect) {
     let lista = []
     let Motivos = await MotivoGastos.getAll();
-
+   
     for (const m of Motivos) {
         for (const g of gastos) {
             if (g.motivo == m.descricao && anoSelect == g.ano) {
                 if (verificaSeMotivoExisteLista(m.descricao, g.ano, lista)) {
                     let i = getIndexObjLista(m.descricao, g.ano, lista);
 
-                    switch (g.mesVencimento) {
-                        case 1: lista[i].janeiro = g.valor; break;
-                        case 2: lista[i].fevereiro = g.valor; break;
-                        case 3: lista[i].marco = g.valor; break;
-                        case 4: lista[i].abril = g.valor; break;
-                        case 5: lista[i].maio = g.valor; break;
-                        case 6: lista[i].junho = g.valor; break;
-                        case 7: lista[i].julho = g.valor; break;
-                        case 8: lista[i].agosto = g.valor; break;
-                        case 9: lista[i].setembro = g.valor; break;
-                        case 10: lista[i].outubro = g.valor; break;
-                        case 11: lista[i].novembro = g.valor; break;
-                        case 12: lista[i].dezembro = g.valor; break;
-                    }
+                    lista[i].mes[g.mes] = g.valor;
                 }
                 else {
                     let obj = {}
                     obj.motivo = m.descricao
                     obj.id = g.id
                     obj.ano = g.ano
-                    obj.janeiro = 0
-                    obj.fevereiro = 0
-                    obj.marco = 0
-                    obj.abril = 0
-                    obj.maio = 0
-                    obj.junho = 0
-                    obj.julho = 0
-                    obj.agosto = 0
-                    obj.setembro = 0
-                    obj.outubro = 0
-                    obj.novembro = 0
-                    obj.dezembro = 0
-
-                    switch (g.mesVencimento) {
-                        case 1: obj.janeiro = g.valor; break;
-                        case 2: obj.fevereiro = g.valor; break;
-                        case 3: obj.marco = g.valor; break;
-                        case 4: obj.abril = g.valor; break;
-                        case 5: obj.maio = g.valor; break;
-                        case 6: obj.junho = g.valor; break;
-                        case 7: obj.julho = g.valor; break;
-                        case 8: obj.agosto = g.valor; break;
-                        case 9: obj.setembro = g.valor; break;
-                        case 10: obj.outubro = g.valor; break;
-                        case 11: obj.novembro = g.valor; break;
-                        case 12: obj.dezembro = g.valor; break;
+                  
+                    obj.mes = []
+                    for(let i = 1; i <= 12;i++)
+                    {
+                        obj.mes[i] = 0
                     }
+
+                    obj.mes[g.mes] = g.valor;                   
 
                     lista.push(obj);
                 }
@@ -840,19 +814,13 @@ async function montarResumoAnual(gastos, anoSelect) {
             let obj = {}
             obj.motivo = m.descricao
             obj.id = await MotivoGastos.getID(m.descricao)
-            obj.ano = anoSelect
-            obj.janeiro = 0
-            obj.fevereiro = 0
-            obj.marco = 0
-            obj.abril = 0
-            obj.maio = 0
-            obj.junho = 0
-            obj.julho = 0
-            obj.agosto = 0
-            obj.setembro = 0
-            obj.outubro = 0
-            obj.novembro = 0
-            obj.dezembro = 0
+            obj.ano = anoSelect         
+            obj.mes = []
+
+            for(let i = 1; i <= 12;i++)
+            {
+                obj.mes[i] = 0
+            }            
             lista.push(obj);
         }
     }
@@ -870,54 +838,21 @@ async function montarResumoAnualCredi(creditos, anoSelect) {
                 if (verificaSeMotivoExisteLista(m.descricao, g.ano, lista)) {
                     let i = getIndexObjLista(m.descricao, g.ano, lista);
 
-                    switch (g.mes) {
-                        case 1: lista[i].janeiro = g.valor; break;
-                        case 2: lista[i].fevereiro = g.valor; break;
-                        case 3: lista[i].marco = g.valor; break;
-                        case 4: lista[i].abril = g.valor; break;
-                        case 5: lista[i].maio = g.valor; break;
-                        case 6: lista[i].junho = g.valor; break;
-                        case 7: lista[i].julho = g.valor; break;
-                        case 8: lista[i].agosto = g.valor; break;
-                        case 9: lista[i].setembro = g.valor; break;
-                        case 10: lista[i].outubro = g.valor; break;
-                        case 11: lista[i].novembro = g.valor; break;
-                        case 12: lista[i].dezembro = g.valor; break;
-                    }
+                    lista[i].mes[g.mes] = g.valor;
                 }
                 else {
                     let obj = {}
                     obj.motivo = m.descricao
                     obj.id = g.id
                     obj.ano = g.ano
-                    obj.janeiro = 0
-                    obj.fevereiro = 0
-                    obj.marco = 0
-                    obj.abril = 0
-                    obj.maio = 0
-                    obj.junho = 0
-                    obj.julho = 0
-                    obj.agosto = 0
-                    obj.setembro = 0
-                    obj.outubro = 0
-                    obj.novembro = 0
-                    obj.dezembro = 0
-
-                    switch (g.mes) {
-                        case 1: obj.janeiro = g.valor; break;
-                        case 2: obj.fevereiro = g.valor; break;
-                        case 3: obj.marco = g.valor; break;
-                        case 4: obj.abril = g.valor; break;
-                        case 5: obj.maio = g.valor; break;
-                        case 6: obj.junho = g.valor; break;
-                        case 7: obj.julho = g.valor; break;
-                        case 8: obj.agosto = g.valor; break;
-                        case 9: obj.setembro = g.valor; break;
-                        case 10: obj.outubro = g.valor; break;
-                        case 11: obj.novembro = g.valor; break;
-                        case 12: obj.dezembro = g.valor; break;
+                    
+                    obj.mes = []
+                    for(let i = 1; i <= 12;i++)
+                    {
+                        obj.mes[i] = 0
                     }
 
+                    obj.mes[g.mes] = g.valor;
                     lista.push(obj);
                 }
             }
@@ -930,44 +865,15 @@ async function montarResumoAnualCredi(creditos, anoSelect) {
             obj.motivo = m.descricao
             obj.id = await Origem.getID(m.descricao)
             obj.ano = anoSelect
-            obj.janeiro = 0
-            obj.fevereiro = 0
-            obj.marco = 0
-            obj.abril = 0
-            obj.maio = 0
-            obj.junho = 0
-            obj.julho = 0
-            obj.agosto = 0
-            obj.setembro = 0
-            obj.outubro = 0
-            obj.novembro = 0
-            obj.dezembro = 0
+            obj.mes = []
+
+            for(let i = 1; i <= 12;i++)
+            {
+                obj.mes[i] = 0
+            }
+           
             lista.push(obj);
         }
-    }
-
-    return lista;
-}
-
-function montarTotalPago(gastos, anoSelect) {
-    let lista = []
-
-    for(let i = 1; i <= 12;i++)
-    {
-        lista[i] = 0
-    }
-
-    for (const g of gastos) 
-    {
-        if (anoSelect == g.ano) 
-        {  
-            if(g.situacao != 3)
-            {
-                continue;
-            }
-
-            lista[g.mes] += parseFloat(g.valor)
-        }        
     }
 
     return lista;
@@ -976,36 +882,23 @@ function montarTotalPago(gastos, anoSelect) {
 function getTotalMesResumoAnual(lista, ano) {
 
     let totais = {}
-    totais.janeiro = 0
-    totais.fevereiro = 0
-    totais.marco = 0
-    totais.abril = 0
-    totais.maio = 0
-    totais.junho = 0
-    totais.julho = 0
-    totais.agosto = 0
-    totais.setembro = 0
-    totais.outubro = 0
-    totais.novembro = 0
-    totais.dezembro = 0
+    totais.mes = []
+   
+    for(let i = 1; i <= 12;i++)
+    {
+        totais.mes[i] = 0;
+    }
 
     for (const g of lista) {
         if (g.ano == ano) {
-            totais.janeiro += parseFloat(g.janeiro);
-            totais.fevereiro += parseFloat(g.fevereiro);
-            totais.marco += parseFloat(g.marco);
-            totais.abril += parseFloat(g.abril);
-            totais.maio += parseFloat(g.maio);
-            totais.junho += parseFloat(g.junho);
-            totais.julho += parseFloat(g.julho);
-            totais.agosto += parseFloat(g.agosto);
-            totais.setembro += parseFloat(g.setembro);
-            totais.outubro += parseFloat(g.outubro);
-            totais.novembro += parseFloat(g.novembro);
-            totais.dezembro += parseFloat(g.dezembro);
+
+            for(let i = 1; i <= 12;i++)
+            {
+                totais.mes[i] += parseFloat(g.mes[i]);
+            }
         }
     }
-
+    
     return totais;
 }
 
@@ -1037,6 +930,62 @@ function getIndexObjLista(motivo, ano, lista) {
 
         index++;
     }
+}
+
+async function getValorLiquidoMes(ano)
+{
+    let liquido = {}
+
+    let data = new Date()
+    let mesRef = DLL.getPedacoData(DLL.ConverterData(DLL.formataData(data)), 'MES');   
+    liquido.mesRef = parseInt(mesRef)
+
+    let saldo = parseFloat(global.user.saldo);
+
+    liquido.mes = []
+
+    for(let i = 1; i <= 12;i++)
+    {
+        liquido.mes[i] = 'FECHADO'
+    }
+
+    for(let i = (mesRef -2); i <= 12;i++)
+    {
+        let subTotal = (saldo + await getCreditoTotalPendenteMes(i,ano)) - await getGastoTotalPendenteMes(i,ano)   
+        saldo = subTotal;
+        liquido.mes[i] = saldo;
+    }
+  
+   return liquido
+}
+
+async function getGastoTotalPendenteMes(mes,ano) {
+    let Gastos = await Gasto.getAll();
+    let resultado = 0;
+   
+    for (const prod of Gastos) {  
+
+        if (prod.situacao != 'PAGO' && prod.ano == ano && prod.mes == mes) {
+          
+            resultado += parseFloat(prod.valor)
+        }
+    }
+
+    return resultado;
+}
+
+async function getCreditoTotalPendenteMes(mes,ano) {
+    let Creditos = await Credito.getAll();
+    let resultado = 0;
+
+    for (const prod of Creditos) {
+
+        if (prod.situacao != 'RECEBIDO' && prod.ano == ano && prod.mes == mes) {
+            resultado += parseFloat(prod.valor)
+        }
+    }
+
+    return resultado;
 }
 
 module.exports = router;

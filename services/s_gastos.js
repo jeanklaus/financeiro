@@ -64,11 +64,11 @@ async function getResumoAno(){
     const conn = await db.connect();  
     const values = [global.user.id]; 
 
-    let sql =  `SELECT m.id,SUM(g.valor) as valor,(SELECT MONTH(g.dt_vencimento)) as mesVencimento,(SELECT YEAR(g.dt_vencimento)) as ano,m.descricao as motivo,inOrcamentario,g.situacao
+    let sql =  `SELECT m.id,SUM(g.valor) as valor,(SELECT MONTH(g.dt_vencimento)) as mes,(SELECT YEAR(g.dt_vencimento)) as ano,m.descricao as motivo,inOrcamentario,g.situacao
     FROM Gastos as g
     INNER JOIN MotivoGastos as m ON m.id = g.motivo
     WHERE g.usuario = ?
-    GROUP BY motivo,mesVencimento`
+    GROUP BY motivo,mes`
     const [rows] = await conn.query(sql,values);
 
     let newrows = rows.map(registro => {        
@@ -78,7 +78,6 @@ async function getResumoAno(){
    
     return newrows; 
 }
-
 
 //GRAVAR
 async function Gravar(valor,dt_registro,dt_vencimento,formaPagamento,motivo,situacao,contaBancaria,inAnoTodo,inFatura)
@@ -273,8 +272,6 @@ async function Dell(id){
     const values = [id,global.user.id];
     await conn.query(sql, values);
 }
-
-
 
 module.exports = {getAll,getAll_Filtros,Gravar,getGastoID,Pagar,EditarValor,Consumir,
     DelOrcamento,GravarOrcamento,GravarParcelado,getResumoAno,Dell}

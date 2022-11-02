@@ -264,7 +264,7 @@ function setDadosJanelaCredito(obj) {
   let inputMesRegistroCredito =  document.getElementById("mesRegistroCredito");  
 
   let [id,motivo,mes,ano] = obj.value.split('|') 
-
+  
   inputTitulo.textContent = `${motivo} - ${mes}/${ano}`
   inputMotivo.value = `${id}|${motivo}` 
   inputData.value = `${ano}-${mes}-01`
