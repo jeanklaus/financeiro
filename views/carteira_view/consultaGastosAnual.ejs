@@ -68,6 +68,9 @@
                       </select>
                       <br>
                   
+                      <input placeholder="TAG(Opcional)" class="w3-input w3-border form-control me-2" type="text" onkeyup="this.value = this.value.toLowerCase();" name="tag" maxlength="10">
+                      <br>
+
                       <div id="orcamentodiv">
                         <input type="checkbox" name="orcamento" id="orcamento" onclick="checkName('orcamento',['parceladodiv','pagodiv','faturadiv'])"> Esse registro é para um ORÇAMENTO?
                       </div>
@@ -127,7 +130,17 @@
                                 <button onclick="setIdDell(this,'IdDellGasto')"  data-bs-toggle="modal" data-bs-target="#modalExcluirRegistroGasto" value="<%= g.id %>" class="w3-tiny w3-round btn-danger">X</button></td>         
                               <td hidden><%= g.motivo %></td>
                               <td hidden><%= g.mes %></td>
-                              <td><%= g.valor %></td> 
+
+                              <% if(g.tag){ %>
+                                <td onclick="setIdRegistroTag('<%= g.id %>','idRegistroTagDel','GASTO')" class="pointer" data-bs-toggle="modal" data-bs-target="#modalExcluirTag"><%= g.valor %>
+                                    <span class="w3-tag w3-tiny w3-black"><%= g.tag %></span>
+                                </td> 
+                                <% }else{ %>
+                                  <td onclick="setIdRegistroTag('<%= g.id %>','idRegistroTagAdd','GASTO')" class="pointer" data-bs-toggle="modal" data-bs-target="#modalAdicionarTag"><%= g.valor %></td> 
+                                <% } %>
+
+
+
                               <td><%= g.dt_vencimento %></td>
                     
                               <% if(g.situacao == 'PAGO') { %>
@@ -229,8 +242,11 @@
                           <option value="<%= c.id %>|<%= c.descricao %>"><%= c.descricao %></option>
                         <% }); %>
                       </select>
-                      <br>                  
-                  
+                      <br> 
+
+                      <input placeholder="TAG(Opcional)" class="w3-input w3-border form-control me-2" type="text" onkeyup="this.value = this.value.toLowerCase();" name="tag" maxlength="10">
+                      <br>
+
                       <div id="parceladodiv">
                         <input type="checkbox" name="parcelado" id="parcelado" onclick="checkName('parcelado',['fimAnodiv'])"> Esse valor é parcelado?
                         <br>
@@ -281,7 +297,15 @@
                                 <button onclick="setIdDell(this,'IdDell')" data-bs-toggle="modal" data-bs-target="#modalExcluirRegistroCredito" value="<%= c.id %>" class="w3-tiny w3-round btn-danger">X</button></td>
                             <td hidden><%= c.descricao %></td>
                             <td hidden><%= c.mes %></td>
-                            <td>$ <%= c.valor %></td>                             
+
+                            <% if(c.tag){ %>
+                            <td onclick="setIdRegistroTag('<%= c.id %>','idRegistroTagDel','CREDITO')" class="pointer" data-bs-toggle="modal" data-bs-target="#modalExcluirTag"><%= c.valor %>
+                                <span class="w3-tag w3-tiny w3-black"><%= c.tag %></span>
+                            </td> 
+                            <% }else{ %>
+                              <td onclick="setIdRegistroTag('<%= c.id %>','idRegistroTagAdd','CREDITO')" class="pointer" data-bs-toggle="modal" data-bs-target="#modalAdicionarTag"><%= c.valor %></td> 
+                            <% } %>
+
                             <td><%= c.dt_previsao %></td>
                             <% if(c.situacao == 'RECEBIDO') { %>
                               <td style="color:rgb(0, 255, 0);"><%= c.situacao %></td>           
@@ -642,6 +666,49 @@
     </div>
   </div>
 
+  <div class="modal" id="modalExcluirTag">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+
+        <form class="w3-container was-validated" action="/Carteira/ClickTag" method="post">          
+          <input id="idRegistroTagDel" class="form-control" type="text" name="id" style="width: auto;" hidden> 
+          <input id="tpRegistroDel" class="form-control" type="text" name="tp" style="width: auto;" hidden> 
+         
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-danger" name="DEL" value="true">Excluir Tag</button>
+          </div>
+
+        </form>   
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="modalAdicionarTag">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+
+        <form class="w3-container was-validated" action="/Carteira/ClickTag" method="post"> 
+    
+          <!-- Modal body -->
+          <div class="modal-body">
+            <div class="form-group">
+              <input id="idRegistroTagAdd" class="form-control" type="text" name="id" style="width: auto;" hidden> 
+              <input id="tpRegistroAdd" class="form-control" type="text" name="tp" style="width: auto;" hidden> 
+
+              <input class="form-control" type="text" name="descricao" style="width: auto;" maxlength="10" required>
+              <div class="valid-feedback">Valid.</div>
+              <div class="invalid-feedback">caracteres permitidos Max :10</div>                          
+            </div>
+          </div>  
+         
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-success" name="ADD" value="true">Adicionar Tag</button>
+          </div>
+
+        </form>   
+      </div>
+    </div>
+  </div>
 
  <!-- ==================================================================================================================== -->
 
@@ -842,3 +909,6 @@
 
 </body>
 </html>
+
+
+

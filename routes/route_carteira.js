@@ -9,6 +9,7 @@ const Func = require('../public/funcoes');
 const DLL = require('../public/DLL');
 const Fatura = require('../services/s_fatura')
 const LocalProc = require('../public/localProcCarteira');
+const Tag = require('../services/s_tag')
 
 const router = express.Router();
 router.use(bodyparser.urlencoded({ extended: false }));
@@ -275,6 +276,11 @@ router.post('/CofirmarRegistroGastos', async (req, res) => {
         let qtParcelas = 0;
         let inValorBruto = false;
         let inFatura = false;
+        let tag = null;
+       
+        if (req.body.tag) {
+          tag = req.body.tag.trim()
+        }
 
         if (!req.body.valor) {
             return res.render('feed', { erro: 'Informe o valor' })
@@ -328,18 +334,18 @@ router.post('/CofirmarRegistroGastos', async (req, res) => {
             }
 
             await Gasto.GravarParcelado(req.body.valor, dataRegistro, req.body.dtVencimento, req.body.formaPagamento,
-                req.body.motivoGastos, situacao, req.body.conta, qtParcelas, inValorBruto, inFatura)
+                req.body.motivoGastos, situacao, req.body.conta, qtParcelas, inValorBruto, inFatura,tag)
 
         }
         else if (req.body.orcamento)//ORCAMENTO
         {
             await Gasto.GravarOrcamento(req.body.valor, req.body.dtVencimento, req.body.formaPagamento,
-                req.body.motivoGastos, req.body.conta, inAnoTodo)
+                req.body.motivoGastos, req.body.conta, inAnoTodo,tag)
         }
         else//NORMAL
         {
             await Gasto.Gravar(req.body.valor, dataRegistro, req.body.dtVencimento, req.body.formaPagamento,
-            req.body.motivoGastos, situacao, req.body.conta, inAnoTodo, inFatura)
+            req.body.motivoGastos, situacao, req.body.conta, inAnoTodo, inFatura,tag)
         }
 
         return res.redirect('ConsultaGastosResumoAnual')
@@ -601,7 +607,12 @@ router.post('/CofirmarRegistroCreditos', async (req, res) => {
         let dataRecebimento = null;
         let qtParcelas = 0;
         let inValorBruto = false;
+        let tag = null;
        
+        if (req.body.tag) {
+          tag = req.body.tag.trim()
+        }
+
         if (!req.body.valor) {
             return res.render('feed', { erro: 'Informe o valor' })
         }
@@ -646,13 +657,13 @@ router.post('/CofirmarRegistroCreditos', async (req, res) => {
             }
 
             await Credito.GravarParcelado(req.body.valor, dataRecebimento, req.body.dtPrevisao,
-                req.body.origemCreditos, situacao, req.body.conta, qtParcelas, inValorBruto)
+                req.body.origemCreditos, situacao, req.body.conta, qtParcelas, inValorBruto,tag)
 
         }
         else//NORMAL
         {
             await Credito.Gravar(req.body.valor, dataRecebimento, req.body.dtPrevisao,
-                req.body.origemCreditos, situacao, req.body.conta, inAnoTodo)
+                req.body.origemCreditos, situacao, req.body.conta, inAnoTodo,tag)
         }
 
         return res.redirect('ConsultaGastosResumoAnual')
@@ -702,6 +713,29 @@ router.post('/ConfirmaEdicaoCredito', async (req, res) => {
     catch (erro) {
         global.conectado = false;
         res.render('feed', { erro })
+    }
+});
+
+//======================================================================== TAG ===============================================================
+router.post('/ClickTag', async (req, res) => {
+    try {
+
+        if (req.body.DEL) 
+        {
+          await Tag.Del(req.body.id,req.body.tp)       
+        }
+
+        if (req.body.ADD) 
+        {
+            await Tag.Add(req.body.id,req.body.descricao,req.body.tp)     
+        }
+        
+        return res.redirect('ConsultaGastosResumoAnual')
+        
+    }
+    catch (erro) {
+        global.conectado = false;
+        res.render('feed', { erro });
     }
 });
 

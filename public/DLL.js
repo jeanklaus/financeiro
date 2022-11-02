@@ -293,4 +293,14 @@ function setDadosJanelaGasto(obj) {
   inputMesRegistroGasto.onchange();
 }
 
+function setIdRegistroTag(idRegistro,campoId,tpRegistro) {   
+  let inputId =  document.getElementById(campoId);
+  let inputTpDel =  document.getElementById("tpRegistroDel");
+  let inputTpAdd =  document.getElementById("tpRegistroAdd");
+
+  inputId.value = idRegistro;
+  inputTpDel.value = tpRegistro;
+  inputTpAdd.value = tpRegistro;
+ }
+
 module.exports = { formataData, ConverterData,AnalisaFiltros,getPedacoData }
