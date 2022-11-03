@@ -727,9 +727,9 @@
   </div>
 
     <div style="background-color: rgb(72, 70, 70);" class="w3-bar w3-padding">
-      <form  action="/Carteira/ConsultandoGastosResumoAnual" method="POST"></form>
+      <form  action="/Carteira/ConsultandoGastosResumoAnual" method="POST">
         <input style="margin-left: 10px ;" id="data" name="ano" class="w3-bar-item w3-tiny form-control me-2" type="number" placeholder="YYYY" min="2022" max="2100" value="<%= anoSelect %>">
-        <button class="w3-bar-item w3-tiny w3-round btn btn-warning me-2" name="PESQUISAR" value="true">Atualizar</button>
+        <button class="w3-bar-item w3-tiny w3-round btn btn-warning me-2" type="submit" value="true">Atualizar</button>
         <a href="/ContaBancaria" class="w3-bar-item w3-tiny w3-round btn btn-primary me-2">Cadastrar Contas Bancarias</a>
         <a href="/Fatura" class="w3-bar-item w3-tiny w3-round btn btn-primary me-2">Consultar Faturas</a>
         <a href="/" class="w3-bar-item w3-tiny w3-round btn btn-danger me-2">Sair</a>
@@ -880,7 +880,7 @@
               value="<%= dado.motivo %>" class="w3-tiny w3-round  btn-danger">-</button> <b><%= dado.motivo %></b></td> 
 
               <% for(let i = 1; i <= 12;i++){ %>   
-                <% if(i > 10){ %>                     
+                <% if(i >= 10){ %>                     
                     <td><button onclick="setDadosJanelaGasto(this)" value="<%= dado.id %>|<%= dado.motivo %>|<%= i %>|<%= anoSelect %>" data-bs-toggle="modal" data-bs-target="#modalJanelaGasto" class="btn SemBorda cell"> <%= dado.mes[i] %></button></td>
                   <% }else{ %> 
                     <td><button onclick="setDadosJanelaGasto(this)" value="<%= dado.id %>|<%= dado.motivo %>|0<%= i %>|<%= anoSelect %>" data-bs-toggle="modal" data-bs-target="#modalJanelaGasto" class="btn SemBorda cell"> <%= dado.mes[i] %></button></td>
