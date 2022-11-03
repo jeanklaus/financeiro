@@ -7,27 +7,35 @@
   <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-  <link rel="stylesheet" href="/styles.css">  
+  <link rel="stylesheet" href="/styles.css"> 
+  <script src="/DLL.js"></script> 
 </head>
-<body>
 
-<div class="container mt-3">
-  <h2>Fatura</h2>
-  <hr>
-  <div class="btn-group">
-  <form action="/Fatura/Atualizar" method="post">
-      <a href="/Carteira/ConsultaGastosResumoAnual" class="btn btn-info">Inicio</a>
+<body onload="getValor('ValoSomaFatura','tblFatura',1)">
+
+<form action="/Fatura/Atualizar" class="was-validated" method="post">
+
+  <div class="w3-container">
+
+    <h1 class="w3-left">          
+        <input id="ValorTotal"  style="text-shadow:1px 1px 2px rgb(255, 255, 255);width: 250px;" class="w3-input"
+        type="text" value="Usuario:<%= global.user.nome %>" readonly>     
+    </h1>
+
+    <h1 class="w3-left">       
+      <input data-bs-toggle="modal" data-bs-target="#modalSaldo" id="ValorTotal"  style="text-shadow:1px 1px 2px rgb(96, 252, 0);width: 260px;" class="w3-input"
+      type="text" value="Saldo: $ <%= global.user.saldo %>" readonly>
+    </h1>
+
+    <br>
   </div>
-</div>
 
-<div class="container mt-3">
-  <nav class="navbar navbar-expand navbar-dark bg-dark">
-  <div class="container">
-  <div class="collapse navbar-collapse" id="mynavbar">
-    
-    <input class="form-control me-2" type="month" id="bdaymonth" name="mes" value="<%= dataInicial %>">
+  <div style="background-color: rgb(72, 70, 70);" class="w3-bar w3-padding">
 
-    <select class="form-control me-2" name="conta" style="width: auto;">
+    <a href="/Carteira/ConsultaGastosResumoAnual"  class="w3-bar-item w3-tiny w3-round btn btn-info">Inicio</a>
+    <input style="margin-left: 10px ;" class="w3-bar-item w3-tiny form-control me-2" type="month" id="bdaymonth" name="mes" value="<%= dataInicial %>" required>
+
+    <select class="w3-bar-item w3-tiny form-control me-2" name="conta" style="width: auto;" required>
       <% if(filtros.conta.id) { %>
         <option value="<%= filtros.conta.id %>|<%= filtros.conta.descricao %>" selected><%= filtros.conta.descricao %></option>
       <% }else { %>
@@ -40,40 +48,43 @@
         <% }); %>
     </select>
 
-    <button class="btn btn-primary me-2" name="ATUALIZAR" value="true">Atualizar</button> 
-    <button class="btn btn-success me-2" name="PAGAR" value="true">Pagar Fatura</button>
+
+    <button class="w3-bar-item w3-tiny w3-round btn btn-warning me-2" name="ATUALIZAR" value="true">Atualizar</button> 
+    <button class="w3-bar-item w3-tiny w3-round btn btn-success me-2" name="PAGAR" value="true">Pagar Fatura</button>
+
   </div>
-  </div>
-  </nav>
-</div>
 
 
-<div class="container mt-3">
-  <table class="table table-dark table-striped table-sm" style="width: auto;">
-    <thead>
-      <tr>  
-        <th>Motivo</th>  
-        <th>Valor</th> 
-        <th>Conta Bancaria</th>    
-        <th>Mes</th>
-        <th>Ano</th>   
-        <th></th> 
-      </tr>
-    </thead>
-    <tbody>          
-      <% GastosFatura.forEach(g => { %>
-      <tr>
-        <td><%= g.motivo %></td>  
-        <td style="color:red ;">$ <%= g.valor %></td>
-        <td><%= g.conta %></td>
-        <td><%= g.mes %></td>
-        <td><%= g.ano %></td>
-        <td><button name="DEL" value="<%= g.id %>" class="btn-sm form-control btn-danger">X</button></td>
-      </tr>  
-      <% }); %>             
-    </tbody>
-  </table>
-</div>
+  
+
+  <div class="w3-container mt-3">
+    <p id="ValoSomaFatura"></p>
+    
+    <table class="w3-small w3-card table w3-border w3-table table-hover TabelaDinamica table-striped" style="width: auto;" id="tblFatura">
+      <thead>
+        <tr>  
+          <th>Motivo</th>  
+          <th>Valor</th> 
+          <th>Conta Bancaria</th>    
+          <th>Mes</th>
+          <th>Ano</th>   
+          <th></th> 
+        </tr>
+      </thead>
+      <tbody>          
+        <% GastosFatura.forEach(g => { %>
+        <tr>
+          <td><%= g.motivo %></td>  
+          <td style="color:red ;"><%= g.valor %></td>
+          <td><%= g.conta %></td>
+          <td><%= g.mes %></td>
+          <td><%= g.ano %></td>
+          <td><button name="DEL" value="<%= g.id %>" class="w3-tiny w3-round btn-danger">X</button></td>
+        </tr>  
+        <% }); %>             
+      </tbody>
+    </table>
+  </div>
 
 </form>
 </body>
