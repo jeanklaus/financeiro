@@ -726,16 +726,16 @@
     <br>
   </div>
 
-<form  action="/Carteira/ConsultandoGastosResumoAnual" method="POST">
-
     <div style="background-color: rgb(72, 70, 70);" class="w3-bar w3-padding">
-      <input style="margin-left: 10px ;" id="data" name="ano" class="w3-bar-item w3-tiny form-control me-2" type="number" placeholder="YYYY" min="2022" max="2100" value="<%= anoSelect %>">
-      <button class="w3-bar-item w3-tiny w3-round btn btn-warning me-2" name="PESQUISAR" value="true">Atualizar</button>
-      <a href="/ContaBancaria" class="w3-bar-item w3-tiny w3-round btn btn-primary me-2">Cadastrar Contas Bancarias</a>
-      <a href="/Fatura" class="w3-bar-item w3-tiny w3-round btn btn-primary me-2">Consultar Faturas</a>
-      <a href="/" class="w3-bar-item w3-tiny w3-round btn btn-danger me-2">Sair</a>
+      <form  action="/Carteira/ConsultandoGastosResumoAnual" method="POST"></form>
+        <input style="margin-left: 10px ;" id="data" name="ano" class="w3-bar-item w3-tiny form-control me-2" type="number" placeholder="YYYY" min="2022" max="2100" value="<%= anoSelect %>">
+        <button class="w3-bar-item w3-tiny w3-round btn btn-warning me-2" name="PESQUISAR" value="true">Atualizar</button>
+        <a href="/ContaBancaria" class="w3-bar-item w3-tiny w3-round btn btn-primary me-2">Cadastrar Contas Bancarias</a>
+        <a href="/Fatura" class="w3-bar-item w3-tiny w3-round btn btn-primary me-2">Consultar Faturas</a>
+        <a href="/" class="w3-bar-item w3-tiny w3-round btn btn-danger me-2">Sair</a>
+    </form>
     </div>
-</form>
+
 
 
   <div class="w3-container w3-left">
