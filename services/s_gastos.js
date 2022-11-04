@@ -4,6 +4,11 @@ const Credito = require('../services/s_creditos')
 const ContaB = require('../services/s_contaBancaria')
 const MotivosGastos = require('../services/s_motivoGastos')
 
+//SITUAÇÃO 
+//[1]= PENDENTE
+//[2]=ATRASADO
+//[3]=PAGO
+//[4]=ORCAMENTO
 
 let SELECT_GERAL = `SELECT g.id,g.valor,g.dt_registro,g.dt_vencimento,formaPagamento,m.descricao as motivo,s.descricao as situacao,
 c.descricao as conta,inOrcamentario,parcela,inFatura,(SELECT YEAR(g.dt_vencimento)) as ano ,(SELECT MONTH(g.dt_vencimento)) as mes,tag
@@ -222,17 +227,59 @@ async function Pagar(id,valor){
 }
 
 //EDITAR O VALOR DO GASTO
-async function EditarValor(id,valor){
-
+async function EditarValor(id,valorNew)
+{
     const conn = await db.connect();
+    let gasto = await getGasto(id);
+   
+    let saldoAtual =  parseFloat(global.user.saldo)
+    let saldoOriginal = parseFloat(gasto.valor).toFixed(2)
+    let diferença = 0
 
-    const sql =  `  UPDATE Gastos 
-                    SET valor = ?
-                    WHERE id = ?
-                    AND usuario = ?`;
+    if(gasto.situacao == 3 && valorNew != saldoOriginal)
+    {
+        if(valorNew > saldoOriginal)//TIRAR
+        {
+            diferença =  parseFloat(valorNew) - saldoOriginal
+            saldoAtual -= diferença;
+        }
 
-    const values = [valor,id,global.user.id];   
-    await conn.query(sql, values);
+        if(valorNew < saldoOriginal)//SOMAR
+        {
+            diferença = saldoOriginal - parseFloat(valorNew) 
+            saldoAtual += diferença;
+        }
+
+        let sql =  `UPDATE Usuario 
+                    SET saldo = ?
+                    WHERE id = ?`;
+
+        let values = [saldoAtual,global.user.id];
+        await conn.query(sql, values);
+
+        sql =  `  UPDATE Gastos 
+        SET valor = ?
+        WHERE id = ?
+        AND usuario = ?`;
+
+        values = [valorNew,id,global.user.id];   
+        await conn.query(sql, values);
+    }
+
+    global.user.saldo =  parseFloat(saldoAtual).toFixed(2)
+}
+
+//GET GASTO
+async function getGasto(id){   
+    const conn = await db.connect();  
+    const values = [global.user.id]; 
+
+    let sql =  `SELECT * FROM Gastos 
+    WHERE usuario = ${global.user.id}
+    AND id = ${id}`
+
+    const [rows] = await conn.query(sql,values);   
+    return rows[0]; 
 }
 
 //CONSUMIR ORCAMENTO

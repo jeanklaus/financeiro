@@ -217,17 +217,59 @@ async function Receber(id,valor){
 }
 
 //EDITAR O VALOR DO CREDITO
-async function EditarValor(id,valor){
+async function EditarValor(id,valorNew){
 
     const conn = await db.connect();
+    let credito = await getCredito(id)
+   
+    let saldoAtual = parseFloat(global.user.saldo)   
+    let saldoOriginal = parseFloat(credito.valor).toFixed(2)
+    let diferença = 0
+    
+    if(credito.situacao == 2 && valorNew != saldoOriginal)
+    {
+        if(valorNew > saldoOriginal)//TIRAR
+        {
+            diferença = parseFloat(valorNew) - saldoOriginal
+            saldoAtual += diferença;
+        }
 
-    const sql =  `  UPDATE Credito 
+        if(valorNew < saldoOriginal)//SOMAR
+        {
+            diferença = saldoOriginal - parseFloat(valorNew)
+            saldoAtual -= diferença;
+        }
+
+        let sql =  `UPDATE Usuario 
+                    SET saldo = ?
+                    WHERE id = ?`;
+
+        let values = [saldoAtual,global.user.id];
+        await conn.query(sql, values);
+
+        sql =  `  UPDATE Credito 
                     SET valor = ?
                     WHERE id = ?
                     AND usuario = ?`;
 
-    const values = [valor,id,global.user.id];   
-    await conn.query(sql, values);
+     values = [valorNew,id,global.user.id];   
+     await conn.query(sql, values);
+    }
+
+    global.user.saldo = parseFloat(saldoAtual).toFixed(2)
+}
+
+//GET CREDITO
+async function getCredito(id){   
+    const conn = await db.connect();   
+
+    let sql =  `SELECT * FROM Credito 
+    WHERE usuario = ${global.user.id}
+    AND id = ${id}`
+
+    const [rows] = await conn.query(sql);
+   
+    return rows[0];
 }
 
 //SELECT RESUMO DO ANO
