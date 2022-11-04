@@ -246,15 +246,15 @@ async function EditarValor(id,valorNew){
 
         let values = [saldoAtual,global.user.id];
         await conn.query(sql, values);
-
-        sql =  `  UPDATE Credito 
-                    SET valor = ?
-                    WHERE id = ?
-                    AND usuario = ?`;
-
-     values = [valorNew,id,global.user.id];   
-     await conn.query(sql, values);
     }
+
+    let sql =  `  UPDATE Credito 
+    SET valor = ?
+    WHERE id = ?
+    AND usuario = ?`;
+
+    let values = [valorNew,id,global.user.id];   
+    await conn.query(sql, values);
 
     global.user.saldo = parseFloat(saldoAtual).toFixed(2)
 }
