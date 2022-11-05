@@ -3,6 +3,7 @@ const Credito = require('../services/s_creditos')
 const Origem = require('../services/s_origemCredito')
 const MotivoGastos = require('../services/s_motivoGastos')
 const DLL = require('../public/DLL');
+const db = require('../db');
 
 function getCustoTotal(lista) {
     let resultado = 0;
@@ -201,7 +202,8 @@ async function getValorLiquidoMes(ano,creditos,gastos)
 {
     let liquidez = {}
 
-    let saldoInicial = 0;
+   let saldoInicial = await getSaldoFimAno(ano -1);
+   
     liquidez.inicial = []
     liquidez.liquido = []
     liquidez.final = []
@@ -216,7 +218,6 @@ async function getValorLiquidoMes(ano,creditos,gastos)
         liquidez.final[i] = liquido + (saldoInicial);
         saldoInicial = liquidez.final[i];
     }
- 
 
    return liquidez
 }
@@ -247,6 +248,28 @@ async function getCreditoTotalMes(mes,ano,Creditos) {
 
     return resultado;
 }
+
+//SELECT 
+async function getSaldoFimAno(ano){   
+
+    const conn = await db.connect();  
+  
+
+    let sql =  `SELECT (SELECT SUM(valor) from Credito where Usuario = ${global.user.id} and (SELECT YEAR(dt_previsao)) = '${ano}' GROUP BY (SELECT YEAR(dt_previsao))) - 
+    (SELECT SUM(valor) from Gastos where Usuario = ${global.user.id} and (SELECT YEAR(dt_vencimento)) = '${ano}' GROUP BY (SELECT YEAR(dt_vencimento)))  as saldoFinal`
+
+    const [rows] = await conn.query(sql);
+
+    if(rows[0].saldoFinal)
+    {
+        return  parseFloat(rows[0].saldoFinal)
+    }
+    else
+    {
+        return 0
+    }
+}
+
 
 module.exports = {getCustoTotal,getGastoTotalPendente,getCreditoTotalPendente,montarResumoAnual,montarResumoAnualCredi,
     getTotalMesResumoAnual,getValorLiquidoMes}

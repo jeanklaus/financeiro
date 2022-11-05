@@ -80,8 +80,7 @@ async function Gravar(valor,dt_recebimento,dt_previsao,origem,situacao,contaBanc
             {
                 data = `${ano}-0${i}-${dia}`         
             }
-           
-            console.log(data)
+          
             const values = [global.user.id,valor,null,data,origem,1,contaBancaria,tag]; 
            await conn.query(sql, values);
         }

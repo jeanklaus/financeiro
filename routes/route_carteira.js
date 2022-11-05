@@ -120,6 +120,52 @@ router.post('/ConsultandoGastosResumoAnual', async (req, res) => {
     }
 });
 
+router.get('/ConsultandoGastosResumoAnual:ano', async (req, res) => {
+    try {
+
+        filtros = {}
+        filtros.motivoGastos = {}
+        filtros.conta = {}
+        filtros.Situacao = {}
+        filtros.origemCredito = {}
+
+        let Origens = await Origem.getAll();
+        let Contas = await ContaBancaria.getAll();
+        let ListaCreditos = await Credito.getAll();
+        let ListaGastos = await Gasto.getAll();  
+
+        let data = new Date()
+        let anoSelect = data.getFullYear();
+
+        if (req.params.ano) {
+            anoSelect = req.params.ano;
+        }
+
+        //GASTOS
+        let Gastos = await Gasto.getResumoAno();
+        let valorTotal = LocalProc.getCustoTotal(Gastos);
+        let resumo = await LocalProc.montarResumoAnual(Gastos, anoSelect);
+        let totais = LocalProc.getTotalMesResumoAnual(resumo, anoSelect);
+
+        //CREDITOS
+        let Creditos = await Credito.getResumoAno();
+
+        let resumoCredi = await LocalProc.montarResumoAnualCredi(Creditos, anoSelect);
+        let totaisCredi = LocalProc.getTotalMesResumoAnual(resumoCredi, anoSelect);
+
+        let liquidez = await LocalProc.getValorLiquidoMes(anoSelect,ListaCreditos,ListaGastos);
+
+        res.render('carteira_view/consultaGastosAnual', {
+            totaisCredi, resumoCredi, totais, anoSelect, resumo,
+            valorTotal,filtros,Origens,Contas,ListaCreditos,ListaGastos,liquidez
+        });
+    }
+    catch (erro) {
+        global.conectado = false;
+        res.render('feed', { erro })
+    }
+});
+
 //=============================================================== GASTOS =========================================================================
 router.get('/ConsultaGastos', async (req, res) => {
     try {
@@ -353,7 +399,8 @@ router.post('/CofirmarRegistroGastos', async (req, res) => {
             req.body.motivoGastos, situacao, req.body.conta, inAnoTodo, inFatura,tag)
         }
 
-        return res.redirect('ConsultaGastosResumoAnual')
+        let ano =   DLL.getPedacoData(req.body.dtVencimento,"ANO");
+        return res.redirect(`ConsultandoGastosResumoAnual${ano}`)
     }
     catch (erro) {
         global.conectado = false;
@@ -672,7 +719,8 @@ router.post('/CofirmarRegistroCreditos', async (req, res) => {
                 req.body.origemCreditos, situacao, req.body.conta, inAnoTodo,tag)
         }
 
-        return res.redirect('ConsultaGastosResumoAnual')
+        let ano =   DLL.getPedacoData(req.body.dtPrevisao,"ANO");
+        return res.redirect(`ConsultandoGastosResumoAnual${ano}`)
 
     }
     catch (erro) {
