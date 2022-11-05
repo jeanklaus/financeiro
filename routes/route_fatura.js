@@ -4,6 +4,7 @@ const Fatura = require('../services/s_fatura')
 const MotivoGastos = require('../services/s_motivoGastos')
 const ContaBancaria = require('../services/s_contaBancaria')
 const DLL = require('../public/DLL');
+const Func = require('../public/funcoes');
 
 const router = express.Router();
 router.use(bodyparser.urlencoded({ extended: false }));
@@ -19,14 +20,11 @@ router.get('/',async (req,res) => {
 
         let Motivos = await MotivoGastos.getAll();
         let Contas = await ContaBancaria.getAll();
-        let GastosFatura = []
+        let dataSelect = ""
 
-        let data = new Date();
-        let mes = data.getMonth() + 1
-        let ano = data.getFullYear()
-        let dataInicial = `${ano}-${mes}`
+        let Faturas = await Fatura.getAll();
 
-        res.render('fatura_view/inicial',{dataInicial,GastosFatura,Motivos,Contas,filtros});
+        res.render('fatura_view/inicial',{dataSelect,Faturas,Motivos,Contas,filtros,itemsFatura : []});
     }
     catch(erro)
     {
@@ -45,44 +43,56 @@ router.post('/Atualizar',async (req,res) => {
 
         let Motivos = await MotivoGastos.getAll();
         let Contas = await ContaBancaria.getAll();
-
-        let data = new Date();
-        let mes = data.getMonth() + 1
-        let ano = data.getFullYear()
-        let dataInicial = `${ano}-${mes}`
+        let dataSelect = ""
+        let itemsFatura = []
 
         if(req.body.mes)
         {
-            dataInicial = req.body.mes
+            dataSelect = req.body.mes
+            let [ano,mes] = dataSelect.split('-')            
+            wheres.push(`mes = ${mes}`);
+            wheres.push(`ano = ${ano}`);
         }
 
-        if(!req.body.conta)
+        if(req.body.DETALHES)
         {
-            return res.render('feed', { erro: 'Informe a conta' })
+           let [id,mes,ano] = req.body.DETALHES.split('|')
+           itemsFatura = await Fatura.getItemsFatura(id);
+
+            if(mes < 10)
+            {
+                mes = `0${mes}`
+            }
+
+           dataSelect = `${ano}-${mes}`
+           wheres.push(`mes = ${mes}`);
+           wheres.push(`ano = ${ano}`);
         }
-        else
-        {
+
+        if (req.body.conta) {
             let [idconta,descricao] = req.body.conta.split('|')
             filtros.conta.id = idconta;
             filtros.conta.descricao = descricao;
+            wheres.push(`conta = ${idconta}`);
         }
-       
-        let GastosFatura = await Fatura.get(filtros.conta.id,dataInicial) 
       
-        if(req.body.DEL)
+        if(req.body.DEL_ITEM)
         {
-            let id = req.body.DEL;
-            await Fatura.Remover(id);
+            let [fatura,gasto] = req.body.DEL_ITEM.split('|')
+            await Fatura.Remover(fatura,gasto);
             return res.redirect('/Fatura')
         }
 
         if(req.body.PAGAR)
         {
-            await Fatura.Pagar(GastosFatura);
-            return res.render('fatura_view/feed',{status:'success',txt:'Fatura Paga!'});
+            let fatura =  req.body.PAGAR
+            await Fatura.Pagar(fatura);
+            return res.render('fatura_view/feed',{status:'success',txt:`Fatura Paga!`});
         }
+    
+        let Faturas = await Fatura.getAllFiltros(Func.AnalisaFiltros(wheres)) 
 
-        return res.render('fatura_view/inicial',{dataInicial,GastosFatura,Motivos,Contas,filtros});
+        return res.render('fatura_view/inicial',{dataSelect,Faturas,Motivos,Contas,filtros,itemsFatura});
     }
     catch(erro)
     {

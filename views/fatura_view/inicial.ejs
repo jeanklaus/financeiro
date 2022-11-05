@@ -10,10 +10,42 @@
   <link rel="stylesheet" href="/styles.css"> 
   <script src="/DLL.js"></script> 
 </head>
+<style>
+  * {
+    box-sizing: border-box;
+  }
+  
+  .row {
+    display: flex;
+    margin-left:-5px;
+    margin-right:-5px;
+  }
+  
+  .column {
+    flex: 50%;
+    padding: 5px;
+  }
+  
+  table {
+    border-collapse: collapse;
+    border-spacing: 0;
+    width: 100%;
+    border: 1px solid #ddd;
+  }
+  
+  th, td {
+    text-align: left;
+    padding: 16px;
+  }
+  
+  tr:nth-child(even) {
+    background-color: #f2f2f2;
+  }
+</style>
 
-<body onload="getValor('ValoSomaFatura','tblFatura',1)">
+<body onload="getValor('ValoSomaFatura','tblItemFatura',1)">
 
-<form action="/Fatura/Atualizar" class="was-validated" method="post">
+<form action="/Fatura/Atualizar" method="post">
 
   <div class="w3-container">
 
@@ -33,9 +65,9 @@
   <div style="background-color: rgb(72, 70, 70);" class="w3-bar w3-padding">
 
     <a href="/Carteira/ConsultaGastosResumoAnual"  class="w3-bar-item w3-tiny w3-round btn btn-info">Inicio</a>
-    <input style="margin-left: 10px ;" class="w3-bar-item w3-tiny form-control me-2" type="month" id="bdaymonth" name="mes" value="<%= dataInicial %>" required>
+    <input style="margin-left: 10px ;" class="w3-bar-item w3-tiny form-control me-2" type="month" id="bdaymonth" name="mes" value="<%= dataSelect %>">
 
-    <select class="w3-bar-item w3-tiny form-control me-2" name="conta" style="width: auto;" required>
+    <select class="w3-bar-item w3-tiny form-control me-2" name="conta" style="width: auto;">
       <% if(filtros.conta.id) { %>
         <option value="<%= filtros.conta.id %>|<%= filtros.conta.descricao %>" selected><%= filtros.conta.descricao %></option>
       <% }else { %>
@@ -49,8 +81,8 @@
     </select>
 
 
-    <button class="w3-bar-item w3-tiny w3-round btn btn-warning me-2" name="ATUALIZAR" value="true">Atualizar</button> 
-    <button class="w3-bar-item w3-tiny w3-round btn btn-success me-2" name="PAGAR" value="true">Pagar Fatura</button>
+    <button class="w3-bar-item w3-tiny w3-round btn btn-primary me-2" name="ATUALIZAR" value="true">Pesquisar</button> 
+  
 
   </div>
 
@@ -58,32 +90,93 @@
   
 
   <div class="w3-container mt-3">
-    <p id="ValoSomaFatura"></p>
-    
-    <table class="w3-small w3-card table w3-border w3-table table-hover TabelaDinamica table-striped" style="width: auto;" id="tblFatura">
-      <thead>
-        <tr>  
-          <th>Motivo</th>  
-          <th>Valor</th> 
-          <th>Conta Bancaria</th>    
-          <th>Mes</th>
-          <th>Ano</th>   
-          <th></th> 
-        </tr>
-      </thead>
-      <tbody>          
-        <% GastosFatura.forEach(g => { %>
-        <tr>
-          <td><%= g.motivo %></td>  
-          <td style="color:red ;"><%= g.valor %></td>
-          <td><%= g.conta %></td>
-          <td><%= g.mes %></td>
-          <td><%= g.ano %></td>
-          <td><button name="DEL" value="<%= g.id %>" class="w3-tiny w3-round btn-danger">X</button></td>
-        </tr>  
-        <% }); %>             
-      </tbody>
-    </table>
+
+    <div class="row">
+
+      <div class="column">
+        <table class="w3-small w3-card table w3-border w3-table table-hover table-striped" style="width: auto ;">
+          <tr>
+            <th>Conta</th>
+            <th>Periodo</th>
+            <th>Situação</th>
+            <th>Dt Pagamento</th>            
+            <th></th>
+          </tr>
+          <% Faturas.forEach(dado => { %>
+            <tr> 
+              <td><%= dado.conta %></td>
+              <td><%= dado.mes %>/<%= dado.ano %></td>
+
+              <% if(dado.Situacao != 'PAGO'){ %>
+                 <td style="background-color: rgb(255, 0, 0);"><b><%= dado.Situacao %></b></td>
+                <% } else { %>
+                  <td style="background-color: rgb(0, 255, 0);"><b><%= dado.Situacao %></b></td>
+                <% } %>
+
+              <td><%= dado.dt_pagamento %></td>
+
+              <% if(dado.Situacao != 'PAGO'){ %>
+              <td>
+                <button name="PAGAR" value="<%= dado.id %>" class="w3-tiny w3-round btn btn-success">Pagar</button>
+                <button name="DETALHES" value="<%= dado.id %>|<%= dado.mes %>|<%= dado.ano %>" class="w3-tiny w3-round btn btn-primary">>></button>
+              </td>
+              <% } else { %>
+                <td>
+                  <div class="w3-tiny w3-round btn btn-secondary">Pagar</div>
+                  <button name="DETALHES" value="<%= dado.id %>|<%= dado.mes %>|<%= dado.ano %>" class="w3-tiny w3-round btn btn-primary">>></button>
+                </td>
+              <% } %>
+            </tr>
+          <% }); %>
+        </table>
+      </div>
+
+     
+      <% if(itemsFatura.length > 0) { %>
+        <div class="column">
+      <% } else { %>
+        <div class="column" hidden>
+      <% }  %>
+      <p id="ValoSomaFatura"></p>
+        <table class="w3-small w3-card table w3-border w3-table table-hover TabelaDinamica table-striped" style="width: auto;" id="tblItemFatura" style="width: auto ;">
+          <thead>
+            <tr>  
+              <th>Motivo</th>  
+              <th>Valor</th> 
+              <th>Situação</th>
+              <th></th>
+            </tr>
+            <% itemsFatura.forEach(dado => { %>
+            <tr>
+                <td><%= dado.motivo %></td>
+                <td><%= dado.valor %></td>
+
+                <% if(dado.situacao != 'PAGO'){ %>
+                  <td style="background-color: rgb(255, 0, 0);"><b><%= dado.situacao %></b></td> 
+                  <td>
+                    <button name="DEL_ITEM" value="<%= dado.fatura %>|<%= dado.gasto %>" class="w3-tiny w3-round btn btn-danger">X</button>
+                  </td>
+                  <% } else { %>
+                    <td style="background-color: rgb(0, 255, 0);"><b><%= dado.situacao %></b></td> 
+                    <td>
+                      <div class="w3-tiny w3-round btn btn-secondary">X</div>
+                    </td>
+                  <% } %>
+
+               
+            </tr>
+            <% }); %>
+          </thead>
+          <tbody>          
+           
+                       
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+
+  
   </div>
 
 </form>

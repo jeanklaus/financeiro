@@ -165,7 +165,7 @@
                                   <td>
                                     <div class="btn-group">
                                       <button name="PAGAR" value="<%= g.id %>" class="w3-tiny w3-round btn-primary">Pagar</button>
-                                      <button name="ADD_FATURA" value="<%= g.id %>" class="w3-tiny w3-round btn-info">Fatura</button>
+                                      <button name="ADD_FATURA" value="<%= g.id %>|<%= g.mes %>|<%= g.ano %>|<%= g.conta %>" class="w3-tiny w3-round btn-info">Fatura</button>
                                     </div>
                                   </td>                  
                                 <% } else if(g.inFatura) { %>
@@ -736,8 +736,6 @@
         <a href="/" class="w3-bar-item w3-tiny w3-round btn btn-danger me-2">Sair</a>
     </form>
     </div>
-
-
 
   <div class="w3-container w3-left">
  

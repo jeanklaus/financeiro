@@ -1,36 +1,104 @@
 const db = require('../db');
 const DLL = require('../public/DLL');
 const Gastos = require('../services/s_gastos')
+const ContaBancaria = require('../services/s_contaBancaria')
 
-let SELECT_GERAL = `SELECT g.id,g.valor,m.descricao as motivo,c.descricao as conta,(SELECT MONTH(g.dt_vencimento)) as mes,(SELECT YEAR(g.dt_vencimento)) as ano
+let SELECT_GERAL = `SELECT f.id,c.descricao as conta,mes,ano,inPaga as Situacao,dt_pagamento
 FROM Fatura as f
-INNER JOIN Gastos as g ON f.idGasto = g.id
-INNER JOIN MotivoGastos as m ON m.id = g.motivo
-INNER JOIN ContaBancaria as c ON c.id = g.contaBancaria`;
+INNER JOIN ContaBancaria as c ON c.id = f.conta`;
+
+async function getAll(){ 
+    const conn = await db.connect();  
+    const values = [global.user.id]; 
+
+    let sql =  `${SELECT_GERAL}
+    WHERE f.usuario = ?
+    ORDER BY f.ano,f.mes`
+    const [rows] = await conn.query(sql,values);
+   
+    let newrows = rows.map(registro => {
+        if(registro.dt_pagamento)
+        {
+            registro.dt_pagamento = DLL.formataData(registro.dt_pagamento);
+        } 
+
+        if(registro.Situacao == 0)
+        {
+            registro.Situacao = "PENDENTE"
+        } 
+        else if(registro.Situacao == 1)
+        {
+            registro.Situacao = "PAGO"
+        } 
+      
+        return registro;
+    });
+   
+    return newrows; 
+}
 
 //SELECT 
 async function get(conta,data){ 
 
+    let [ano,mes] = data.split('-')
+
     const conn = await db.connect();  
-    const values = [global.user.id,conta]; 
+    const values = [global.user.id,conta,mes,ano]; 
 
     let sql =  `${SELECT_GERAL}
-    WHERE g.usuario = ?
-    AND g.inFatura = 1   
-    AND g.situacao != 3
+    WHERE f.usuario = ?
     AND c.id = ? 
-    AND g.dt_vencimento >= '${data}-01'
-    AND g.dt_vencimento <= '${data}-31'
-    ORDER BY g.dt_vencimento`
+    AND f.mes = ?
+    AND f.ano = ?
+    ORDER BY f.ano,f.mes`
     const [rows] = await conn.query(sql,values);
    
     let newrows = rows.map(registro => {
-        if(registro.dt_registro)
+        if(registro.dt_pagamento)
         {
-            registro.dt_registro = DLL.formataData(registro.dt_registro);
-        }      
-        registro.dt_vencimento = DLL.formataData(registro.dt_vencimento);
-        registro.valor = parseFloat(registro.valor).toFixed(2);
+            registro.dt_pagamento = DLL.formataData(registro.dt_pagamento);
+        } 
+
+        if(registro.Situacao == 0)
+        {
+            registro.Situacao = "PENDENTE"
+        } 
+        else if(registro.Situacao == 1)
+        {
+            registro.Situacao = "PAGO"
+        } 
+      
+        return registro;
+    });
+   
+    return newrows; 
+}
+
+//SELECT 
+async function getAllFiltros(filtros){ 
+
+    const conn = await db.connect(); 
+
+    let sql =  `${SELECT_GERAL}
+    WHERE ${filtros}
+    ORDER BY f.ano,f.mes`
+    const [rows] = await conn.query(sql);
+   
+    let newrows = rows.map(registro => {
+        if(registro.dt_pagamento)
+        {
+            registro.dt_pagamento = DLL.formataData(registro.dt_pagamento);
+        } 
+
+        if(registro.Situacao == 0)
+        {
+            registro.Situacao = "PENDENTE"
+        } 
+        else if(registro.Situacao == 1)
+        {
+            registro.Situacao = "PAGO"
+        } 
+      
         return registro;
     });
    
@@ -38,12 +106,35 @@ async function get(conta,data){
 }
 
 //ADD GASTO NA FATURA 
-async function AddGasto(gasto)
+async function AddGasto(gasto,mes,ano,conta)
 {
     const conn = await db.connect();
+    let sql = ""
+    let values = []
+    let idFatura = 0;
+    let idConta = await ContaBancaria.getID(conta);
 
-    let sql =  `INSERT INTO Fatura (idGasto,usuario) VALUES (?,?)`;
-    const values = [gasto,global.user.id];
+    sql =  `SELECT * FROM Fatura WHERE mes = ? AND ano = ? AND usuario = ? AND conta = ?`;
+    values = [mes,ano,global.user.id,idConta];
+    let [rows] = await conn.query(sql, values);
+   
+    console.log(rows)
+
+    if(rows.length > 0)//ACHO
+    {
+        idFatura = rows[0].id
+    }
+    else
+    {
+        sql =  `INSERT INTO  Fatura (usuario,conta,mes,ano) VALUES (?,?,?,?)`;
+        values = [global.user.id,idConta,mes,ano];
+        await conn.query(sql, values);
+
+        idFatura = await getIdFatura(mes,ano,idConta);
+    }
+
+    sql =  `INSERT INTO ItemFatura (fatura,gasto,usuario) VALUES (?,?,?)`;
+    values = [idFatura,gasto,global.user.id];
     await conn.query(sql, values); 
 
     sql =  `  UPDATE Gastos 
@@ -51,32 +142,54 @@ async function AddGasto(gasto)
     WHERE id = ?                     
     AND usuario = ?`;
 
+    values = [gasto,global.user.id];
     await conn.query(sql, values); 
 }
 
+async function getIdFatura(mes,ano,conta)
+{ 
+    const conn = await db.connect();  
+    const values = [global.user.id,mes,ano,conta]; 
+
+    let sql =  `SELECT id FROM Fatura
+    WHERE usuario = ?
+    AND mes = ? 
+    AND ano = ?
+    AND conta = ?`
+    const [rows] = await conn.query(sql,values);
+   
+   return rows[0].id
+}
 
 async function Pagar(fatura)
 {
     const conn = await db.connect();
 
-    fatura.forEach(async gasto => {
-       await Gastos.Pagar(gasto.id,parseFloat(gasto.valor));
+    let itemsFatura = await getItemsFatura(fatura);
 
-       let sql =  `DELETE FROM Fatura WHERE idGasto = ? AND usuario = ?`;
-       const values = [gasto.id,global.user.id];
-       await conn.query(sql, values); 
+    itemsFatura.forEach(async obj => {     
+       await Gastos.Pagar(obj.gasto,parseFloat(obj.valor));
     });
+
+    let sql =  `UPDATE Fatura 
+                SET inPaga = 1,
+                dt_pagamento = now()
+                WHERE id = ?`;
+    const values = [fatura];
+    await conn.query(sql, values); 
 }
 
 //REMOVER
-async function Remover(gasto)
+async function Remover(fatura,gasto)
 {
     const conn = await db.connect();
 
-    let sql =  `DELETE FROM Fatura WHERE idGasto = ? AND usuario = ?`;
-    const values = [gasto,global.user.id];
+    let sql =  `DELETE FROM ItemFatura WHERE fatura = ? AND gasto = ? AND usuario = ?`;
+    let values = [fatura,gasto,global.user.id];
     await conn.query(sql, values); 
 
+
+    values = [gasto,global.user.id];
     sql =  `  UPDATE Gastos 
     SET inFatura = 0  
     WHERE id = ?                     
@@ -85,4 +198,20 @@ async function Remover(gasto)
     await conn.query(sql, values); 
 }
 
-module.exports = {get,AddGasto,Pagar,Remover}
+async function getItemsFatura(fatura){ 
+
+    const conn = await db.connect();  
+    const values = [fatura]; 
+
+    let sql =  `SELECT i.fatura as fatura,i.gasto,m.descricao as motivo,g.valor,s.descricao as situacao
+    FROM ItemFatura i
+    INNER JOIN Gastos g ON g.id = i.gasto
+    INNER JOIN MotivoGastos m ON m.id = g.motivo
+    INNER JOIN SituacaoGastos s ON s.id = g.situacao
+    WHERE i.fatura = ?`
+
+    const [rows] = await conn.query(sql,values);
+    return rows; 
+}
+
+module.exports = {get,AddGasto,getAll,getItemsFatura,getAllFiltros,Remover,Pagar}

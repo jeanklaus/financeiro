@@ -27,6 +27,11 @@ let idGasto = null;
 let idCredito = null;
 let gasto = {}
 let credito = {}
+
+//GENERICO USADO QUANDO QUISER - sem lugar certo
+let mes = 0
+let ano = 0
+let conta = 0;
 //=============================================================== PAINEL =========================================================================
 router.get('/ConsultaGastosResumoAnual', async (req, res) => {
     try {
@@ -359,13 +364,14 @@ router.post('/CofirmarRegistroGastos', async (req, res) => {
 //PAGAR - CONSUMIR - DELETAR ORCAMENTO - ADD  FATURA
 router.post('/PagarGasto', async (req, res) => {
     try {
-        if (req.body.CONF_ADD_FATURA) {
-            await Fatura.AddGasto(idGasto);
+        if (req.body.CONF_ADD_FATURA) 
+        {
+            await Fatura.AddGasto(idGasto,mes,ano,conta);
             return res.redirect('ConsultaGastosResumoAnual')
         }
 
         if (req.body.ADD_FATURA) {
-            idGasto = req.body.ADD_FATURA;
+            [idGasto,mes,ano,conta] = req.body.ADD_FATURA.split('|');
             return res.render('fatura_view/feedAdd')
         }
 
