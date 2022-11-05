@@ -2,7 +2,7 @@
 const Origem = require('../services/s_origemCredito')
 const MotivoGastos = require('../services/s_motivoGastos')
 
-function checkName(nome,ids = []) {
+function checkName(nome,ids = [],tp) {
   
   let checkbox = document.getElementById(nome); 
   let inputs = []
@@ -11,7 +11,7 @@ function checkName(nome,ids = []) {
     inputs.push(document.getElementById(id));
   });
 
-  verificaCheckParcela();
+  verificaCheckParcela(tp);
 
   if (checkbox.checked) {
     inputs.forEach(input => {
@@ -25,11 +25,24 @@ function checkName(nome,ids = []) {
   }
 }
 
-function verificaCheckParcela()
+function verificaCheckParcela(tp)
 {
-  let campoQtParcela = document.getElementById("qtParcelas"); 
-  let divTpValor = document.getElementById("divTpValor"); 
-  let checkbox = document.getElementById("parcelado");  
+  let campoQtParcela ;
+  let divTpValor;
+  let checkbox ;  
+
+  if(tp == 'CREDI')
+  {
+    campoQtParcela = document.getElementById("qtParcelasCredi"); 
+    divTpValor = document.getElementById("divTpValorCredi"); 
+    checkbox = document.getElementById("parceladoCredi");
+  }
+  else
+  {
+    campoQtParcela = document.getElementById("qtParcelas"); 
+    divTpValor = document.getElementById("divTpValor"); 
+    checkbox = document.getElementById("parcelado");  
+  }
 
   if (checkbox.checked) 
   {
@@ -41,6 +54,7 @@ function verificaCheckParcela()
     divTpValor.hidden = true; 
     campoQtParcela.hidden = true;   
   }
+
 }
 
 function check(ids = []) {

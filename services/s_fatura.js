@@ -117,8 +117,6 @@ async function AddGasto(gasto,mes,ano,conta)
     sql =  `SELECT * FROM Fatura WHERE mes = ? AND ano = ? AND usuario = ? AND conta = ?`;
     values = [mes,ano,global.user.id,idConta];
     let [rows] = await conn.query(sql, values);
-   
-    console.log(rows)
 
     if(rows.length > 0)//ACHO
     {

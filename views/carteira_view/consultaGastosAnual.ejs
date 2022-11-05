@@ -73,11 +73,11 @@
                       <br>
 
                       <div id="orcamentodiv">
-                        <input type="checkbox" name="orcamento" id="orcamento" onclick="checkName('orcamento',['parceladodiv','pagodiv','faturadiv'])"> Esse registro é para um ORÇAMENTO?
+                        <input type="checkbox" name="orcamento" id="orcamento" onclick="checkName('orcamento',['parceladodiv','pagodiv','faturadiv'],'GASTO')"> Esse registro é para um ORÇAMENTO?
                       </div>
                   
                       <div id="parceladodiv">
-                        <input type="checkbox" name="parcelado" id="parcelado" onclick="checkName('parcelado',['fimAnodiv','orcamentodiv'])"> Esse valor é parcelado?
+                        <input type="checkbox" name="parcelado" id="parcelado" onclick="checkName('parcelado',['fimAnodiv','orcamentodiv'],'GASTO')"> Esse valor é parcelado?
                         <br>
                           <div id="divTpValor" hidden>          
                             <input type="radio" id="tpValorBruto" name="tpValor" value="B">
@@ -248,24 +248,24 @@
                       <input placeholder="TAG(Opcional)" class="w3-input w3-border form-control me-2" type="text" onkeyup="this.value = this.value.toLowerCase();" name="tag" maxlength="10">
                       <br>
 
-                      <div id="parceladodiv">
-                        <input type="checkbox" name="parcelado" id="parcelado" onclick="checkName('parcelado',['fimAnodiv'])"> Esse valor é parcelado?
+                      <div id="parceladodivCredi">
+                        <input type="checkbox" name="parcelado" id="parceladoCredi" onclick="checkName('parceladoCredi',['fimAnodivCredi'],'CREDI')"> Esse valor é parcelado?
                         <br>
-                          <div id="divTpValor" hidden>          
-                            <input type="radio" id="tpValorBruto" name="tpValor" value="B">
+                          <div id="divTpValorCredi" hidden>          
+                            <input type="radio" id="tpValorBrutoCredi" name="tpValor" value="B">
                             <label for="age1">Valor é BRUTO</label><br>
-                            <input type="radio" id="tpValorParcela" name="tpValor" value="P">
+                            <input type="radio" id="tpValorParcelaCredi" name="tpValor" value="P">
                             <label for="age2">Valor é da PARCELA</label><br>
                           </div> 
                       </div>
                   
-                      <input placeholder="Quantas parcelas?" class="w3-input w3-border form-control me-2" name="qtParcelas" step="0.01" type="number" id="qtParcelas" hidden>
+                      <input placeholder="Quantas parcelas?" class="w3-input w3-border form-control me-2" name="qtParcelas" step="0.01" type="number" id="qtParcelasCredi" hidden>
                   
-                      <div id="fimAnodiv">
-                        <input type="checkbox" name="fimAno" id="fimAno" onclick="checkName('fimAno',['parceladodiv'])"> Gerar registro até fim do ano?
+                      <div id="fimAnodivCredi">
+                        <input type="checkbox" name="fimAno" id="fimAnoCredi" onclick="checkName('fimAnoCredi',['parceladodivCredi'],'CREDI')"> Gerar registro até fim do ano?
                       </div> 
                   
-                      <input type="checkbox" name="recebido" id="checkbox"> Registrar essa como recebida?
+                      <input type="checkbox" name="recebido" id="checkboxCredi"> Registrar essa como recebida?
                       <hr>
                       <button type="submit" class="btn w3-green">Confirmar</button>    
                     </form>                    
@@ -736,6 +736,7 @@
         <a href="/" class="w3-bar-item w3-tiny w3-round btn btn-danger me-2">Sair</a>
     </form>
     </div>
+
 
   <div class="w3-container w3-left">
  
