@@ -92,7 +92,7 @@ async function montarResumoAnual(gastos, anoSelect) {
 async function montarResumoAnualCredi(creditos, anoSelect) {
     let lista = []    
     let Motivos = await Origem.getAll();
-  
+
     for (const m of Motivos) 
     {
         for (const g of creditos) 

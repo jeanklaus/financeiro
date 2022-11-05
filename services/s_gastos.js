@@ -73,7 +73,7 @@ async function getResumoAno(){
     FROM Gastos as g
     INNER JOIN MotivoGastos as m ON m.id = g.motivo
     WHERE g.usuario = ?
-    GROUP BY motivo,mes`
+    GROUP BY motivo,mes,ano`
     const [rows] = await conn.query(sql,values);
 
     let newrows = rows.map(registro => {        

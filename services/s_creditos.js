@@ -74,8 +74,16 @@ async function Gravar(valor,dt_recebimento,dt_previsao,origem,situacao,contaBanc
     {
         for(let i = (mes + 1);i <= 12;i++)
         {
-            const values = [global.user.id,valor,null,`${ano}-${i}-${dia}`,origem,1,contaBancaria,tag]; 
-            await conn.query(sql, values);
+            let data = `${ano}-${i}-${dia}`;
+
+            if(i < 10)
+            {
+                data = `${ano}-0${i}-${dia}`         
+            }
+           
+            console.log(data)
+            const values = [global.user.id,valor,null,data,origem,1,contaBancaria,tag]; 
+           await conn.query(sql, values);
         }
     }
 }
@@ -281,7 +289,7 @@ async function getResumoAno(){
     FROM Credito as c
     INNER JOIN OrigemCredito as o ON o.id = c.origemCredito
     WHERE c.usuario = ?
-    GROUP BY motivo,mes`
+    GROUP BY motivo,mes,ano`
     const [rows] = await conn.query(sql,values);
 
     let newrows = rows.map(registro => {        

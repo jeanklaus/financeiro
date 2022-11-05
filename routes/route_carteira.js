@@ -62,7 +62,7 @@ router.get('/ConsultaGastosResumoAnual', async (req, res) => {
         let totaisCredi = LocalProc.getTotalMesResumoAnual(resumoCredi, anoSelect); 
         
         let liquidez = await LocalProc.getValorLiquidoMes(anoSelect,ListaCreditos,ListaGastos);
-    
+      
         res.render('carteira_view/consultaGastosAnual', {
             totaisCredi, resumoCredi, totais, anoSelect, resumo,
             valorTotal,filtros,Origens,Contas,ListaCreditos,ListaGastos,liquidez
