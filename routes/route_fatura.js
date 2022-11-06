@@ -46,6 +46,8 @@ router.post('/Atualizar',async (req,res) => {
         let dataSelect = ""
         let itemsFatura = []
 
+        wheres.push(`f.usuario = ${global.user.id}`);
+
         if(req.body.mes)
         {
             dataSelect = req.body.mes
