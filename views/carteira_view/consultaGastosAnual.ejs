@@ -728,6 +728,92 @@
     </div>
   </div>
 
+  <div class="modal" id="modalUsuarioPagar">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+
+        <form class="w3-container was-validated" action="/Carteira/PagarGasto" method="post">
+
+          <div class="modal-header">
+            <h4 class="modal-title">Escolha seu Pacote</h4>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+         
+          <div class="modal-body">
+            <div class="form-group"> 
+              
+              <p>Apos efetuar o pagamento sera realizado uma analise e disponivel seu tempo de uso dentro de ate 1 dia. </p>
+              <p style="color:red ;" >O pagamento sera creditado para o email de pagamento</p>
+
+              <div class="row">
+                  <div class="col">
+
+                    <table class="w3-small w3-card table w3-border w3-table table-hover TabelaDinamica table-striped">
+                      <thead>
+                        <tr> 
+                          <th style="text-align:center;">Ganhe +1 MES (R$ 32,00)</th> 
+                          <th>
+                            <span> 
+                              <script src="https://www.mercadopago.com.br/integrations/v1/web-payment-checkout.js" data-preference-id="72273544-ef269c33-ac91-4517-b03a-aba2e4c29f6c" data-source="button"></script>
+                            </span>
+                          </th> 
+                        </tr>
+
+                        <tr> 
+                          <th style="text-align:center;">Ganhe +3 MESES (R$ 90,00)</th> 
+                          <th>
+                            <span> 
+                              <script src="https://www.mercadopago.com.br/integrations/v1/web-payment-checkout.js" data-preference-id="72273544-fe2c660e-42ba-4157-8f3c-bad362d1b7f6" data-source="button"></script>
+                            </span>
+                          </th> 
+                        </tr>
+
+                        <tr> 
+                          <th style="text-align:center;">Ganhe +1 ANO (R$ 320,00)</th> 
+                          <th>
+                            <span> 
+                              <script src="https://www.mercadopago.com.br/integrations/v1/web-payment-checkout.js" data-preference-id="72273544-57a91a01-48bf-4f59-972b-b422afc6b8df" data-source="button"></script>
+                            </span>
+                          </th> 
+                        </tr>
+
+                      </thead>
+                    </table>
+
+                    
+                    
+                    
+                  
+                  </div>
+              </div>
+
+              
+              
+
+
+
+
+
+
+
+
+
+
+             
+              
+            </div>
+          </div> 
+         
+          <div class="modal-footer">
+           
+          </form>          
+            <div class="btn btn-danger" data-bs-dismiss="modal">Cancelar</div>           
+          </div>
+
+      </div>
+    </div>
+  </div>
+
  <!-- ==================================================================================================================== -->
 
   <div class="w3-container">
@@ -738,23 +824,32 @@
     </h1>
 
     <h1 class="w3-left">       
-      <input data-bs-toggle="modal" data-bs-target="#" id="ValorTotal"  style="text-shadow:1px 1px 2px rgb(96, 252, 0);width: 260px;" class="w3-input"
+      <input data-bs-toggle="modal" data-bs-target="#" id="ValorTotal"  style="text-shadow:1px 1px 2px rgb(96, 252, 0);width: 800px;" class="w3-input"
       type="text" value="Saldo: $ <%= global.user.saldo %>" readonly>
     </h1>
     <br>
   </div>
 
-    <div style="background-color: rgb(72, 70, 70);" class="w3-bar w3-padding">
-      <form  action="/Carteira/ConsultandoGastosResumoAnual" method="POST">
-        <input style="margin-left: 10px ;" id="data" name="ano" class="w3-bar-item w3-tiny form-control me-2" type="number" placeholder="YYYY" min="2022" max="2100" value="<%= anoSelect %>">
-        <button class="w3-bar-item w3-tiny w3-round btn btn-warning me-2" type="submit" value="true">Atualizar</button>
-        <a href="/ContaBancaria" class="w3-bar-item w3-tiny w3-round btn btn-primary me-2">Cadastrar Contas Bancarias</a>
-        <a href="/Fatura" class="w3-bar-item w3-tiny w3-round btn btn-primary me-2">Consultar Faturas</a>
-        <a href="/" class="w3-bar-item w3-tiny w3-round btn btn-danger me-2">Sair</a>
-    </form>
+  <form  action="/Carteira/ConsultandoGastosResumoAnual" method="POST">
+    <div style="background-color: rgb(72, 70, 70);" class="w3-bar w3-padding btn-group">
+     
+        <% if(!global.user.inVencido){ %>
+          <input style="margin-left: 10px ;" id="data" name="ano" class="w3-bar-item w3-tiny form-control me-2" type="number" placeholder="YYYY" min="2022" max="2100" value="<%= anoSelect %>">
+          <div><button class="w3-bar-item w3-tiny w3-round btn btn-warning me-2" type="submit" value="true">Atualizar</button></div>
+          <div><a href="/ContaBancaria" class="w3-bar-item w3-tiny w3-round btn btn-primary me-2">Cadastrar Contas Bancarias</a></div>
+          <div><a href="/Fatura" class="w3-bar-item w3-tiny w3-round btn btn-primary me-2">Consultar Faturas</a></div>
+        <% } %>
+        <div><a href="/" class="w3-bar-item w3-tiny w3-round btn btn-danger me-2">Sair</a></div>
+  </form>
+
+        <div class="w3-display-right w3-margin-right">
+          <div data-bs-toggle="modal" data-bs-target="#modalUsuarioPagar" class="w3-bar-item w3-tiny w3-round btn btn-info me-2" value="true">Pagar</div>
+          <label style="color: white ;"><b>Validade: <%= global.user.validade %></b></label>
+        </div>
     </div>
+  
 
-
+  <% if(!global.user.inVencido){ %>
   <div class="w3-container w3-left">
  
      <!--LIQUIDO MES  -->
@@ -913,7 +1008,9 @@
     </div>
 
   </div>
-
+  <% }else{ %>
+    <h1>Sistema atingiu a data de validade</h1>
+  <% } %>
  
 
 </body>
