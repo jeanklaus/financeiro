@@ -283,21 +283,30 @@ async function getGasto(id){
 }
 
 //CONSUMIR ORCAMENTO
-async function Consumir(gasto,valor,data){
+async function Consumir(gasto,valor,data,inZerar){
 
     const conn = await db.connect();
-
     await Gravar(valor,data,data,gasto.formaPagamento,await MotivosGastos.getID(gasto.motivo),3,await ContaB.getID(gasto.conta),false);
 
-    const sql =  `  UPDATE Gastos 
-                    SET valor = valor - ?
-                    WHERE id = ?
-                    AND usuario = ?`;
+    if(inZerar)
+    {
+        const sql =  `DELETE FROM Gastos WHERE id = ? AND usuario = ?`;
+        const values = [gasto.id,global.user.id];   
+        await conn.query(sql, values);
+    }
+    else
+    {
+        const sql =  `  UPDATE Gastos 
+        SET valor = valor - ?
+        WHERE id = ?
+        AND usuario = ?`;
 
-    const values = [valor,gasto.id,global.user.id];   
-    await conn.query(sql, values); 
+        const values = [valor,gasto.id,global.user.id];   
+        await conn.query(sql, values); 
+    }
 
     await Credito.DiminuiSaldo(valor);
+   
 }
 
 //DELETAR ORCAMENTO
@@ -314,6 +323,14 @@ async function DelOrcamento(id){
 //DELETAR ORCAMENTO
 async function Dell(id){
     const conn = await db.connect();
+
+    let gasto = await getGasto(id);
+
+    if(gasto.situacao == 3)
+    {
+        await Credito.AumentaSaldo(parseFloat(gasto.valor))
+    }
+
     const sql =  `DELETE FROM Gastos WHERE id = ? AND usuario = ?`;
 
     const values = [id,global.user.id];

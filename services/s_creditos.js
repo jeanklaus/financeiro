@@ -302,8 +302,16 @@ async function getResumoAno(){
 //DELETAR
 async function Dell(id){
     const conn = await db.connect();
-    const sql =  `DELETE FROM Credito WHERE id = ? AND usuario = ?`;
 
+    let credito = await getCredito(id);
+
+    if(credito.situacao == 2)
+    {
+        await DiminuiSaldo(parseFloat(credito.valor));
+    }
+
+    const sql =  `DELETE FROM Credito WHERE id = ? AND usuario = ?`;
+   
     const values = [id,global.user.id];
     await conn.query(sql, values);
 }

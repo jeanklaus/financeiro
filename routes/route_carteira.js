@@ -411,6 +411,7 @@ router.post('/CofirmarRegistroGastos', async (req, res) => {
 //PAGAR - CONSUMIR - DELETAR ORCAMENTO - ADD  FATURA
 router.post('/PagarGasto', async (req, res) => {
     try {
+
         if (req.body.CONF_ADD_FATURA) 
         {
             await Fatura.AddGasto(idGasto,mes,ano,conta);
@@ -432,10 +433,17 @@ router.post('/PagarGasto', async (req, res) => {
 
         if (req.body.CONSUMIR) 
         {
+            let inZerar = 0;
+
+            if(req.body.inZerar)
+            {
+                inZerar = 1
+            }
+
             idGasto = req.body.idRegistroOrcGasto;
             gasto = await Gasto.getGastoID(idGasto);
-
-            await Gasto.Consumir(gasto, req.body.valor, req.body.dataConsumo);
+            
+            await Gasto.Consumir(gasto, req.body.valor, req.body.dataConsumo,inZerar);
             return res.redirect('ConsultaGastosResumoAnual')
         }
 
