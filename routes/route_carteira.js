@@ -703,6 +703,12 @@ router.post('/CofirmarRegistroCreditos', async (req, res) => {
             await Credito.AumentaSaldo(req.body.valor);
         }
 
+        if (req.body.recebidoSimbolico) {
+            situacao = 2;//RECEBIDO
+            dataRecebimento = new Date();
+            dataRecebimento = DLL.ConverterData(DLL.formataData(dataRecebimento))
+        }
+
         if (req.body.fimAno) {
             inAnoTodo = true;
         }
