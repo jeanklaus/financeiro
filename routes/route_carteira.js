@@ -357,6 +357,12 @@ router.post('/CofirmarRegistroGastos', async (req, res) => {
             situacao = 3;//PAGO
             dataRegistro = new Date();
             dataRegistro = DLL.ConverterData(DLL.formataData(dataRegistro))
+        }
+
+        if (req.body.pagoDesconta) {
+            situacao = 3;//PAGO
+            dataRegistro = new Date();
+            dataRegistro = DLL.ConverterData(DLL.formataData(dataRegistro))
             await Credito.DiminuiSaldo(req.body.valor);
         }
 

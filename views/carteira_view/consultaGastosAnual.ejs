@@ -73,35 +73,45 @@
                       <input placeholder="TAG(Opcional)" class="w3-input w3-border form-control me-2" type="text" onkeyup="this.value = this.value.toLowerCase();" name="tag" maxlength="10">
                       <br>
 
-                      <div id="orcamentodiv">
-                        <input type="checkbox" name="orcamento" id="orcamento" onclick="checkName('orcamento',['parceladodiv','pagodiv','faturadiv'],'GASTO')"> ORÇAMENTO
-                      </div>
-                  
-                      <div id="parceladodiv">
-                        <input type="checkbox" name="parcelado" id="parcelado" onclick="checkName('parcelado',['fimAnodiv','orcamentodiv'],'GASTO')"> PARCELADO
-                        <br>
-                          <div id="divTpValor" hidden>          
-                            <input type="radio" id="tpValorBruto" name="tpValor" value="B">
-                            <label for="age1">Valor é BRUTO</label><br>
-                            <input type="radio" id="tpValorParcela" name="tpValor" value="P">
-                            <label for="age2">Valor é da PARCELA</label><br>
-                          </div>      
-                        
-                      </div>
-                  
-                      <input placeholder="Quantas parcelas?" class="w3-input w3-border form-control me-2" name="qtParcelas" step="0.01" type="number" id="qtParcelas" hidden>
-                  
-                      <div id="fimAnodiv">
-                        <input type="checkbox" name="fimAno" id="fimAno" onclick="checkName('fimAno',['parceladodiv'])"> ANO TODO
-                      </div>    
-                  
-                      <div id="pagodiv">
-                        <input type="checkbox" name="pago" id="pago"> PAGA
-                      </div>
-                  
-                      <div id="faturadiv">
-                        <input type="checkbox" name="fatura" id="fatura"> ADD FATURA
-                      </div>
+                      <div class="row">
+                        <div class="col">                        
+                          <div id="orcamentodiv">
+                            <input type="checkbox" name="orcamento" id="orcamento" onclick="checkName('orcamento',['parceladodiv','pagodiv','faturadiv'],'GASTO')"> ORÇAMENTO
+                          </div>
+                      
+                          <div id="parceladodiv">
+                            <input type="checkbox" name="parcelado" id="parcelado" onclick="checkName('parcelado',['fimAnodiv','orcamentodiv'],'GASTO')"> PARCELADO
+                            <br>
+                              <div id="divTpValor" hidden>          
+                                <input type="radio" id="tpValorBruto" name="tpValor" value="B">
+                                <label for="age1">Valor é BRUTO</label><br>
+                                <input type="radio" id="tpValorParcela" name="tpValor" value="P">
+                                <label for="age2">Valor é da PARCELA</label><br>
+                              </div>      
+                            
+                          </div>
+                      
+                          <input placeholder="Quantas parcelas?" class="w3-input w3-border form-control me-2" name="qtParcelas" step="0.01" type="number" id="qtParcelas" hidden>
+                          <div id="fimAnodiv">
+                            <input type="checkbox" name="fimAno" id="fimAno" onclick="checkName('fimAno',['parceladodiv'])"> ANO TODO
+                          </div>    
+                        </div>
+
+                        <div class="col">
+
+                          <div id="pagodiv">
+                            <input type="checkbox" name="pago" id="pago"> PAGA - SIMBOLICO
+                          </div>
+
+                          <div id="pagodiv">
+                            <input type="checkbox" name="pago" id="pagoDesconta"> PAGA - DESCONTA
+                          </div>
+                      
+                          <div id="faturadiv">
+                            <input type="checkbox" name="fatura" id="fatura"> ADD FATURA
+                          </div>
+                        </div>
+                    </div>
                       <br>
                       <button type="submit" class="btn w3-green">Confirmar</button>    
                     </form>          
