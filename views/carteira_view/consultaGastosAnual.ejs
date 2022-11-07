@@ -828,24 +828,25 @@
     </h1>
     <br>
   </div>
-
+    
   <form  action="/Carteira/ConsultandoGastosResumoAnual" method="POST">
-    <div style="background-color: rgb(72, 70, 70);" class="w3-bar w3-padding btn-group">
-     
-        <% if(!global.user.inVencido){ %>
-          <input style="margin-left: 10px ;" id="data" name="ano" class="w3-bar-item w3-tiny form-control me-2" type="number" placeholder="YYYY" min="2022" max="2100" value="<%= anoSelect %>">
-          <div><button class="w3-bar-item w3-tiny w3-round btn btn-warning me-2" type="submit" value="true">Atualizar</button></div>
-          <div><a href="/ContaBancaria" class="w3-bar-item w3-tiny w3-round btn btn-primary me-2">Cadastrar Contas Bancarias</a></div>
-          <div><a href="/Fatura" class="w3-bar-item w3-tiny w3-round btn btn-primary me-2">Consultar Faturas</a></div>
-        <% } %>
-        <div><a href="/" class="w3-bar-item w3-tiny w3-round btn btn-danger me-2">Sair</a></div>
-  </form>
 
-        <div class="w3-display-right w3-margin-right">
-          <div data-bs-toggle="modal" data-bs-target="#modalUsuarioPagar" class="w3-bar-item w3-tiny w3-round btn btn-info me-2" value="true">Pagar</div>
-          <label style="color: white ;"><b>Validade: <%= global.user.validade %></b></label>
-        </div>
+    <div style="background-color: black;width: 100%;" class="w3-padding-16 btn-group">
+
+        <input style="margin-left: 10px ;" id="data" name="ano" class="me-2 w3-tiny form-control" type="number" placeholder="YYYY" min="2022" max="2100" value="<%= anoSelect %>">
+
+        <div><button class="w3-tiny w3-round btn btn-warning me-2" type="submit" value="true"><b>Atualizar</b></button></div>
+           
+        <div><a href="/ContaBancaria" class="w3-tiny w3-round btn btn-primary me-2"><b>Contas Bancarias</b></a></div>
+        
+        <div><a href="/Fatura" class="w3-tiny w3-round btn btn-primary me-2"><b>Faturas</b></a></div>
+        
+        <div><a class="w3-tiny w3-round btn btn-info me-2 btn" data-bs-toggle="modal" data-bs-target="#modalUsuarioPagar"><b>Pagar</b></a></div>
+        <div><a href="/" class="w3-tiny w3-round btn btn-danger me-2"><b>Sair</b></a></div>
+        <label style="color: white ;"><b>Validade: <%= global.user.validade %></b></label>
+        
     </div>
+  </form>
   
 
   <% if(!global.user.inVencido){ %>
@@ -1014,6 +1015,16 @@
 
 </body>
 </html>
+<script>
+  function myFunction() {
+    var x = document.getElementById("Demo");
+    if (x.className.indexOf("w3-show") == -1) { 
+      x.className += " w3-show";
+    } else {
+      x.className = x.className.replace(" w3-show", "");
+    }
+  }
+  </script>
 
 
 
