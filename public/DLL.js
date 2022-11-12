@@ -317,4 +317,6 @@ function setIdRegistroTag(idRegistro,campoId,tpRegistro) {
   inputTpAdd.value = tpRegistro;
  }
 
+
+
 module.exports = { formataData, ConverterData,AnalisaFiltros,getPedacoData }

@@ -877,19 +877,19 @@
             
             <!--TABELA -->
               <tr>
-                <th><b>SALDO INICIAL</b></th>
+                <th><b>INICIAL</b></th>
                 <% for(let i = 1; i <= 12;i++){ %>
                   <td><%= liquidez.inicial[i].toFixed(2) %></td> 
                 <% } %>             
               </tr>
               <tr>
-                <th><b>SALDO LIQUIDO</b></th>
+                <th><b>LIQUIDO GERAL</b></th>
                 <% for(let i = 1; i <= 12;i++){ %>
                   <td><%= liquidez.liquido[i].toFixed(2) %></td> 
                 <% } %>             
               </tr>
               <tr>
-                <th><b>SALDO FINAL</b></th>
+                <th><b>FINAL GERAL</b></th>
                 <% for(let i = 1; i <= 12;i++){ %>
                   <% if(liquidez.final[i].toFixed(2) >= 0){ %>
                     <td style="background-color: rgb(0, 253, 0) ;"><b><%= liquidez.final[i].toFixed(2) %></b></td> 
@@ -934,9 +934,18 @@
              
               <% for(let i = 1; i <= 12;i++){ %>   
                 <% if(i >= 10){ %> 
-                  <td><button onclick="setDadosJanelaCredito(this)" value="<%= dado.id %>|<%= dado.motivo %>|<%= i %>|<%= anoSelect %>" data-bs-toggle="modal" data-bs-target="#modalJanelaCredito" class="btn SemBorda cell"> <%= dado.mes[i] %></button></td>
+                  <% if(dado.pago[i]){ %> 
+                    <td><button onclick="setDadosJanelaCredito(this)" value="<%= dado.id %>|<%= dado.motivo %>|<%= i %>|<%= anoSelect %>" data-bs-toggle="modal" data-bs-target="#modalJanelaCredito" class="btn SemBorda cell"> <span class="tagPequena w3-round w3-tag w3-tiny w3-green"></span><%= dado.mes[i] %></button></td>
+                    <% }else{ %>
+                      <td><button onclick="setDadosJanelaCredito(this)" value="<%= dado.id %>|<%= dado.motivo %>|<%= i %>|<%= anoSelect %>" data-bs-toggle="modal" data-bs-target="#modalJanelaCredito" class="btn SemBorda cell"> <span class="tagPequena w3-round w3-tag w3-tiny w3-red"></span><%= dado.mes[i] %></button></td>
+                    <% } %>  
+                  
                   <% }else{ %> 
-                    <td><button onclick="setDadosJanelaCredito(this)" value="<%= dado.id %>|<%= dado.motivo %>|0<%= i %>|<%= anoSelect %>" data-bs-toggle="modal" data-bs-target="#modalJanelaCredito" class="btn SemBorda cell"> <%= dado.mes[i] %></button></td>
+                    <% if(dado.pago[i]){ %>
+                      <td><button onclick="setDadosJanelaCredito(this)" value="<%= dado.id %>|<%= dado.motivo %>|0<%= i %>|<%= anoSelect %>" data-bs-toggle="modal" data-bs-target="#modalJanelaCredito" class="btn SemBorda cell"> <span class="tagPequena w3-round w3-tag w3-tiny w3-green"></span><%= dado.mes[i] %></button></td>
+                      <% }else{ %> 
+                        <td><button onclick="setDadosJanelaCredito(this)" value="<%= dado.id %>|<%= dado.motivo %>|0<%= i %>|<%= anoSelect %>" data-bs-toggle="modal" data-bs-target="#modalJanelaCredito" class="btn SemBorda cell"> <span class="tagPequena w3-round w3-tag w3-tiny w3-red"></span><%= dado.mes[i] %></button></td>
+                      <% } %>
                   <% } %> 
               <% } %>
               <td><a href="/Carteira/ClickCreditos<%= dado.motivo %>" class="SemBorda"><button class="w3-tiny w3-round btn-primary">>></button></a></td>
@@ -993,11 +1002,20 @@
               value="<%= dado.motivo %>" class="w3-tiny w3-round  btn-danger">-</button> <b><%= dado.motivo %></b></td> 
 
               <% for(let i = 1; i <= 12;i++){ %>   
-                <% if(i >= 10){ %>                     
-                    <td><button onclick="setDadosJanelaGasto(this)" value="<%= dado.id %>|<%= dado.motivo %>|<%= i %>|<%= anoSelect %>" data-bs-toggle="modal" data-bs-target="#modalJanelaGasto" class="btn SemBorda cell"> <%= dado.mes[i] %></button></td>
-                  <% }else{ %> 
-                    <td><button onclick="setDadosJanelaGasto(this)" value="<%= dado.id %>|<%= dado.motivo %>|0<%= i %>|<%= anoSelect %>" data-bs-toggle="modal" data-bs-target="#modalJanelaGasto" class="btn SemBorda cell"> <%= dado.mes[i] %></button></td>
-                  <% } %> 
+                <% if(i >= 10){ %>                   
+                    <% if(dado.pago[i]){ %> 
+                    <td><button onclick="setDadosJanelaGasto(this)" value="<%= dado.id %>|<%= dado.motivo %>|<%= i %>|<%= anoSelect %>" data-bs-toggle="modal" data-bs-target="#modalJanelaGasto" class="btn SemBorda cell"> <span class="tagPequena w3-round w3-tag w3-tiny w3-green"></span><%= dado.mes[i] %></button></td>
+                    <% }else{ %>
+                      <td><button onclick="setDadosJanelaGasto(this)" value="<%= dado.id %>|<%= dado.motivo %>|<%= i %>|<%= anoSelect %>" data-bs-toggle="modal" data-bs-target="#modalJanelaGasto" class="btn SemBorda cell"> <span class="tagPequena w3-round w3-tag w3-tiny w3-red"></span><%= dado.mes[i] %></button></td>
+                    <% } %>  
+                  
+                <% }else{ %> 
+                      <% if(dado.pago[i]){ %>
+                      <td><button onclick="setDadosJanelaGasto(this)" value="<%= dado.id %>|<%= dado.motivo %>|0<%= i %>|<%= anoSelect %>" data-bs-toggle="modal" data-bs-target="#modalJanelaGasto" class="btn SemBorda cell"> <span class="tagPequena w3-round w3-tag w3-tiny w3-green"></span><%= dado.mes[i] %></button></td>
+                      <% }else{ %> 
+                        <td><button onclick="setDadosJanelaGasto(this)" value="<%= dado.id %>|<%= dado.motivo %>|0<%= i %>|<%= anoSelect %>" data-bs-toggle="modal" data-bs-target="#modalJanelaGasto" class="btn SemBorda cell"> <span class="tagPequena w3-round w3-tag w3-tiny w3-red"></span><%= dado.mes[i] %></button></td>
+                      <% } %>                   
+                <% } %>   
               <% } %>              
                 <td><a href="/Carteira/ClickGastos<%= dado.motivo %>" class="SemBorda"><button class="w3-tiny w3-round btn-primary">>></button></a></td>    
             </tr> 

@@ -76,3 +76,14 @@ a
   font-size: 16px;
 }
 
+.w3-tag
+{
+  background-color: blue;
+}
+
+.tagPequena
+{
+  width: 0.5px;
+  height: 8px;   
+}
+

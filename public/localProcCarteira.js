@@ -2,7 +2,6 @@ const Gasto = require('../services/s_gastos')
 const Credito = require('../services/s_creditos')
 const Origem = require('../services/s_origemCredito')
 const MotivoGastos = require('../services/s_motivoGastos')
-const DLL = require('../public/DLL');
 const db = require('../db');
 
 function getCustoTotal(lista) {
@@ -50,6 +49,13 @@ async function montarResumoAnual(gastos, anoSelect) {
                     let i = getIndexObjLista(m.descricao, g.ano, lista);
 
                     lista[i].mes[g.mes] = g.valor;
+
+                    let inPendencia = getInGastosPendenteMes(g.mes,anoSelect,m.id,gastos)
+                   
+                    if(inPendencia)
+                    {
+                        lista[i].pago[g.mes] = 0
+                    } 
                 }
                 else {
                     let obj = {}
@@ -57,11 +63,21 @@ async function montarResumoAnual(gastos, anoSelect) {
                     obj.id = g.id
                     obj.ano = g.ano
                   
-                    obj.mes = []
+                    obj.mes = []  
+                    obj.pago = []
+
                     for(let i = 1; i <= 12;i++)
                     {
                         obj.mes[i] = 0
+                        obj.pago[i] = 1
                     }
+
+                    let inPendencia = getInGastosPendenteMes(g.mes,anoSelect,m.id,gastos)                
+
+                    if(inPendencia)
+                    {
+                        obj.pago[g.mes] = 0
+                    }       
 
                     obj.mes[g.mes] = g.valor;                   
 
@@ -78,11 +94,14 @@ async function montarResumoAnual(gastos, anoSelect) {
             obj.id = m.id
             obj.ano = anoSelect         
             obj.mes = []
+            obj.pago = []
 
             for(let i = 1; i <= 12;i++)
             {
                 obj.mes[i] = 0
-            }            
+                obj.pago[i] = 1
+            }
+                    
             lista.push(obj);
         }
     }
@@ -93,7 +112,7 @@ async function montarResumoAnual(gastos, anoSelect) {
 async function montarResumoAnualCredi(creditos, anoSelect) {
     let lista = []    
     let Motivos = await Origem.getAll();
-
+   
     for (const m of Motivos) 
     {
         for (const g of creditos) 
@@ -101,8 +120,16 @@ async function montarResumoAnualCredi(creditos, anoSelect) {
             if (g.motivo == m.descricao && anoSelect == g.ano) {
                 if (verificaSeMotivoExisteLista(m.descricao, g.ano, lista)) {
                     let i = getIndexObjLista(m.descricao, g.ano, lista);
-
+                    
                     lista[i].mes[g.mes] = g.valor;
+
+                    let inPendencia = getInCreditoPendenteMes(g.mes,anoSelect,m.id,creditos)
+                   
+                    if(inPendencia)
+                    {
+                        lista[i].pago[g.mes] = 0
+                    }     
+
                 }
                 else {
                     let obj = {}
@@ -111,10 +138,20 @@ async function montarResumoAnualCredi(creditos, anoSelect) {
                     obj.ano = g.ano
                     
                     obj.mes = []
+                    obj.pago = []
+
                     for(let i = 1; i <= 12;i++)
                     {
                         obj.mes[i] = 0
+                        obj.pago[i] = 1
                     }
+
+                    let inPendencia = getInCreditoPendenteMes(g.mes,anoSelect,m.id,creditos)            
+
+                    if(inPendencia)
+                    {
+                        obj.pago[g.mes] = 0
+                    }                   
 
                     obj.mes[g.mes] = g.valor;
                     lista.push(obj);
@@ -129,17 +166,20 @@ async function montarResumoAnualCredi(creditos, anoSelect) {
             obj.motivo = m.descricao
             obj.id = m.id           
             obj.ano = anoSelect
+
             obj.mes = []
+            obj.pago = []
 
             for(let i = 1; i <= 12;i++)
             {
                 obj.mes[i] = 0
+                obj.pago[i] = 1
             }
            
             lista.push(obj);
         }
     }
-
+   
     return lista;
 }
 
@@ -268,6 +308,43 @@ async function getSaldoFimAno(ano){
     {
         return 0
     }
+}
+
+
+//BUSCA GASTOS PELO ID
+function getInGastosPendenteMes(mes,ano,motivo,lista){  
+    
+    let inPendencia = false
+    let resultados = []
+
+    resultados = lista.filter(element => {
+       return element.situacao != 3 && element.mes == mes && element.ano == ano && element.id == motivo;
+    });
+
+    if(resultados.length > 0)
+    {
+        inPendencia = true
+    }
+    
+    return inPendencia
+}
+
+//BUSCA CREDITO PELO ID
+ function getInCreditoPendenteMes(mes,ano,motivo,lista){  
+    
+    let inPendencia = false 
+    let resultados = []
+
+    resultados = lista.filter(element => {
+        return element.situacao != 2 && element.mes == mes && element.ano == ano && element.id == motivo;
+     });
+
+    if(resultados.length > 0)
+    {
+        inPendencia = true
+    }
+    
+    return inPendencia
 }
 
 
