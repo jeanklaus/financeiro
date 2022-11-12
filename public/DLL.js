@@ -317,6 +317,10 @@ function setIdRegistroTag(idRegistro,campoId,tpRegistro) {
   inputTpAdd.value = tpRegistro;
  }
 
+ function ConvertDateToNumber(d) {
+  let [dia,mes,ano] = d.split('/');
+  let numero = `${ano}${mes}${dia}`;
+  return parseFloat(numero)
+}
 
-
-module.exports = { formataData, ConverterData,AnalisaFiltros,getPedacoData }
+module.exports = { formataData, ConverterData,AnalisaFiltros,getPedacoData,ConvertDateToNumber }

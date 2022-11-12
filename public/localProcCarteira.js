@@ -1,9 +1,7 @@
-const Gasto = require('../services/s_gastos')
-const Credito = require('../services/s_creditos')
 const Origem = require('../services/s_origemCredito')
 const MotivoGastos = require('../services/s_motivoGastos')
 const db = require('../db');
-
+const DLL = require('../public/DLL');
 
 function getCustoTotal(lista) {
     let resultado = 0;
@@ -247,30 +245,43 @@ async function getValorLiquidoMes(ano,creditos,gastos)
 {
     let liquidez = {}
 
-   let saldoInicial = await getSaldoFimAno(ano -1);
+   let saldoInicial = await getSaldoFimAno(ano - 1);
+   let saldoInicialReal = await getSaldoFimAnoReal(ano - 1);
    
-    liquidez.inicial = []
+    liquidez.inicial = []  
     liquidez.liquido = []
     liquidez.final = []
+
+    liquidez.inicialReal = []
+    liquidez.liqReal = []
+    liquidez.finalReal = []
+    
 
     for(let i = 1; i <= 12;i++)
     {
         liquidez.inicial[i] = saldoInicial
+        liquidez.inicialReal[i] = saldoInicialReal
 
-        let liquido = await getCreditoTotalMes(i,ano,creditos) - await getGastoTotalMes(i,ano,gastos) 
+        let liquido = await getTotalMes(i,ano,creditos) - await getTotalMes(i,ano,gastos) 
+        let liqReal = await getTotalMesReal(i,ano,creditos) - await getTotalMes(i,ano,gastos) 
 
         liquidez.liquido[i] = liquido;
+        liquidez.liqReal[i] = liqReal;
+
         liquidez.final[i] = liquido + (saldoInicial);
+        liquidez.finalReal[i] = liqReal + (saldoInicialReal);
+
         saldoInicial = liquidez.final[i];
+        saldoInicialReal = liquidez.finalReal[i];
     }
 
    return liquidez
 }
 
-async function getGastoTotalMes(mes,ano,Gastos) {  
+async function getTotalMes(mes,ano,registros) {  
     let resultado = 0;
    
-    for (const prod of Gastos) {  
+    for (const prod of registros) { 
 
         if (prod.ano == ano && prod.mes == mes) {
           
@@ -281,13 +292,21 @@ async function getGastoTotalMes(mes,ano,Gastos) {
     return resultado;
 }
 
-async function getCreditoTotalMes(mes,ano,Creditos) {
+async function getTotalMesReal(mes,ano,registros) {  
     let resultado = 0;
+   
+    for (const prod of registros) { 
 
-    for (const prod of Creditos) {
+        let dataAtual = new Date()
+        let dataRegistro = DLL.ConvertDateToNumber(prod.dt_previsao)        
+        dataAtual =DLL.ConvertDateToNumber(DLL.formataData(dataAtual))
 
         if (prod.ano == ano && prod.mes == mes) {
-            resultado += parseFloat(prod.valor)
+
+            if(prod.situacao == 'RECEBIDO' || dataAtual < dataRegistro)
+            {
+                resultado += parseFloat(prod.valor)
+            }           
         }
     }
 
@@ -297,11 +316,30 @@ async function getCreditoTotalMes(mes,ano,Creditos) {
 //SELECT 
 async function getSaldoFimAno(ano){   
 
-    const conn = await db.connect();  
-  
+    const conn = await db.connect(); 
 
     let sql =  `SELECT (SELECT SUM(valor) from Credito where Usuario = ${global.user.id} and (SELECT YEAR(dt_previsao)) = '${ano}' GROUP BY (SELECT YEAR(dt_previsao))) - 
     (SELECT SUM(valor) from Gastos where Usuario = ${global.user.id} and (SELECT YEAR(dt_vencimento)) = '${ano}' GROUP BY (SELECT YEAR(dt_vencimento)))  as saldoFinal`
+
+    const [rows] = await conn.query(sql);
+
+    if(rows[0].saldoFinal)
+    {
+        return  parseFloat(rows[0].saldoFinal)
+    }
+    else
+    {
+        return 0
+    }
+}
+
+//SELECT 
+async function getSaldoFimAnoReal(ano){   
+
+    const conn = await db.connect(); 
+
+    let sql = `SELECT (SELECT SUM(valor) from Credito where Usuario = ${global.user.id} and (SELECT YEAR(dt_previsao)) = '${ano}' and (situacao = 2 OR now() < dt_previsao) GROUP BY (SELECT YEAR(dt_previsao))) - 
+    (SELECT SUM(valor) from Gastos where Usuario = ${global.user.id} and (SELECT YEAR(dt_vencimento)) = '${ano}' GROUP BY (SELECT YEAR(dt_vencimento)))  as saldoFinal;`
 
     const [rows] = await conn.query(sql);
 

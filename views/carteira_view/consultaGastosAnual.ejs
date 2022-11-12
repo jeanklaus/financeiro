@@ -753,7 +753,7 @@
                           <th style="text-align:center;">Ganhe +1 MES (R$ 32,00)</th> 
                           <th>
                             <span> 
-                              <script src="https://www.mercadopago.com.br/integrations/v1/web-payment-checkout.js" data-preference-id="72273544-ef269c33-ac91-4517-b03a-aba2e4c29f6c" data-source="button"></script>
+                              <script src="https://www.mercadopago.com.br/integrations/v1/web-payment-checkout.js" data-preference-id="72273544-ef269c33-ac91-4517-b03a-aba2e4c29f6c" data-source="button" ></script>
                             </span>
                           </th> 
                         </tr>
@@ -778,27 +778,9 @@
 
                       </thead>
                     </table>
-
-                    
-                    
-                    
                   
                   </div>
               </div>
-
-              
-              
-
-
-
-
-
-
-
-
-
-
-             
               
             </div>
           </div> 
@@ -898,6 +880,32 @@
                   <% } %>
                 <% } %>             
               </tr>
+              <tr>
+                <th><br></th>
+              </tr>
+              <tr>
+                <th><b>INICIAL REAL</b></th>
+                <% for(let i = 1; i <= 12;i++){ %>
+                  <td><%= liquidez.inicialReal[i].toFixed(2) %></td> 
+                <% } %>             
+              </tr>
+              <tr>
+                <th><b>LIQUIDO REAL</b></th>
+                <% for(let i = 1; i <= 12;i++){ %>
+                  <td><%= liquidez.liqReal[i].toFixed(2) %></td> 
+                <% } %>             
+              </tr>
+              <tr>
+                <th><b>FINAL REAL</b></th>
+                <% for(let i = 1; i <= 12;i++){ %>
+                  <% if(liquidez.finalReal[i].toFixed(2) >= 0){ %>
+                    <td style="background-color: rgb(0, 253, 0) ;"><b><%= liquidez.finalReal[i].toFixed(2) %></b></td> 
+                  <% }else{ %>
+                    <td style="background-color: rgb(255, 0, 0) ;"><b><%= liquidez.finalReal[i].toFixed(2) %></b></td> 
+                  <% } %>
+                <% } %>             
+              </tr>
+              <tr>
           </tbody>
         </table>   
       </div> 
@@ -1050,7 +1058,7 @@
       x.className = x.className.replace(" w3-show", "");
     }
   }
-  </script>
+</script>
 
 
 
