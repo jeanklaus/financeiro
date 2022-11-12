@@ -53,12 +53,12 @@ router.get('/ConsultaGastosResumoAnual', async (req, res) => {
         //GASTOS
         let Gastos = await Gasto.getResumoAno();
         let valorTotal = LocalProc.getCustoTotal(Gastos);
-        let resumo = await LocalProc.montarResumoAnual(Gastos, anoSelect);
+        let resumo = await LocalProc.montarResumoAnual(Gastos, anoSelect,ListaGastos);
         let totais = LocalProc.getTotalMesResumoAnual(resumo, anoSelect);
      
         //CREDITOS
         let Creditos = await Credito.getResumoAno();        
-        let resumoCredi =  await LocalProc.montarResumoAnualCredi(Creditos, anoSelect);
+        let resumoCredi =  await LocalProc.montarResumoAnualCredi(Creditos, anoSelect,ListaCreditos);
         let totaisCredi = LocalProc.getTotalMesResumoAnual(resumoCredi, anoSelect); 
         
         let liquidez = await LocalProc.getValorLiquidoMes(anoSelect,ListaCreditos,ListaGastos);
@@ -98,13 +98,13 @@ router.post('/ConsultandoGastosResumoAnual', async (req, res) => {
         //GASTOS
         let Gastos = await Gasto.getResumoAno();
         let valorTotal = LocalProc.getCustoTotal(Gastos);
-        let resumo = await LocalProc.montarResumoAnual(Gastos, anoSelect);
+        let resumo = await LocalProc.montarResumoAnual(Gastos, anoSelect,ListaGastos);
         let totais = LocalProc.getTotalMesResumoAnual(resumo, anoSelect);
 
         //CREDITOS
         let Creditos = await Credito.getResumoAno();
 
-        let resumoCredi = await LocalProc.montarResumoAnualCredi(Creditos, anoSelect);
+        let resumoCredi =  await LocalProc.montarResumoAnualCredi(Creditos, anoSelect,ListaCreditos);
         let totaisCredi = LocalProc.getTotalMesResumoAnual(resumoCredi, anoSelect);
 
         let liquidez = await LocalProc.getValorLiquidoMes(anoSelect,ListaCreditos,ListaGastos);
@@ -144,13 +144,13 @@ router.get('/ConsultandoGastosResumoAnual:ano', async (req, res) => {
         //GASTOS
         let Gastos = await Gasto.getResumoAno();
         let valorTotal = LocalProc.getCustoTotal(Gastos);
-        let resumo = await LocalProc.montarResumoAnual(Gastos, anoSelect);
+        let resumo = await LocalProc.montarResumoAnual(Gastos, anoSelect,ListaGastos);
         let totais = LocalProc.getTotalMesResumoAnual(resumo, anoSelect);
 
         //CREDITOS
         let Creditos = await Credito.getResumoAno();
 
-        let resumoCredi = await LocalProc.montarResumoAnualCredi(Creditos, anoSelect);
+        let resumoCredi =  await LocalProc.montarResumoAnualCredi(Creditos, anoSelect,ListaCreditos);
         let totaisCredi = LocalProc.getTotalMesResumoAnual(resumoCredi, anoSelect);
 
         let liquidez = await LocalProc.getValorLiquidoMes(anoSelect,ListaCreditos,ListaGastos);

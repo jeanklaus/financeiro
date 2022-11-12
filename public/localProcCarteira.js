@@ -4,6 +4,7 @@ const Origem = require('../services/s_origemCredito')
 const MotivoGastos = require('../services/s_motivoGastos')
 const db = require('../db');
 
+
 function getCustoTotal(lista) {
     let resultado = 0;
 
@@ -38,20 +39,24 @@ async function getCreditoTotalPendente(ano,Creditos) {
     return resultado;
 }
 
-async function montarResumoAnual(gastos, anoSelect) {
+async function montarResumoAnual(gastos, anoSelect,listaGastos) {
     let lista = []
     let Motivos = await MotivoGastos.getAll();
-   
-    for (const m of Motivos) {
-        for (const g of gastos) {
-            if (g.motivo == m.descricao && anoSelect == g.ano) {
-                if (verificaSeMotivoExisteLista(m.descricao, g.ano, lista)) {
+
+    for (const m of Motivos) 
+    {
+        for (const g of gastos) 
+        {
+            if (g.motivo == m.descricao && anoSelect == g.ano) 
+            {
+                if (verificaSeMotivoExisteLista(m.descricao, g.ano, lista)) 
+                {
                     let i = getIndexObjLista(m.descricao, g.ano, lista);
 
                     lista[i].mes[g.mes] = g.valor;
+                  
+                    let inPendencia = getInGastosPendenteMes(g.mes,anoSelect,m.descricao,listaGastos)
 
-                    let inPendencia = getInGastosPendenteMes(g.mes,anoSelect,m.id,gastos)
-                   
                     if(inPendencia)
                     {
                         lista[i].pago[g.mes] = 0
@@ -72,7 +77,7 @@ async function montarResumoAnual(gastos, anoSelect) {
                         obj.pago[i] = 1
                     }
 
-                    let inPendencia = getInGastosPendenteMes(g.mes,anoSelect,m.id,gastos)                
+                    let inPendencia = getInGastosPendenteMes(g.mes,anoSelect,m.descricao,listaGastos)                
 
                     if(inPendencia)
                     {
@@ -109,7 +114,7 @@ async function montarResumoAnual(gastos, anoSelect) {
     return lista;
 }
 
-async function montarResumoAnualCredi(creditos, anoSelect) {
+async function montarResumoAnualCredi(creditos, anoSelect,listaCreditos) {
     let lista = []    
     let Motivos = await Origem.getAll();
    
@@ -123,7 +128,7 @@ async function montarResumoAnualCredi(creditos, anoSelect) {
                     
                     lista[i].mes[g.mes] = g.valor;
 
-                    let inPendencia = getInCreditoPendenteMes(g.mes,anoSelect,m.id,creditos)
+                    let inPendencia = getInCreditoPendenteMes(g.mes,anoSelect,m.descricao,listaCreditos)
                    
                     if(inPendencia)
                     {
@@ -146,7 +151,7 @@ async function montarResumoAnualCredi(creditos, anoSelect) {
                         obj.pago[i] = 1
                     }
 
-                    let inPendencia = getInCreditoPendenteMes(g.mes,anoSelect,m.id,creditos)            
+                    let inPendencia = getInCreditoPendenteMes(g.mes,anoSelect,m.descricao,listaCreditos)            
 
                     if(inPendencia)
                     {
@@ -312,15 +317,15 @@ async function getSaldoFimAno(ano){
 
 
 //BUSCA GASTOS PELO ID
-function getInGastosPendenteMes(mes,ano,motivo,lista){  
-    
+function getInGastosPendenteMes(mes,ano,motivo,motivos){  
+  
     let inPendencia = false
     let resultados = []
-
-    resultados = lista.filter(element => {
-       return element.situacao != 3 && element.mes == mes && element.ano == ano && element.id == motivo;
-    });
-
+    
+    resultados = motivos.filter(element => {
+        return element.situacao != 'PAGO' && element.mes == mes && element.ano == ano && element.motivo == motivo;
+     });    
+    
     if(resultados.length > 0)
     {
         inPendencia = true
@@ -330,13 +335,13 @@ function getInGastosPendenteMes(mes,ano,motivo,lista){
 }
 
 //BUSCA CREDITO PELO ID
- function getInCreditoPendenteMes(mes,ano,motivo,lista){  
+ function getInCreditoPendenteMes(mes,ano,motivo,motivos){  
     
     let inPendencia = false 
     let resultados = []
-
-    resultados = lista.filter(element => {
-        return element.situacao != 2 && element.mes == mes && element.ano == ano && element.id == motivo;
+   
+    resultados = motivos.filter(element => {
+        return element.situacao != 'RECEBIDO' && element.mes == mes && element.ano == ano && element.descricao == motivo;
      });
 
     if(resultados.length > 0)
@@ -346,6 +351,7 @@ function getInGastosPendenteMes(mes,ano,motivo,lista){
     
     return inPendencia
 }
+
 
 
 module.exports = {getCustoTotal,getGastoTotalPendente,getCreditoTotalPendente,montarResumoAnual,montarResumoAnualCredi,

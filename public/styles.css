@@ -83,7 +83,8 @@ a
 
 .tagPequena
 {
-  width: 0.5px;
-  height: 8px;   
+  width: 1px;
+  height: 8px; 
+  margin-right: 3px;  
 }
 
