@@ -727,7 +727,7 @@
     </div>
   </div>
 
-  <div class="modal" id="modalUsuarioPagar">
+  <div onfocus="" class="modal" id="modalUsuarioPagar">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
 
@@ -752,7 +752,7 @@
                         <tr> 
                           <th style="text-align:center;">Ganhe +1 MES (R$ 32,00)</th> 
                           <th>
-                            <span> 
+                            <span onclick="console.log('1 MES')"> 
                               <script src="https://www.mercadopago.com.br/integrations/v1/web-payment-checkout.js" data-preference-id="72273544-ef269c33-ac91-4517-b03a-aba2e4c29f6c" data-source="button" ></script>
                             </span>
                           </th> 
@@ -761,7 +761,7 @@
                         <tr> 
                           <th style="text-align:center;">Ganhe +3 MESES (R$ 90,00)</th> 
                           <th>
-                            <span> 
+                            <span onclick="console.log('3 MES')"> 
                               <script src="https://www.mercadopago.com.br/integrations/v1/web-payment-checkout.js" data-preference-id="72273544-fe2c660e-42ba-4157-8f3c-bad362d1b7f6" data-source="button"></script>
                             </span>
                           </th> 
@@ -770,7 +770,7 @@
                         <tr> 
                           <th style="text-align:center;">Ganhe +1 ANO (R$ 320,00)</th> 
                           <th>
-                            <span> 
+                            <span onclick="console.log('1 ANO')"> 
                               <script src="https://www.mercadopago.com.br/integrations/v1/web-payment-checkout.js" data-preference-id="72273544-57a91a01-48bf-4f59-972b-b422afc6b8df" data-source="button"></script>
                             </span>
                           </th> 
@@ -823,7 +823,7 @@
         
         <div><a href="/Fatura" class="w3-tiny w3-round btn btn-primary me-2"><b>Faturas</b></a></div>
         
-        <div><a class="w3-tiny w3-round btn btn-info me-2 btn" data-bs-toggle="modal" data-bs-target="#modalUsuarioPagar"><b>Pagar</b></a></div>
+        <div><a class="w3-tiny w3-round btn btn-info me-2 btn" data-bs-toggle="modal" data-bs-target="#modalUsuarioPagar"><b>+ prazo de validade</b></a></div>
         <div><a href="/" class="w3-tiny w3-round btn btn-danger me-2"><b>Sair</b></a></div>
         <label style="color: white ;"><b>Validade: <%= global.user.validade %></b></label>
         
@@ -914,8 +914,11 @@
     <div class="container mt-3">  
       <table class="w3-small w3-card table w3-border w3-table table-hover TabelaDinamica table-striped" id="tblCreditos">
         <thead>
-          <tr>            
+          <tr>
             <td onclick="w3.sortHTML('#tblCreditos', '.item', 'td:nth-child(1)')"><button data-bs-toggle="modal" data-bs-target="#modalAdicionarCredito" class="w3-tiny w3-round btn-primary">+</button> GANHOS</td>      
+          </tr>
+          <tr>           
+            <th><input type="text" id="InputBuscaCredito" onkeyup="FiltroTabelaMotivos('InputBuscaCredito','tblCreditos',0)"></th> 
             <th>Janeiro</th>  
             <th>Fevereiro</th> 
             <th>Março</th> 
@@ -931,8 +934,7 @@
             <th><a data-bs-toggle="collapse" href="#demo" class="SemBorda"><button class="w3-tiny w3-round btn-warning">>></button></a></th>
           </tr>
         </thead>
-        <tbody> 
-          
+        <tbody>          
           <!--TABELA -->
           <% resumoCredi.forEach(dado => { %>
             <%  if(dado.ano == anoSelect) { %>           
@@ -976,10 +978,10 @@
         </tbody>
       </table>
     </div>
-
+    
      <!--GASTOS -->
     <div class="container mt-3">  
-      <table class="w3-small w3-card table w3-border w3-table table-hover TabelaDinamica table-striped" id="tblGastos">
+      <table class="w3-small w3-card table w3-border w3-table table-hover TabelaDinamica table-striped" id="tblGastos" >
         <thead>
            
           <tr>
@@ -989,8 +991,11 @@
             <% } %>             
             <th></th>           
           </tr> 
+          <tr>
+            <th onclick="w3.sortHTML('#tblGastos', '.item', 'td:nth-child(1)')"><button data-bs-toggle="modal" data-bs-target="#modalAdicionarGastos" class="w3-tiny w3-round btn-primary">+</button> GASTOS</th>     
+          </tr>
           <tr> 
-            <td onclick="w3.sortHTML('#tblGastos', '.item', 'td:nth-child(1)')"><button data-bs-toggle="modal" data-bs-target="#modalAdicionarGastos" class="w3-tiny w3-round btn-primary">+</button> GASTOS</td>     
+            <th><input type="text" id="InputBuscaGasto" onkeyup="FiltroTabelaMotivos('InputBuscaGasto','tblGastos',0)"></th>  
             <th>Janeiro</th>  
             <th>Fevereiro</th> 
             <th>Março</th> 

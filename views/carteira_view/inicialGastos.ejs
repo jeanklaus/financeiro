@@ -90,75 +90,77 @@
 
   
   <form  action="/Carteira/ClickGastos" method="post">
-      <nav class="navbar navbar-expand-sm bg-dark">
-       
-        <select class="form-control me-2" name="motivoGastos" style="width: auto;">
-          <% if(filtros.motivoGastos.id) { %>
-            <option value="<%= filtros.motivoGastos.id %>|<%= filtros.motivoGastos.descricao %>" selected><%= filtros.motivoGastos.descricao %></option>
-          <% }else { %>
-            <option value="" disabled selected>Motivo</option>
-          <% } %>   
-          <% Motivos.forEach(m => { %>
-            <option value="<%= m.id %>|<%= m.descricao %>"><%= m.descricao %></option>
-          <% }); %>
-        </select>
 
-        <select class="form-control me-2" name="formaPagamento" style="width: auto;">
-          <% if(filtros.formaPagamento) { %>
-            <option value="<%= filtros.formaPagamento %>|" selected><%= filtros.formaPagamento %></option>
-          <% }else { %>
-            <option value="" disabled selected>Forma de Pagamento</option>
-          <% } %>     
-            <option value="DINHEIRO">DINHEIRO</option>
-            <option value="CARTAO">CARTAO</option>
-        </select>
+    <div style="background-color: black;width: 100%;" class="w3-padding-16 btn-group">
 
-        <select class="form-control me-2" name="conta" style="width: auto;">
-          <% if(filtros.conta.id) { %>
-            <option value="<%= filtros.conta.id %>|<%= filtros.conta.descricao %>" selected><%= filtros.conta.descricao %></option>
-          <% }else { %>
-            <option value="" disabled selected>Contas</option>
-          <% } %>          
-          <% Contas.forEach(c => { %>
-            <option value="<%= c.id %>|<%= c.descricao %>">
-              <%= c.descricao %>
-            </option>
-            <% }); %>
-        </select>
-
-        <select class="form-control me-2" name="Situacao" style="width: auto;">
-          <% if(filtros.Situacao.id) { %>
-            <option value="<%= filtros.Situacao.id %>|<%= filtros.Situacao.descricao %>" selected><%= filtros.Situacao.descricao %></option>
-          <% }else { %>
-            <option value="" disabled selected>Situação</option>
-          <% } %>  
-          <option value="1|PENDENTE">PENDENTE</option>
-          <option value="2|ATRASADO">ATRASADO</option>
-          <option value="3|PAGO">PAGO</option>  
-          <option value="4|ORCAMENTO">ORCAMENTO</option> 
-        </select>
-
-        <% if(filtros.dataIni) { %>
-          <input class="w3-input w3-border form-control me-2" type="date" name="dataIni" value="<%= filtros.dataIni %>">
+      <select class="me-2 w3-tiny form-control" name="motivoGastos" style="width: auto;">
+        <% if(filtros.motivoGastos.id) { %>
+          <option value="<%= filtros.motivoGastos.id %>|<%= filtros.motivoGastos.descricao %>" selected><%= filtros.motivoGastos.descricao %></option>
         <% }else { %>
-          <input class="w3-input w3-border form-control me-2" type="date" name="dataIni">
+          <option value="" disabled selected>Motivo</option>
         <% } %>   
+        <% Motivos.forEach(m => { %>
+          <option value="<%= m.id %>|<%= m.descricao %>"><%= m.descricao %></option>
+        <% }); %>
+      </select>
 
-        <% if(filtros.dataFim) { %>
-          <input class="w3-input w3-border form-control me-2" type="date" name="dataFim" value="<%= filtros.dataFim %>">
+      <select class="me-2 w3-tiny form-control" name="formaPagamento" style="width: auto;">
+        <% if(filtros.formaPagamento) { %>
+          <option value="<%= filtros.formaPagamento %>|" selected><%= filtros.formaPagamento %></option>
         <% }else { %>
-          <input class="w3-input w3-border form-control me-2" type="date" name="dataFim">
-        <% } %> 
-        <button class="btn btn-primary me-2" name="PESQUISAR" value="true">Pesquisar</button>
-        
-        <a href="/Carteira/ConsultaGastosResumoAnual" class="btn btn-success me-2">Voltar</a>       
-     
-     
-      </nav>
+          <option value="" disabled selected>Forma de Pagamento</option>
+        <% } %>     
+          <option value="DINHEIRO">DINHEIRO</option>
+          <option value="CARTAO">CARTAO</option>
+      </select>
+
+      <select class="me-2 w3-tiny form-control" name="conta" style="width: auto;">
+        <% if(filtros.conta.id) { %>
+          <option value="<%= filtros.conta.id %>|<%= filtros.conta.descricao %>" selected><%= filtros.conta.descricao %></option>
+        <% }else { %>
+          <option value="" disabled selected>Contas</option>
+        <% } %>          
+        <% Contas.forEach(c => { %>
+          <option value="<%= c.id %>|<%= c.descricao %>">
+            <%= c.descricao %>
+          </option>
+          <% }); %>
+      </select>
+
+      <select class="me-2 w3-tiny form-control" name="Situacao" style="width: auto;">
+        <% if(filtros.Situacao.id) { %>
+          <option value="<%= filtros.Situacao.id %>|<%= filtros.Situacao.descricao %>" selected><%= filtros.Situacao.descricao %></option>
+        <% }else { %>
+          <option value="" disabled selected>Situação</option>
+        <% } %>  
+        <option value="1|PENDENTE">PENDENTE</option>
+        <option value="2|ATRASADO">ATRASADO</option>
+        <option value="3|PAGO">PAGO</option>  
+        <option value="4|ORCAMENTO">ORCAMENTO</option> 
+      </select>
+
+      <% if(filtros.dataIni) { %>
+        <input class="me-2 w3-tiny form-control" type="date" name="dataIni" value="<%= filtros.dataIni %>">
+      <% }else { %>
+        <input class="me-2 w3-tiny form-control" type="date" name="dataIni">
+      <% } %>   
+
+      <% if(filtros.dataFim) { %>
+        <input class="me-2 w3-tiny form-control" type="date" name="dataFim" value="<%= filtros.dataFim %>">
+      <% }else { %>
+        <input class="me-2 w3-tiny form-control" type="date" name="dataFim">
+      <% } %> 
+
+      <div><button class="w3-tiny w3-round btn btn-primary me-2" name="PESQUISAR" value="true">Pesquisar</button></div>      
+      <div><a href="/Carteira/ConsultaGastosResumoAnual" class="w3-tiny w3-round btn btn-success me-2">Voltar</a></div>  
+            
+    </div>
+
     </form>
+
   <div class="container w3-left">
     <div class="container mt-3">
-      <table class="table table-dark table-striped table-sm">
+      <table class="w3-small w3-card table w3-border w3-table table-hover table-striped">
         <thead>
           <tr>  
             <th></th>     
@@ -169,8 +171,7 @@
             <th>Conta Bancaria</th> 
             <th>Dt Registro</th> 
             <th>Dt Vencimento</th>
-            <th>Situação</th>  
-            <th></th> 
+            <th>Situação</th> 
           </tr>
         </thead>
         <tbody>          
@@ -194,31 +195,6 @@
             <% } else { %> 
               <td style="color:rgb(250, 0, 0);"><%= g.situacao %></td>
             <% } %> 
-            
-
-            <form action="/Carteira/PagarGasto" method="post">
-
-              <% if(g.inOrcamentario) { %>
-                <td>
-                  <div class="btn-group">
-                    <button name="CONSUMIR" value="<%= g.id %>" class="me-1 btn-sm form-control btn-info">Consumir</button>
-                    <button name="DEL" value="<%= g.id %>" class=" btn-sm form-control btn-danger">X</button>
-                  </div>
-                </td>
-              <% } else if(g.situacao != 'PAGO' && !g.inFatura) { %> 
-                <td>
-                  <div class="btn-group">
-                    <button name="PAGAR" value="<%= g.id %>" class="me-1 btn-sm form-control btn-primary">Pagar</button>
-                    <button name="ADD_FATURA" value="<%= g.id %>" class="btn-sm form-control btn-info">ADD Fatura</button>
-                  </div>
-                </td>                  
-              <% } else if(g.inFatura) { %>
-                <td>FATURA</td>                
-              <% }else { %>
-                <td></td>                
-              <% } %>
-            </form>
-
           </tr>  
           <% }); %>             
         </tbody>

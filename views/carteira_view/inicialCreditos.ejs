@@ -90,65 +90,67 @@
   </div>
 
   <form action="/Carteira/ClickCreditos" method="post">
-    <nav class="navbar navbar-expand navbar-dark bg-dark">
-    
 
-    <select class="form-control me-2" name="origemCredito" style="width: auto;">
-      <% if(filtros.origemCredito.id) { %>
-        <option value="<%= filtros.origemCredito.id %>|<%= filtros.origemCredito.descricao %>" selected><%= filtros.origemCredito.descricao %></option>
-      <% }else { %>
-        <option value="" disabled selected>Origem Credito</option>
-      <% } %>   
-      <% Origens.forEach(o => { %>
-        <option value="<%= o.id %>|<%= o.descricao %>"><%= o.descricao %></option>
-      <% }); %>
-    </select>
 
-    <select class="form-control me-2" name="conta" style="width: auto;">
-      <% if(filtros.conta.id) { %>
-        <option value="<%= filtros.conta.id %>|<%= filtros.conta.descricao %>" selected><%= filtros.conta.descricao %></option>
-      <% }else { %>
-        <option value="" disabled selected>Contas</option>
-      <% } %>          
-      <% Contas.forEach(c => { %>
-        <option value="<%= c.id %>|<%= c.descricao %>">
-          <%= c.descricao %>
-        </option>
+    <div style="background-color: black;width: 100%;" class="w3-padding-16 btn-group">
+
+      <select class="me-2 w3-tiny form-control" name="origemCredito" style="width: auto;">
+        <% if(filtros.origemCredito.id) { %>
+          <option value="<%= filtros.origemCredito.id %>|<%= filtros.origemCredito.descricao %>" selected><%= filtros.origemCredito.descricao %></option>
+        <% }else { %>
+          <option value="" disabled selected>Origem Credito</option>
+        <% } %>   
+        <% Origens.forEach(o => { %>
+          <option value="<%= o.id %>|<%= o.descricao %>"><%= o.descricao %></option>
         <% }); %>
-    </select>
+      </select>
 
-    <select class="form-control me-2" name="Situacao" style="width: auto;">
-      <% if(filtros.Situacao.id) { %>
-        <option value="<%= filtros.Situacao.id %>|<%= filtros.Situacao.descricao %>" selected><%= filtros.Situacao.descricao %></option>
+      <select class="me-2 w3-tiny form-control" name="conta" style="width: auto;">
+        <% if(filtros.conta.id) { %>
+          <option value="<%= filtros.conta.id %>|<%= filtros.conta.descricao %>" selected><%= filtros.conta.descricao %></option>
+        <% }else { %>
+          <option value="" disabled selected>Contas</option>
+        <% } %>          
+        <% Contas.forEach(c => { %>
+          <option value="<%= c.id %>|<%= c.descricao %>">
+            <%= c.descricao %>
+          </option>
+          <% }); %>
+      </select>
+
+      <select class="me-2 w3-tiny form-control" name="Situacao" style="width: auto;">
+        <% if(filtros.Situacao.id) { %>
+          <option value="<%= filtros.Situacao.id %>|<%= filtros.Situacao.descricao %>" selected><%= filtros.Situacao.descricao %></option>
+        <% }else { %>
+          <option value="" disabled selected>Situação</option>
+        <% } %>  
+        <option value="1|PENDENTE">A RECEBER</option>
+        <option value="2|RECEBIDO">RECEBIDO</option> 
+      </select>
+
+      <% if(filtros.dataIni) { %>
+        <input class="me-2 w3-tiny form-control" type="date" name="dataIni" value="<%= filtros.dataIni %>">
       <% }else { %>
-        <option value="" disabled selected>Situação</option>
-      <% } %>  
-      <option value="1|PENDENTE">A RECEBER</option>
-      <option value="2|RECEBIDO">RECEBIDO</option> 
-    </select>
-
-    <% if(filtros.dataIni) { %>
-      <input class="w3-input w3-border form-control me-2" type="date" name="dataIni" value="<%= filtros.dataIni %>">
-    <% }else { %>
-      <input class="w3-input w3-border form-control me-2" type="date" name="dataIni">
-    <% } %>   
-
-    <% if(filtros.dataFim) { %>
-      <input class="w3-input w3-border form-control me-2" type="date" name="dataFim" value="<%= filtros.dataFim %>">
-    <% }else { %>
-      <input class="w3-input w3-border form-control me-2" type="date" name="dataFim">
-    <% } %> 
-    <button class="btn btn-primary me-2" name="PESQUISAR" value="true">Pesquisar</button>
+        <input class="me-2 w3-tiny form-control" type="date" name="dataIni">
+      <% } %>   
+  
+      <% if(filtros.dataFim) { %>
+        <input class="me-2 w3-tiny form-control" type="date" name="dataFim" value="<%= filtros.dataFim %>">
+      <% }else { %>
+        <input class="me-2 w3-tiny form-control" type="date" name="dataFim">
+      <% } %>
+      
+      <div><button class="w3-tiny w3-round btn btn-primary me-2" name="PESQUISAR" value="true">Pesquisar</button></div>
     
-    <a href="/Carteira/ConsultaGastosResumoAnual" class="btn btn-success me-2">Voltar</a> 
-    </nav>
+      <div><a href="/Carteira/ConsultaGastosResumoAnual" class="w3-tiny w3-round btn btn-success me-2">Voltar</a></div>      
+  </div>
   </form>
+
+
   <div class="container w3-left">
-    
-    
  
     <div class="container mt-3">
-      <table class="table table-dark table-striped table-sm">
+      <table class="w3-small w3-card table w3-border w3-table table-hover table-striped">
         <thead>
           <tr>   
             <th></th> 
@@ -157,8 +159,7 @@
             <th>Conta Bancaria</th> 
             <th>Dt Recebimento</th> 
             <th>Dt Prevista</th>
-            <th>Situação</th>  
-            <th></th>         
+            <th>Situação</th>
           </tr>
         </thead>
         <tbody>          
@@ -173,16 +174,10 @@
             <td><%= c.dt_previsao %></td>
   
             <% if(c.situacao == 'RECEBIDO') { %>
-              <td style="color:rgb(0, 255, 0);"><%= c.situacao %></td>           
+              <td style="color:rgb(0, 255, 0);"><b><%= c.situacao %></b></td>           
             <% } else { %> 
-              <td style="color:rgb(250, 0, 0);"><%= c.situacao %></td>
+              <td style="color:rgb(250, 0, 0);"><b><%= c.situacao %></b></td>
             <% } %> 
-            <form action="/Carteira/ReceberCredito" method="post">
-              <% if(c.situacao != 'RECEBIDO') { %>
-                <td><button name="RECEBER" value="<%= c.id %>" class="btn-sm form-control btn-primary">Receber</button></td>
-              <% } else { %> 
-                <td></td>
-              <% } %>
             </form>
           </tr>  
           <% }); %>             

@@ -194,6 +194,33 @@ function FiltroTabela(campoMotivo,campoMes, tbl, indiceCollMotivo,indiceCollMes)
   }
 }
 
+function FiltroTabelaMotivos(campoMotivo, tbl, indiceCollMotivo) 
+{
+  let table, tr, tdMotivo, i;
+  let filtroMotivo =  document.getElementById(campoMotivo).value.toUpperCase();
+
+  table = document.getElementById(tbl);
+  tr = table.getElementsByTagName("tr");
+
+  for (i = 0; i < tr.length; i++) {
+    tdMotivo = tr[i].getElementsByTagName("td")[indiceCollMotivo];
+
+    if (tdMotivo) 
+    {
+      let txtValueMotivo = tdMotivo.textContent || tdMotivo.innerText;
+
+      console.log(filtroMotivo.toUpperCase().trim(), )
+
+      if (txtValueMotivo.replace('-','').trim().indexOf(filtroMotivo) > -1) {
+        tr[i].style.display = "";
+      }
+      else {
+        tr[i].style.display = "none";
+      }
+    }
+  }
+}
+
 const Esta = (prod,lista) => {
   let i = 0;
   
