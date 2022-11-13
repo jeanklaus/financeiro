@@ -10,6 +10,7 @@ const DLL = require('../public/DLL');
 const Fatura = require('../services/s_fatura')
 const LocalProc = require('../public/localProcCarteira');
 const Tag = require('../services/s_tag')
+const ControleValidade = require('../services/s_controleValidade')
 
 const router = express.Router();
 router.use(bodyparser.urlencoded({ extended: false }));
@@ -417,7 +418,7 @@ router.post('/CofirmarRegistroGastos', async (req, res) => {
 //PAGAR - CONSUMIR - DELETAR ORCAMENTO - ADD  FATURA
 router.post('/PagarGasto', async (req, res) => {
     try {
-
+       
         if (req.body.CONF_ADD_FATURA) 
         {
             await Fatura.AddGasto(idGasto,mes,ano,conta);
@@ -807,6 +808,43 @@ router.post('/ClickTag', async (req, res) => {
         
         return res.redirect('ConsultaGastosResumoAnual')
         
+    }
+    catch (erro) {
+        global.conectado = false;
+        res.render('feed', { erro });
+    }
+});
+
+//======================================================================== EVENTO MERCADO PAGO ===============================================================
+router.post('/Evento_1', async (req, res) => {
+    try {
+
+        await ControleValidade.gerarLog(1);
+        return 0
+    }
+    catch (erro) {
+        global.conectado = false;
+        res.render('feed', { erro });
+    }
+});
+
+router.post('/Evento_2', async (req, res) => {
+    try {
+
+      await ControleValidade.gerarLog(2);
+      return 0
+    }
+    catch (erro) {
+        global.conectado = false;
+        res.render('feed', { erro });
+    }
+});
+
+router.post('/Evento_3', async (req, res) => {
+    try {
+
+        await ControleValidade.gerarLog(3);
+        return 0
     }
     catch (erro) {
         global.conectado = false;

@@ -24,7 +24,7 @@ router.post('/',async (req,res) => {
             database:'tornei65_financeiro'
         });
       
-        let sql =  `SELECT id,nome,login,senha,saldo,dt_validade FROM Usuario WHERE login = ? AND senha = ?`
+        let sql =  `SELECT id,nome,login,senha,saldo,dt_validade,email FROM Usuario WHERE login = ? AND senha = ?`
         let values = [req.body.login,req.body.senha]
         const [rows] = await connection.query(sql,values);
 
@@ -34,6 +34,7 @@ router.post('/',async (req,res) => {
             global.user.nome = rows[0].nome; 
             global.user.saldo = rows[0].saldo; 
             global.user.validade = rows[0].dt_validade;
+            global.user.email = rows[0].email;
 
             let data = new Date()
             

@@ -735,8 +735,6 @@
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
 
-        <form class="w3-container was-validated" action="/Carteira/PagarGasto" method="post">
-
           <div class="modal-header">
             <h4 class="modal-title">Escolha seu Pacote</h4>
             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
@@ -750,39 +748,43 @@
 
               <div class="row">
                   <div class="col">
-
                     <table class="w3-small w3-card table w3-border w3-table table-hover TabelaDinamica table-striped">
                       <thead>
                         <tr> 
                           <th style="text-align:center;">Ganhe +1 MES (R$ 32,00)</th> 
                           <th>
-                            <span onclick="console.log('1 MES')"> 
+                            <form action="/Carteira/Evento_1" method="post">
+                              <button class="SemBorda" type="submit">  
                               <script src="https://www.mercadopago.com.br/integrations/v1/web-payment-checkout.js" data-preference-id="72273544-ef269c33-ac91-4517-b03a-aba2e4c29f6c" data-source="button" ></script>
-                            </span>
+                            </button> 
+                          </form>  
                           </th> 
                         </tr>
 
                         <tr> 
                           <th style="text-align:center;">Ganhe +3 MESES (R$ 90,00)</th> 
                           <th>
-                            <span onclick="console.log('3 MES')"> 
+                            <form action="/Carteira/Evento_2" method="post">
+                            <button class="SemBorda" type="submit">                           
                               <script src="https://www.mercadopago.com.br/integrations/v1/web-payment-checkout.js" data-preference-id="72273544-fe2c660e-42ba-4157-8f3c-bad362d1b7f6" data-source="button"></script>
-                            </span>
+                            </button> 
+                          </form>          
                           </th> 
                         </tr>
 
                         <tr> 
                           <th style="text-align:center;">Ganhe +1 ANO (R$ 320,00)</th> 
                           <th>
-                            <span onclick="console.log('1 ANO')"> 
+                            <form action="/Carteira/Evento_3" method="post">
+                              <button class="SemBorda" type="submit">            
                               <script src="https://www.mercadopago.com.br/integrations/v1/web-payment-checkout.js" data-preference-id="72273544-57a91a01-48bf-4f59-972b-b422afc6b8df" data-source="button"></script>
-                            </span>
+                            </button> 
+                          </form> 
                           </th> 
                         </tr>
 
                       </thead>
                     </table>
-                  
                   </div>
               </div>
               

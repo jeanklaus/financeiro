@@ -1,7 +1,4 @@
 
-const Origem = require('../services/s_origemCredito')
-const MotivoGastos = require('../services/s_motivoGastos')
-
 function checkName(nome,ids = [],tp) {
   
   let checkbox = document.getElementById(nome); 
