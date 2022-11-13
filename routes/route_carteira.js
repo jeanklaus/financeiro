@@ -199,7 +199,7 @@ router.post('/ClickGastos', async (req, res) => {
             if (req.body.valor && req.body.id) {
                 let valor = req.body.valor;
                 let id = req.body.id;
-                await Gasto.EditarValor(id, valor);
+                await Gasto.EditarValor(id, valor,req.body.inAnoTodo);
             }
         }
 
@@ -549,7 +549,8 @@ router.post('/ClickCreditos', async (req, res) => {
             if (req.body.valor && req.body.id) {
                 let valor = req.body.valor;
                 let id = req.body.id;
-                await Credito.EditarValor(id, valor);
+
+                await Credito.EditarValor(id, valor,req.body.inAnoTodo);
             }
         }
 

@@ -227,7 +227,7 @@ async function Pagar(id,valor){
 }
 
 //EDITAR O VALOR DO GASTO
-async function EditarValor(id,valorNew)
+async function EditarValor(id,valorNew,inAnoTodo = false)
 {
     const conn = await db.connect();
     let gasto = await getGasto(id);
@@ -235,7 +235,7 @@ async function EditarValor(id,valorNew)
     let saldoAtual =  parseFloat(global.user.saldo)
     let saldoOriginal = parseFloat(gasto.valor).toFixed(2)
     let diferença = 0
-
+   
     if(gasto.situacao == 3 && valorNew != saldoOriginal)
     {
         if(valorNew > saldoOriginal)//TIRAR
@@ -258,13 +258,36 @@ async function EditarValor(id,valorNew)
         await conn.query(sql, values);
     }
 
-    let sql =  `  UPDATE Gastos 
+    let sql = ""
+    let values = []
+
+    if(inAnoTodo)
+    {
+        let ano = gasto.dt_vencimento.getFullYear()
+        let mes = gasto.dt_vencimento.getMonth() + 1
+        
+        sql =  `UPDATE  Gastos 
+        SET valor = ?
+        where (SELECT YEAR(dt_vencimento)) = ? 
+        AND (SELECT MONTH(dt_vencimento)) >= ?
+        AND (SELECT MONTH(dt_vencimento)) <= 12
+        AND valor = ?
+        AND usuario = ?
+        AND motivo = ?;`;
+
+        values = [valorNew,ano,mes,gasto.valor,global.user.id,gasto.motivo];
+    }
+    else
+    {
+        sql =  `  UPDATE Gastos 
         SET valor = ?
         WHERE id = ?
         AND usuario = ?`;
 
-        let values = [valorNew,id,global.user.id];   
-        await conn.query(sql, values);
+        values = [valorNew,id,global.user.id];  
+    }
+    
+    await conn.query(sql, values);
 
     global.user.saldo =  parseFloat(saldoAtual).toFixed(2)
 }

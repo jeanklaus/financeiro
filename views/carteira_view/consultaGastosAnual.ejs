@@ -446,7 +446,9 @@
             <div class="form-group"> 
               <input id="idEditarGasto" class="form-control" type="text" name="id" style="width: auto;" hidden>             
               <input id="valorEditarGasto" class="form-control" type="text" name="valor" style="width: auto;" required> 
-              <div class="invalid-feedback">insira um valor</div>                                   
+              <div class="invalid-feedback">insira um valor</div> 
+              <br>
+              <input type="checkbox" name="inAnoTodo"> ANO TODO                                  
             </div>
           </div>    
         
@@ -668,7 +670,9 @@
             <div class="form-group"> 
               <input id="idEditar" class="form-control" type="text" name="id" style="width: auto;" hidden>             
               <input id="valorEditar" class="form-control" type="text" name="valor" style="width: auto;" required> 
-              <div class="invalid-feedback">insira um valor</div>                                   
+              <div class="invalid-feedback">insira um valor</div>   
+              <br>
+              <input type="checkbox" name="inAnoTodo"> ANO TODO                                
             </div>
           </div>    
         
@@ -915,7 +919,7 @@
       <table class="w3-small w3-card table w3-border w3-table table-hover TabelaDinamica table-striped" id="tblCreditos">
         <thead>
           <tr>
-            <td onclick="w3.sortHTML('#tblCreditos', '.item', 'td:nth-child(1)')"><button data-bs-toggle="modal" data-bs-target="#modalAdicionarCredito" class="w3-tiny w3-round btn-primary">+</button> GANHOS</td>      
+            <th onclick="w3.sortHTML('#tblCreditos', '.item', 'td:nth-child(1)')"><button data-bs-toggle="modal" data-bs-target="#modalAdicionarCredito" class="w3-tiny w3-round btn-primary">+</button> GANHOS</th>      
           </tr>
           <tr>           
             <th><input type="text" id="InputBuscaCredito" onkeyup="FiltroTabelaMotivos('InputBuscaCredito','tblCreditos',0)"></th> 

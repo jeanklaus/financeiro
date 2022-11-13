@@ -224,11 +224,11 @@ async function Receber(id,valor){
 }
 
 //EDITAR O VALOR DO CREDITO
-async function EditarValor(id,valorNew){
+async function EditarValor(id,valorNew,inAnoTodo = false){
 
     const conn = await db.connect();
     let credito = await getCredito(id)
-   
+
     let saldoAtual = parseFloat(global.user.saldo)   
     let saldoOriginal = parseFloat(credito.valor).toFixed(2)
     let diferença = 0
@@ -246,7 +246,7 @@ async function EditarValor(id,valorNew){
             diferença = saldoOriginal - parseFloat(valorNew)
             saldoAtual -= diferença;
         }
-
+       
         let sql =  `UPDATE Usuario 
                     SET saldo = ?
                     WHERE id = ?`;
@@ -255,14 +255,36 @@ async function EditarValor(id,valorNew){
         await conn.query(sql, values);
     }
 
-    let sql =  `  UPDATE Credito 
-    SET valor = ?
-    WHERE id = ?
-    AND usuario = ?`;
+    let sql = ""
+    let values = []
 
-    let values = [valorNew,id,global.user.id];   
+    if(inAnoTodo)
+    {
+        let ano = credito.dt_previsao.getFullYear()
+        let mes = credito.dt_previsao.getMonth() + 1
+        
+        sql =  `UPDATE  Credito 
+        SET valor = ?
+        where (SELECT YEAR(dt_previsao)) = ? 
+        AND (SELECT MONTH(dt_previsao)) >= ?
+        AND (SELECT MONTH(dt_previsao)) <= 12
+        AND valor = ?
+        AND usuario = ?
+        AND origemCredito = ?;`;
+
+        values = [valorNew,ano,mes,credito.valor,global.user.id,credito.origemCredito];
+    }
+    else
+    {
+        sql =  `  UPDATE Credito 
+        SET valor = ?
+        WHERE id = ?
+        AND usuario = ?`;
+
+        values = [valorNew,id,global.user.id];
+    }
+      
     await conn.query(sql, values);
-
     global.user.saldo = parseFloat(saldoAtual).toFixed(2)
 }
 
