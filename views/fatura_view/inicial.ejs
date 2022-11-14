@@ -99,7 +99,8 @@
             <th>Conta</th>
             <th>Periodo</th>
             <th>Situação</th>
-            <th>Dt Pagamento</th>            
+            <th>Dt Pagamento</th>    
+            <th>Total</th>          
             <th></th>
           </tr>
           <% Faturas.forEach(dado => { %>
@@ -114,6 +115,7 @@
                 <% } %>
 
               <td><%= dado.dt_pagamento %></td>
+              <td><%= dado.vlTotal %></td>
 
               <% if(dado.Situacao != 'PAGO'){ %>
               <td>

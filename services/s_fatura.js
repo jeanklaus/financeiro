@@ -3,7 +3,11 @@ const DLL = require('../public/DLL');
 const Gastos = require('../services/s_gastos')
 const ContaBancaria = require('../services/s_contaBancaria')
 
-let SELECT_GERAL = `SELECT f.id,c.descricao as conta,mes,ano,inPaga as Situacao,dt_pagamento
+let SELECT_GERAL = `SELECT f.id,c.descricao as conta,mes,ano,inPaga as Situacao,dt_pagamento,
+(SELECT sum(g.valor)
+FROM ItemFatura i
+INNER JOIN Gastos g ON g.id = i.gasto
+WHERE fatura = f.id) as vlTotal
 FROM Fatura as f
 INNER JOIN ContaBancaria as c ON c.id = f.conta`;
 
