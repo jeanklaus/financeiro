@@ -440,17 +440,17 @@ router.post('/PagarGasto', async (req, res) => {
 
         if (req.body.CONSUMIR) 
         {
-            let inZerar = 0;
+            let inZerar = false;
 
             if(req.body.inZerar)
             {
-                inZerar = 1
+                inZerar = true
             }
 
             idGasto = req.body.idRegistroOrcGasto;
             gasto = await Gasto.getGastoID(idGasto);
             
-            await Gasto.Consumir(gasto, req.body.valor, req.body.dataConsumo,inZerar);
+            await Gasto.Consumir(gasto, req.body.valor, req.body.dataConsumo,inZerar,req.body.inFatura,req.body.inPaga);
             return res.redirect('ConsultaGastosResumoAnual')
         }
 

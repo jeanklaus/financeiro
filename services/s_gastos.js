@@ -306,10 +306,34 @@ async function getGasto(id){
 }
 
 //CONSUMIR ORCAMENTO
-async function Consumir(gasto,valor,data,inZerar){
+async function Consumir(gasto,valor,data,inZerar,inFatura,inPaga){
 
     const conn = await db.connect();
-    await Gravar(valor,data,data,gasto.formaPagamento,await MotivosGastos.getID(gasto.motivo),3,await ContaB.getID(gasto.conta),false);
+    
+    if(inFatura)
+    {
+        if(inPaga)
+        {
+            await Gravar(valor,data,data,gasto.formaPagamento,await MotivosGastos.getID(gasto.motivo),3,await ContaB.getID(gasto.conta),false,inFatura);
+        }
+        else
+        {
+            await Gravar(valor,data,data,gasto.formaPagamento,await MotivosGastos.getID(gasto.motivo),1,await ContaB.getID(gasto.conta),false,inFatura);
+        }
+       
+    }
+    else
+    {
+        if(inPaga)
+        {
+            await Gravar(valor,data,data,gasto.formaPagamento,await MotivosGastos.getID(gasto.motivo),3,await ContaB.getID(gasto.conta),false);
+        }
+        else
+        {
+            await Gravar(valor,data,data,gasto.formaPagamento,await MotivosGastos.getID(gasto.motivo),1,await ContaB.getID(gasto.conta),false);
+        }
+       
+    }  
 
     if(inZerar)
     {
