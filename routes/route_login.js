@@ -15,14 +15,17 @@ router.post('/',async (req,res) => {
         global.logado = false;  
         global.conectado = false;  
 
-        const mysql = require("mysql2/promise");     
-        const connection = await mysql.createConnection(       
-        {
+        const mysql = require("mysql2/promise"); 
+            
+        const connection = mysql.createPool({
             host:'ns847.hostgator.com.br', 
             user:'tornei65_jeanadm',
+            database: 'tornei65_financeiro',
             password:'PpOoIi876@',
-            database:'tornei65_financeiro'
-        });
+            waitForConnections: true,
+            connectionLimit: 20,
+            queueLimit: 0
+          });
       
         let sql =  `SELECT id,nome,login,senha,saldo,dt_validade,email FROM Usuario WHERE login = ? AND senha = ?`
         let values = [req.body.login,req.body.senha]
