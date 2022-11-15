@@ -735,6 +735,11 @@ router.post('/CofirmarRegistroCreditos', async (req, res) => {
                 req.body.origemCreditos, situacao, req.body.conta, qtParcelas, inValorBruto,tag)
 
         }
+        else if (req.body.orcamento)//ORCAMENTO
+        {
+            await Credito.GravarOrcamento(req.body.valor, req.body.dtPrevisao,
+            req.body.origemCreditos, req.body.conta, inAnoTodo,tag)
+        }
         else//NORMAL
         {
             await Credito.Gravar(req.body.valor, dataRecebimento, req.body.dtPrevisao,
@@ -753,6 +758,22 @@ router.post('/CofirmarRegistroCreditos', async (req, res) => {
 
 router.post('/ReceberCredito', async (req, res) => {
     try {
+
+        if (req.body.CONSUMIR) 
+        {
+            let inZerar = false;
+
+            if(req.body.inZerar)
+            {
+                inZerar = true
+            }
+
+            idCredito = req.body.idRegistroOrcCredito;
+            credito = await Credito.getCreditoID(idCredito);
+            
+            await Credito.Consumir(credito, req.body.valor, req.body.dataConsumo,inZerar,req.body.inRecebida);
+            return res.redirect('ConsultaGastosResumoAnual')
+        }
 
         if (req.body.RECEBER) {
             idCredito = req.body.RECEBER;

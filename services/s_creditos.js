@@ -1,12 +1,15 @@
 const db = require('../db');
 const DLL = require('../public/DLL');
+const MoivoCredito = require('../services/s_origemCredito')
+const ContaB = require('../services/s_contaBancaria')
 
 //SELECT 
 async function getAll(){   
     const conn = await db.connect();  
     const values = [global.user.id]; 
 
-    let sql =  `SELECT c.id,c.valor,c.dt_recebimento,o.descricao,c.dt_previsao,s.descricao as situacao,cc.descricao as conta,(SELECT YEAR(c.dt_previsao)) as ano,(SELECT MONTH(c.dt_previsao)) as mes,tag 
+    let sql =  `SELECT c.id,c.valor,c.dt_recebimento,o.descricao,c.dt_previsao,s.descricao as situacao,cc.descricao as conta,(SELECT YEAR(c.dt_previsao)) as ano,
+    (SELECT MONTH(c.dt_previsao)) as mes,tag,inOrcamentario 
     FROM Credito as c
     INNER JOIN OrigemCredito as o ON o.id = c.origemCredito
     INNER JOIN SituacaoCredito as s ON s.id = c.situacao
@@ -33,7 +36,7 @@ async function getAll_Filtros(filtro){
     const conn = await db.connect();  
     const values = [global.user.id]; 
 
-    let sql = `SELECT c.id,c.valor,c.dt_recebimento,o.descricao,c.dt_previsao,s.descricao as situacao,cc.descricao as conta,tag 
+    let sql = `SELECT c.id,c.valor,c.dt_recebimento,o.descricao,c.dt_previsao,s.descricao as situacao,cc.descricao as conta,tag,inOrcamentario
     FROM Credito as c
     INNER JOIN OrigemCredito as o ON o.id = c.origemCredito
     INNER JOIN SituacaoCredito as s ON s.id = c.situacao
@@ -56,7 +59,7 @@ async function getAll_Filtros(filtro){
 
 //GRAVAR
 async function Gravar(valor,dt_recebimento,dt_previsao,origem,situacao,contaBancaria,inAnoTodo,tag)
-{
+{   
     let mes = parseInt(DLL.getPedacoData(dt_previsao,"MES"))
     let dia = DLL.getPedacoData(dt_previsao,"DIA")
     let ano = DLL.getPedacoData(dt_previsao,"ANO")
@@ -338,8 +341,67 @@ async function Dell(id){
     await conn.query(sql, values);
 }
 
+//ORCAMENTO
+async function GravarOrcamento(valor,dt_previsao,origem,contaBancaria,inAnoTodo,tag)
+{
+    let mes = parseInt(DLL.getPedacoData(dt_previsao,"MES"))
+    let dia = DLL.getPedacoData(dt_previsao,"DIA")
+    let ano = DLL.getPedacoData(dt_previsao,"ANO")
+
+    const conn = await db.connect(); 
+
+    const sql =  `INSERT INTO Credito
+    (usuario,valor,dt_previsao,origemCredito,situacao,contaBancaria,tag,inOrcamentario) 
+    VALUES (?,?,?,?,?,?,?,?)`;
+
+    const values = [global.user.id,valor,dt_previsao,origem,3,contaBancaria,tag,1]; 
+    await conn.query(sql, values);
+
+    if(inAnoTodo)    
+    {
+        for(let i = (mes + 1);i <= 12;i++)
+        {
+            const values = [global.user.id,valor,`${ano}-${i}-${dia}`,origem,3,contaBancaria,tag,1]; 
+            await conn.query(sql, values);
+        }
+    }
+}
+
+//CONSUMIR ORCAMENTO
+async function Consumir(credito,valor,data,inZerar,inRecebido){
+
+    const conn = await db.connect();    
+   
+    if(inRecebido)
+    {
+       await Gravar(valor,data,data,await MoivoCredito.getID(credito.descricao),2,await ContaB.getID(credito.conta),false,null)
+       await AumentaSaldo(valor);
+    }
+    else
+    {
+        await Gravar(valor,null,data,await MoivoCredito.getID(credito.descricao),1,await ContaB.getID(credito.conta),false,null)
+    }
+
+    if(inZerar)
+    {
+        const sql =  `DELETE FROM Credito WHERE id = ? AND usuario = ?`;
+        const values = [credito.id,global.user.id];   
+        await conn.query(sql, values);
+    }
+    else
+    {
+        const sql =  `  UPDATE Credito 
+        SET valor = valor - ?
+        WHERE id = ?
+        AND usuario = ?`;
+
+        const values = [valor,credito.id,global.user.id];   
+        await conn.query(sql, values); 
+    }
+}
+
 
 module.exports = {getResumoAno,getSaldo,DiminuiSaldo,AtualizaSaldo,getAll,getAll_Filtros,AumentaSaldo,
-    Gravar,getCreditoID,Receber,EditarValor,GravarParcelado,Dell}
+    Gravar,getCreditoID,Receber,EditarValor,GravarParcelado,Dell,GravarOrcamento,Consumir}
 
 

@@ -142,6 +142,7 @@ async function GravarOrcamento(valor,dt_vencimento,formaPagamento,motivo,contaBa
         }
     }
 }
+
 //GRAVAR PARCELADO
 async function GravarParcelado(valor,dt_registro,dt_vencimento,formaPagamento,motivo,situacao,contaBancaria,qtParcelas,inBruto,inFatura,tag)
 {
@@ -315,10 +316,11 @@ async function Consumir(gasto,valor,data,inZerar,inFatura,inPaga){
         if(inPaga)
         {
             await Gravar(valor,data,data,gasto.formaPagamento,await MotivosGastos.getID(gasto.motivo),3,await ContaB.getID(gasto.conta),false,inFatura);
+            await Credito.DiminuiSaldo(valor);
         }
         else
         {
-            await Gravar(valor,data,data,gasto.formaPagamento,await MotivosGastos.getID(gasto.motivo),1,await ContaB.getID(gasto.conta),false,inFatura);
+            await Gravar(valor,null,data,gasto.formaPagamento,await MotivosGastos.getID(gasto.motivo),1,await ContaB.getID(gasto.conta),false,inFatura);
         }
        
     }
@@ -330,7 +332,8 @@ async function Consumir(gasto,valor,data,inZerar,inFatura,inPaga){
         }
         else
         {
-            await Gravar(valor,data,data,gasto.formaPagamento,await MotivosGastos.getID(gasto.motivo),1,await ContaB.getID(gasto.conta),false);
+            await Gravar(valor,null,data,gasto.formaPagamento,await MotivosGastos.getID(gasto.motivo),1,await ContaB.getID(gasto.conta),false);
+            await Credito.DiminuiSaldo(valor);
         }
        
     }  
@@ -351,9 +354,6 @@ async function Consumir(gasto,valor,data,inZerar,inFatura,inPaga){
         const values = [valor,gasto.id,global.user.id];   
         await conn.query(sql, values); 
     }
-
-    await Credito.DiminuiSaldo(valor);
-   
 }
 
 //DELETAR ORCAMENTO

@@ -1,0 +1,334 @@
+<!-- JANELA CREDITOS -->
+<div class="modal" id="modalJanelaCredito">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        
+          <div class="modal-header">
+            <h4 id="TituloJanelaCredi" class="modal-title"></h4>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+         
+          <div class="modal-body">
+            <div class="form-group">              
+              
+              <div class="container mt-3">
+                <h4>Registro de Creditos</h4>
+                <br>
+               
+                <ul class="nav nav-pills" role="tablist">
+                  <li class="nav-item">
+                    <a class="nav-link active" data-bs-toggle="pill" href="#Adicionar">Adicionar</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="pill" href="#Lista">Lista</a>
+                  </li>
+                </ul>
+                
+                <div class="tab-content">
+
+                    <!-- ADD  -->
+                  <div id="Adicionar" class="container tab-pane active"><br>
+
+                    <form class="w3-container was-validated" action="/Carteira/CofirmarRegistroCreditos" method="post">
+                     
+                      <input placeholder="Valor" class="form-control" type="number" step="0.01" name="valor" id="valor" style="width: auto;" required>
+                      <br>
+                  
+                      <input id="campoOrigemCredito" class="form-control" type="text" name="origemCreditos" style="width: auto;" hidden readonly>                      
+
+                      <input id="campoDataCredito" class="w3-input w3-border form-control me-2" type="date" name="dtPrevisao" required>
+                      <br>
+                  
+                      <select class="form-control me-2" name="conta" style="width: auto;" required>      
+                        <option value="" disabled selected>Contas</option>              
+                        <% Contas.forEach(c => { %>
+                          <option value="<%= c.id %>|<%= c.descricao %>"><%= c.descricao %></option>
+                        <% }); %>
+                      </select>
+                      <br> 
+
+                      <input placeholder="TAG(Opcional)" class="w3-input w3-border form-control me-2" type="text" onkeyup="this.value = this.value.toLowerCase();" name="tag" maxlength="10">
+                      <br>
+
+                      <div id="orcamentodivCredi">
+                        <input type="checkbox" name="orcamento" id="orcamentoCredi" onclick="checkName('orcamentoCredi',['parceladodivCredi','divRecebida'],'CREDITO')"> ORÇAMENTO
+                      </div>
+
+                      <div id="parceladodivCredi">
+                        <input type="checkbox" name="parcelado" id="parceladoCredi" onclick="checkName('parceladoCredi',['fimAnodivCredi'],'CREDI')"> PARCELADO
+                        <br>
+                          <div id="divTpValorCredi" hidden>          
+                            <input type="radio" id="tpValorBrutoCredi" name="tpValor" value="B">
+                            <label for="age1">Valor é BRUTO</label><br>
+                            <input type="radio" id="tpValorParcelaCredi" name="tpValor" value="P">
+                            <label for="age2">Valor é da PARCELA</label><br>
+                          </div> 
+                      </div>
+                  
+                      <input placeholder="Quantas parcelas?" class="w3-input w3-border form-control me-2" name="qtParcelas" step="0.01" type="number" id="qtParcelasCredi" hidden>
+                  
+                      <div id="fimAnodivCredi">
+                        <input type="checkbox" name="fimAno" id="fimAnoCredi" onclick="checkName('fimAnoCredi',['parceladodivCredi'],'CREDI')"> ANO TODO
+                      </div> 
+
+                      <div id="divRecebida">
+                        <input type="checkbox" name="recebido" id="checkboxCredi"> RECEBIDA
+                      </div>
+                      <input type="checkbox" name="recebidoSimbolico" id="checkboxCrediSimb" hidden>
+                      <hr>
+                      <button type="submit" class="btn w3-green">Confirmar</button>    
+                    </form>                    
+                  </div>
+
+                    <!-- LISTA -->
+                  <div id="Lista" class="container tab-pane fade"><br>
+
+                    <input onchange="FiltroTabela('nmMotivoCredito','mesRegistroCredito','tblEditarCredito',1,2)" id="nmMotivoCredito" hidden>
+                    <input onchange="FiltroTabela('nmMotivoCredito','mesRegistroCredito','tblEditarCredito',1,2)" id="mesRegistroCredito" hidden>
+
+                    <div class="">
+                      <table class="w3-small w3-card table w3-border w3-table table-hover TabelaDinamica table-striped" id="tblEditarCredito">
+                        <thead>
+                          <tr>   
+                            <th></th> 
+                            <th hidden></th>
+                            <th hidden></th>
+                            <th>Valor</th>
+                            <th>Dt Prevista</th>
+                            <th>Situação</th>  
+                            <th></th>         
+                          </tr>
+                        </thead>
+                        <tbody>          
+                          <% ListaCreditos.forEach(c => { %>
+                           <tr> 
+                            <% if(anoSelect == c.ano){ %>
+                            <td><button onclick="setValorEdi(this,'idEditar','valorEditar')" data-bs-toggle="modal" data-bs-target="#modalEditarRegistroCredito" value="<%= c.id %>|<%= c.valor %>" class="w3-tiny w3-round btn-warning">E</button>
+                                <button onclick="setIdDell(this,'IdDell')" data-bs-toggle="modal" data-bs-target="#modalExcluirRegistroCredito" value="<%= c.id %>" class="w3-tiny w3-round btn-danger">X</button></td>
+                            <td hidden><%= c.descricao %></td>
+                            <td hidden><%= c.mes %></td>
+
+                            <% if(c.tag){ %>
+                            <td onclick="setIdRegistroTag('<%= c.id %>','idRegistroTagDel','CREDITO')" class="pointer" data-bs-toggle="modal" data-bs-target="#modalExcluirTag"><%= c.valor %>
+                                <span class="w3-tag w3-tiny w3-black"><%= c.tag %></span>
+                            </td> 
+                            <% }else{ %>
+                              <td onclick="setIdRegistroTag('<%= c.id %>','idRegistroTagAdd','CREDITO')" class="pointer" data-bs-toggle="modal" data-bs-target="#modalAdicionarTag"><%= c.valor %></td> 
+                            <% } %>
+
+                            <td><%= c.dt_previsao %></td>
+                            <% if(c.situacao == 'RECEBIDO') { %>
+                              <td style="color:rgb(0, 255, 0);"><%= c.situacao %></td>           
+                            <% } else if(c.situacao == 'ORCAMENTO'){ %> 
+                                <td style="color:rgb(0, 45, 248);"><%= c.situacao %></td>
+                            <% } else { %> 
+                              <td style="color:rgb(250, 0, 0);"><%= c.situacao %></td>
+                            <% } %> 
+
+                            <form action="/Carteira/ReceberCredito" method="post">
+                              <% if(c.situacao != 'RECEBIDO' && c.situacao != 'ORCAMENTO') { %>
+                                <td><button name="RECEBER" value="<%= c.id %>" class="w3-tiny w3-round btn-primary">Receber</button></td>
+                                <% } else if(c.inOrcamentario) { %>
+                                  <td>
+                                  <div class="btn-group">
+                                      <button onclick="setValorConsumo(this,'idConsumoCredito','valorConsumoCredito','dataConsumoCredito')" data-bs-toggle="modal" data-bs-target="#modalConsumirOrcamentoCredito" value="<%= c.id %>|<%= c.valor %>" class="w3-tiny w3-round btn-info">Consumir</button>                                     
+                                  </div>
+                                  </td>
+                              <% } else { %> 
+                                <td></td>
+                              <% } %>
+                            </form>
+                            <% } %>
+                          </tr>  
+                          <% }); %>             
+                        </tbody>
+                      </table>
+                    </div> 
+
+                  </div>
+                  
+                </div>
+              </div>
+
+            </div>
+          </div> 
+         
+          <div class="modal-footer">
+            <div class="btn btn-danger" data-bs-dismiss="modal">Fechar</div>           
+          </div>
+
+      </div>
+    </div>
+</div>
+
+<div class="modal" id="modalExcluirCredito">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+
+        <form class="w3-container was-validated" action="/OrigemCredito/Click" method="post">  
+
+          <!-- Modal Header -->
+          <div class="modal-header">
+            <h4 class="modal-title">Excluir Credito</h4>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+    
+          <!-- Modal body -->
+          <div class="modal-body">
+            <div class="form-group">              
+              <input id="DescCreditoDell" class="form-control" type="text" name="CREDITO" style="width: auto;" required readonly>                                    
+            </div>
+          </div>    
+          
+          <!-- Modal footer -->
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-success" name="CONF_DEL" value="true">Confirmar</button> 
+          </form>          
+            <div class="btn btn-danger" data-bs-dismiss="modal">Cancelar</div>           
+          </div>
+
+      </div>
+    </div>
+</div>
+
+<div class="modal" id="modalAdicionarCredito">
+<div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+
+    <form class="w3-container was-validated"action="/OrigemCredito/Click" method="post">  
+
+        <!-- Modal Header -->
+        <div class="modal-header">
+        <h4 class="modal-title">Adicionar Credito</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+
+        <!-- Modal body -->
+        <div class="modal-body">
+        <div class="form-group">              
+            <input class="form-control" type="text" name="nome" id="nome" style="width: auto;" required>
+            <div class="valid-feedback">Valid.</div>
+            <div class="invalid-feedback">escreva a descrição do credito.</div>
+        </div>
+        </div>
+        
+        <!-- Modal footer -->
+        <div class="modal-footer">
+        <button type="submit" class="btn btn-success" name="CONFIRMAR_ADD" value="true">Confirmar</button> 
+        </form>          
+        <button class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>           
+        </div>
+
+    </div>
+    </div>
+</div>
+
+<div class="modal" id="modalExcluirRegistroCredito">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+
+        <form class="w3-container was-validated" action="/Carteira/ClickCreditos" method="post">  
+
+          <!-- Modal Header -->
+          <div class="modal-header">
+            <h4 class="modal-title">Excluir Registro</h4>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+    
+          <!-- Modal body -->
+          <div class="modal-body" hidden>
+            <div class="form-group">              
+              <input id="IdDell" class="form-control" type="text" name="id" style="width: auto;">                                    
+            </div>
+          </div>    
+        
+          <!-- Modal footer -->
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-success" name="DEL" value="true">Confirmar</button> 
+          </form>          
+            <div class="btn btn-danger" data-bs-dismiss="modal">Cancelar</div>           
+          </div>
+
+      </div>
+    </div>
+</div>
+
+<div class="modal" id="modalEditarRegistroCredito">
+<div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+
+    <form class="w3-container was-validated" action="/Carteira/ClickCreditos" method="post">  
+
+        <!-- Modal Header -->
+        <div class="modal-header">
+        <h4 class="modal-title">Editar Registro</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+
+        <!-- Modal body -->
+        <div class="modal-body">
+        <div class="form-group"> 
+            <input id="idEditar" class="form-control" type="text" name="id" style="width: auto;" hidden>             
+            <input id="valorEditar" class="form-control" ttype="number" step="0.01" name="valor" style="width: auto;" required> 
+            <div class="invalid-feedback">insira um valor</div>   
+            <br>
+            <input type="checkbox" name="inAnoTodo"> ANO TODO                                
+        </div>
+        </div>    
+    
+        <!-- Modal footer -->
+        <div class="modal-footer">
+        <button type="submit" class="btn btn-success" name="EDI" value="true">Confirmar</button> 
+    </form>          
+        <div class="btn btn-danger" data-bs-dismiss="modal">Cancelar</div>           
+        </div>
+
+    </div>
+</div>
+</div>
+
+<!-- CONSUMIR ORCAMENTO -->
+<div class="modal" id="modalConsumirOrcamentoCredito">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+
+      <form class="w3-container was-validated" action="/Carteira/ReceberCredito" method="post">
+
+        <div class="modal-header">
+          <h4 class="modal-title">Consumir Orcamento</h4>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+       
+        <div class="modal-body">
+          <div class="form-group"> 
+
+            <label class="w3-text-black"><h4>Saldo</h4></label>
+            <input id="valorConsumoCredito" class="form-control" type="number" step="0.01" style="width: auto;" readonly>
+            <br>
+            
+            <input placeholder="Valor Usado" class="form-control" type="number" step="0.01" name="valor" id="valor" style="width: auto;" required>
+            <br>
+
+            <input id="idConsumoCredito" class="form-control" type="text" name="idRegistroOrcCredito" style="width: auto;" hidden> 
+            <input id="dataConsumoCredito" class="w3-input w3-border form-control me-2" type="date"  name="dataConsumo">
+            <br>
+
+            <input  type="checkbox"  name="inZerar"> Consumir/Zerar
+            <br>
+            <input type="checkbox" name="inRecebida"> RECEBIDA
+            <hr>
+           
+            <button name="CONSUMIR" value="true" class="btn w3-green">Confirmar Consumo</button>
+          </div>
+        </div>    
+      
+       
+        <div class="modal-footer">
+         
+        </form>          
+          <div class="btn btn-danger" data-bs-dismiss="modal">Cancelar</div>           
+        </div>
+
+    </div>
+  </div>
+</div>
