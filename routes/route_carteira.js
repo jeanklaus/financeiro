@@ -490,33 +490,6 @@ router.post('/ConfirmaEdicaoGasto', async (req, res) => {
     }
 });
 
-//===================================================================== SALDO USUARIO ==============================================================
-router.get('/DefinirSaldoUsuario', async (req, res) => {
-    try {
-        return res.render('carteira_view/definirSaldo')
-    }
-    catch (erro) {
-        global.conectado = false;
-        res.render('feed', { erro })
-    }
-});
-
-router.post('/AlterarSaldo', async (req, res) => {
-    try {
-        if (req.body.saldo) {
-            await Credito.AtualizaSaldo(req.body.saldo);
-            return res.redirect('ConsultaGastosResumoAnual')
-        }
-        else {
-            return res.render('feed', { erro: 'Informe o novo saldo' })
-        }
-    }
-    catch (erro) {
-        global.conectado = false;
-        res.render('feed', { erro })
-    }
-});
-
 //======================================================================== CREDITOS ===============================================================
 router.get('/ConsultaCreditos', async (req, res) => {
     try {
