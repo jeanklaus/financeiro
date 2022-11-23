@@ -201,6 +201,10 @@ router.post('/ClickGastos', async (req, res) => {
                 let valor = req.body.valor;
                 let id = req.body.id;
                 await Gasto.EditarValor(id, valor,req.body.inAnoTodo);
+
+                let ano =  req.body.ano
+                return res.redirect(`ConsultandoGastosResumoAnual${ano}`)
+               
             }
         }
 
@@ -208,6 +212,8 @@ router.post('/ClickGastos', async (req, res) => {
             if (req.body.id) {
                 let id = req.body.id
                 await Gasto.Dell(id)
+                let ano =  req.body.ano
+                return res.redirect(`ConsultandoGastosResumoAnual${ano}`)
             }
         }
 
@@ -523,8 +529,9 @@ router.post('/ClickCreditos', async (req, res) => {
             if (req.body.valor && req.body.id) {
                 let valor = req.body.valor;
                 let id = req.body.id;
-
                 await Credito.EditarValor(id, valor,req.body.inAnoTodo);
+                let ano =  req.body.ano
+                return res.redirect(`ConsultandoGastosResumoAnual${ano}`)
             }
         }
 
@@ -532,6 +539,8 @@ router.post('/ClickCreditos', async (req, res) => {
             if (req.body.id) {
                 let id = req.body.id
                 await Credito.Dell(id)
+                let ano =  req.body.ano
+                return res.redirect(`ConsultandoGastosResumoAnual${ano}`)
             }
         }
 

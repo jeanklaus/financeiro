@@ -237,7 +237,8 @@
     
           <!-- Modal body -->
           <div class="modal-body" hidden>
-            <div class="form-group">              
+            <div class="form-group">   
+              <input name="ano" value="<%= anoSelect %>" hidden>           
               <input id="IdDell" class="form-control" type="text" name="id" style="width: auto;">                                    
             </div>
           </div>    
@@ -268,6 +269,7 @@
         <!-- Modal body -->
         <div class="modal-body">
         <div class="form-group"> 
+            <input name="ano" value="<%= anoSelect %>" hidden>
             <input id="idEditar" class="form-control" type="text" name="id" style="width: auto;" hidden>             
             <input id="valorEditar" class="form-control" ttype="number" step="0.01" name="valor" style="width: auto;" required> 
             <div class="invalid-feedback">insira um valor</div>   
