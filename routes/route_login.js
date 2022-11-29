@@ -38,6 +38,8 @@ router.post('/',async (req,res) => {
             global.user.saldo = rows[0].saldo; 
             global.user.validade = rows[0].dt_validade;
             global.user.email = rows[0].email;
+            global.user.login = rows[0].login;
+
 
             let data = new Date()
             
