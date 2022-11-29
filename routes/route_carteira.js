@@ -194,6 +194,7 @@ router.post('/ClickGastos', async (req, res) => {
         let Gastos = []
         let Motivos = await MotivoGastos.getAll();
         let Contas = await ContaBancaria.getAll();
+        let inReflash = false
         wheres = []
 
         if (req.body.EDI) {
@@ -202,9 +203,15 @@ router.post('/ClickGastos', async (req, res) => {
                 let id = req.body.id;
                 await Gasto.EditarValor(id, valor,req.body.inAnoTodo);
 
-                let ano =  req.body.ano
-                return res.redirect(`ConsultandoGastosResumoAnual${ano}`)
-               
+               if(!req.body.ano)
+               {
+                    inReflash = true
+               }
+               else
+               {
+                    let ano =  req.body.ano
+                    return res.redirect(`ConsultandoGastosResumoAnual${ano}`)
+               }
             }
         }
 
@@ -217,7 +224,7 @@ router.post('/ClickGastos', async (req, res) => {
             }
         }
 
-        if (req.body.PESQUISAR) {
+        if (req.body.PESQUISAR || inReflash) {
             if (req.body.motivoGastos) {
                 [filtros.motivoGastos.id, filtros.motivoGastos.descricao] = req.body.motivoGastos.split('|');
                 wheres.push(`motivo = ${filtros.motivoGastos.id}`);
@@ -355,6 +362,13 @@ router.post('/CofirmarRegistroGastos', async (req, res) => {
         if (!req.body.formaPagamento) {
             return res.render('feed', { erro: 'Informe a forma de pagamento' })
         }
+        else
+        {
+            if(req.body.formaPagamento == "CREDITO")
+            {
+                inFatura = true;
+            }
+        }
 
         if (!req.body.conta) {
             return res.render('feed', { erro: 'Informe a conta' })
@@ -375,11 +389,7 @@ router.post('/CofirmarRegistroGastos', async (req, res) => {
 
         if (req.body.fimAno) {
             inAnoTodo = true;
-        }
-
-        if (req.body.fatura) {
-            inFatura = true;
-        }
+        }       
 
         if (req.body.parcelado)//PARCELADO
         {
@@ -508,7 +518,7 @@ router.get('/ConsultaCreditos', async (req, res) => {
         let Creditos = await Credito.getAll();
         let valorTotal = LocalProc.getCustoTotal(Creditos);       
         let Origens = await Origem.getAll();
-        let Contas = await ContaBancaria.getAll();
+        let Contas = await ContaBancaria.getAll();       
 
         res.render('carteira_view/inicialCreditos', { Creditos, valorTotal, Origens, Contas, filtros });
     }
@@ -523,6 +533,7 @@ router.post('/ClickCreditos', async (req, res) => {
         let Creditos = []
         let Origens = await Origem.getAll();
         let Contas = await ContaBancaria.getAll();
+        let inReflash = false
         wheres = []
 
         if (req.body.EDI) {
@@ -530,8 +541,16 @@ router.post('/ClickCreditos', async (req, res) => {
                 let valor = req.body.valor;
                 let id = req.body.id;
                 await Credito.EditarValor(id, valor,req.body.inAnoTodo);
-                let ano =  req.body.ano
-                return res.redirect(`ConsultandoGastosResumoAnual${ano}`)
+
+                if(req.body.ano == 0)
+                {
+                    inReflash = true;
+                }
+                else
+                {
+                    let ano =  req.body.ano
+                    return res.redirect(`ConsultandoGastosResumoAnual${ano}`)
+                }
             }
         }
 
@@ -544,7 +563,7 @@ router.post('/ClickCreditos', async (req, res) => {
             }
         }
 
-        if (req.body.PESQUISAR) {
+        if (req.body.PESQUISAR || inReflash) {
             if (req.body.origemCredito) {
                 [filtros.origemCredito.id, filtros.origemCredito.descricao] = req.body.origemCredito.split('|');
                 wheres.push(`origemCredito = ${filtros.origemCredito.id}`);

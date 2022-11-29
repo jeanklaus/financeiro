@@ -41,7 +41,7 @@
                         <select class="form-control me-2" name="formaPagamento" style="width: auto;" required>
                         <option value="" disabled selected>Forma de Pagamento</option>           
                         <option value="DINHEIRO">DINHEIRO</option>
-                        <option value="CARTAO">CARTAO</option>
+                        <option value="CREDITO">CARTAO DE CREDITO</option>
                         </select>
                         <br>
                     
@@ -74,10 +74,7 @@
                             
                             </div>
                         
-                            <input placeholder="Quantas parcelas?" class="w3-input w3-border form-control me-2" name="qtParcelas" step="0.01" type="number" id="qtParcelas" hidden>
-                            <div id="fimAnodiv">
-                            <input type="checkbox" name="fimAno" id="fimAno" onclick="checkName('fimAno',['parceladodiv'])"> ANO TODO
-                            </div>    
+                            <input placeholder="Quantas parcelas?" class="w3-input w3-border form-control me-2" name="qtParcelas" step="0.01" type="number" id="qtParcelas" hidden>                             
                         </div>
 
                         <div class="col">
@@ -86,13 +83,14 @@
                             <input type="checkbox" name="pago" id="pago" hidden>
                             </div>
 
+                            <div id="fimAnodiv">
+                              <input type="checkbox" name="fimAno" id="fimAno" onclick="checkName('fimAno',['parceladodiv'])"> ANO TODO
+                              </div>  
+
                             <div id="pagodiv">
                             <input type="checkbox" name="pagoDesconta" id="pagoDesconta"> PAGA
-                            </div>
-                        
-                            <div id="faturadiv">
-                            <input type="checkbox" name="fatura" id="fatura"> ADD FATURA
-                            </div>
+                            </div>                              
+                                                       
                         </div>
                     </div>
                         <br>

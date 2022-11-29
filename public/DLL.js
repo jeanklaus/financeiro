@@ -302,10 +302,12 @@ function setDadosJanelaCredito(obj) {
   let inputMesRegistroCredito =  document.getElementById("mesRegistroCredito");  
 
   let [id,motivo,mes,ano] = obj.value.split('|') 
+  let dataAtual = new Date();
+  let dia = dataAtual.getDate()
   
   inputTitulo.textContent = `${motivo} - ${mes}/${ano}`
   inputMotivo.value = `${id}|${motivo}` 
-  inputData.value = `${ano}-${mes}-01`
+  inputData.value = `${ano}-${mes}-${dia}`
   inputFiltroMotivoEdicao.value = motivo
   inputMesRegistroCredito.value = parseInt(mes)
   inputFiltroMotivoEdicao.onchange();
@@ -321,10 +323,12 @@ function setDadosJanelaGasto(obj) {
   let inputMesRegistroGasto =  document.getElementById("mesRegistroGasto");
 
   let [id,motivo,mes,ano] = obj.value.split('|') 
+  let dataAtual = new Date();
+  let dia = dataAtual.getDate()
 
   inputTitulo.textContent = `${motivo} - ${mes}/${ano}`
   inputMotivo.value = `${id}|${motivo}` 
-  inputData.value = `${ano}-${mes}-01`
+  inputData.value = `${ano}-${mes}-${dia}`
   inputFiltroMotivoEdicao.value = motivo
   inputMesRegistroGasto.value = parseInt(mes)
   inputFiltroMotivoEdicao.onchange();
