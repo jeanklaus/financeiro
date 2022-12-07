@@ -294,16 +294,12 @@ async function getTotalMes(mes,ano,registros) {
 
 async function getTotalMesReal(mes,ano,registros) {  
     let resultado = 0;
-   
+
     for (const prod of registros) { 
 
-        let dataAtual = new Date()
-        let dataRegistro = DLL.ConvertDateToNumber(prod.dt_previsao)        
-        dataAtual =DLL.ConvertDateToNumber(DLL.formataData(dataAtual))
-
         if (prod.ano == ano && prod.mes == mes) {
-
-            if(prod.situacao == 'RECEBIDO' || dataAtual < dataRegistro)
+           
+            if(prod.situacao == 'RECEBIDO')
             {
                 resultado += parseFloat(prod.valor)
             }           
