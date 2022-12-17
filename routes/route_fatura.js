@@ -3,7 +3,6 @@ const bodyparser = require('body-parser');
 const Fatura = require('../services/s_fatura')
 const MotivoGastos = require('../services/s_motivoGastos')
 const ContaBancaria = require('../services/s_contaBancaria')
-const DLL = require('../public/DLL');
 const Func = require('../public/funcoes');
 
 const router = express.Router();
@@ -81,7 +80,7 @@ router.post('/Atualizar',async (req,res) => {
         if(req.body.DEL_ITEM)
         {
             let [fatura,gasto] = req.body.DEL_ITEM.split('|')
-            await Fatura.Remover(fatura,gasto);
+            await Fatura.RemoverItem(fatura,gasto);
             return res.redirect('/Fatura')
         }
 

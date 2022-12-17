@@ -3,6 +3,7 @@ const DLL = require('../public/DLL');
 const Credito = require('../services/s_creditos')
 const ContaB = require('../services/s_contaBancaria')
 const MotivosGastos = require('../services/s_motivoGastos')
+const Fatura = require('../services/s_fatura')
 
 //SITUAÇÃO 
 //[1]= PENDENTE
@@ -86,7 +87,7 @@ async function getResumoAno(){
 
 //GRAVAR
 async function Gravar(valor,dt_registro,dt_vencimento,formaPagamento,motivo,situacao,contaBancaria,inAnoTodo,inFatura,tag)
-{
+{   
     let inFaturaBd = 0;
 
     if(inFatura)
@@ -100,6 +101,7 @@ async function Gravar(valor,dt_registro,dt_vencimento,formaPagamento,motivo,situ
 
     const conn = await db.connect(); 
 
+    //trigger add na fatura se tiver marcado como cartoa de credito.
     const sql =  `INSERT INTO Gastos
     (usuario,valor,dt_registro,dt_vencimento,formaPagamento,motivo,situacao,contaBancaria,inFatura,tag) 
     VALUES (?,?,?,?,?,?,?,?,?,?)`;
@@ -367,7 +369,7 @@ async function DelOrcamento(id){
     return result
 }
 
-//DELETAR ORCAMENTO
+//DELETAR GASTO
 async function Dell(id){
     const conn = await db.connect();
 
@@ -382,7 +384,14 @@ async function Dell(id){
 
     const values = [id,global.user.id];
     await conn.query(sql, values);
+
+   if(gasto.inFatura)
+   {
+        let fatura = await Fatura.getIdFaturaDoGasto(gasto.id)
+        await Fatura.RemoverItem(fatura,gasto.id)
+   }
 }
+
 
 module.exports = {getAll,getAll_Filtros,Gravar,getGastoID,Pagar,EditarValor,Consumir,
     DelOrcamento,GravarOrcamento,GravarParcelado,getResumoAno,Dell}
