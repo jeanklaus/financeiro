@@ -153,7 +153,8 @@
 
         <input style="margin-left: 10px ;" id="data" name="ano" class="me-2 w3-tiny form-control" type="number" placeholder="YYYY" min="2022" max="2100" value="<%= anoSelect %>">
 
-        <div><button class="w3-tiny w3-round btn btn-warning me-2" type="submit" value="true"><b>Atualizar</b></button></div>
+        <div><button onclick="ativaCarregamento(this,'btCarregando_updateAno')" class="w3-tiny w3-round btn btn-warning me-2" type="submit" value="true"><b>Atualizar</b></button></div>
+        <div><button id="btCarregando_updateAno" class="w3-tiny w3-round btn btn-warning me-2" disabled hidden><span class="spinner-border spinner-border-sm"></span>Aguarde..</button></div>
            
         <div><a href="/ContaBancaria" class="w3-tiny w3-round btn btn-primary me-2"><b>Contas Bancarias</b></a></div>
         

@@ -51,10 +51,14 @@
         
          
           <div class="modal-footer">
+
+            
            
           </form>          
-            <div class="btn btn-danger" data-bs-dismiss="modal">Cancelar</div>           
+            <div class="btn btn-danger" data-bs-dismiss="modal">Cancelar</div> 
           </div>
+
+         
 
       </div>
     </div>
@@ -72,7 +76,13 @@
     <label class="w3-text-teal"><b>SENHA</b></label>
     <input class="w3-input w3-border w3-sand" name="senha" placeholder="SENHA" type="password" style="width: auto;"></p>
 
-    <button class="w3-btn w3-teal w3-round w3-margin-bottom">ACESSAR</button>
+    <button onclick="ativaCarregamento(this,'btCarregando_Login')" class="w3-btn w3-teal w3-round w3-margin-bottom">ACESSAR</button>
+
+    <button id="btCarregando_Login" class="w3-btn w3-teal w3-round w3-margin-bottom" disabled hidden>
+      <span class="spinner-border spinner-border-sm"></span>
+      Aguarde..
+    </button>
+
     <div data-bs-toggle="modal" data-bs-target="#modalCadastroUsuario" class="w3-btn w3-teal w3-round w3-margin-bottom">CADASTRAR</div> 
   </form>
   

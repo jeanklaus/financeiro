@@ -7,11 +7,14 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 <link rel="stylesheet" href="/styles.css">
+<script src="/DLL.js"></script>
 <body>
     <div class="alert alert-success">
         <strong>CONFIRME</strong> Confirme que recebeu esse credito?
         <form action="/Carteira/ReceberCredito" method="post">
-          <button name="CONFIRMADO" value="true" class="btn btn-info m-2">SIM</button>
+          <button onclick="ativaCarregamento(this,'btCarregando_RecebCredSim')" name="CONFIRMADO" value="true" class="btn btn-info m-2">SIM</button>
+          <button id="btCarregando_RecebCredSim" class="btn btn-info" disabled hidden><span class="spinner-border spinner-border-sm"></span>Aguarde..</button>
+
           <a href="/Carteira/ConsultaGastosResumoAnual" class="btn btn-info m-2">NAO</a>
         </form>
       </div>            

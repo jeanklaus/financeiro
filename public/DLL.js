@@ -351,4 +351,12 @@ function setIdRegistroTag(idRegistro,campoId,tpRegistro) {
   return parseFloat(numero)
 }
 
+function ativaCarregamento(obj,descricao) { 
+  let bt = document.getElementById(descricao);
+
+  obj.hidden = true;
+  bt.hidden = false;
+
+}
+
 module.exports = { formataData, ConverterData,AnalisaFiltros,getPedacoData,ConvertDateToNumber }

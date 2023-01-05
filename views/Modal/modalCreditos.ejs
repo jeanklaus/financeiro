@@ -76,7 +76,10 @@
                       </div>
                       <input type="checkbox" name="recebidoSimbolico" id="checkboxCrediSimb" hidden>
                       <hr>
-                      <button type="submit" class="btn w3-green">Confirmar</button>    
+                      <button onclick="ativaCarregamento(this,'btCarregando_addRegCred')" type="submit" class="btn w3-green">Confirmar</button>    
+
+                      <button id="btCarregando_addRegCred" class="btn w3-green" disabled hidden><span class="spinner-border spinner-border-sm"></span>Aguarde..</button>
+
                     </form>                    
                   </div>
 
@@ -182,8 +185,14 @@
           
           <!-- Modal footer -->
           <div class="modal-footer">
-            <button type="submit" class="btn btn-success" name="CONF_DEL" value="true">Confirmar</button> 
-          </form>          
+            <button onclick="ativaCarregamento(this,'btCarregando_modalExcluirCreditos')" type="submit" class="btn btn-success" name="CONF_DEL" value="true">Confirmar</button> 
+          </form>    
+
+          <button id="btCarregando_modalExcluirCreditos" class="btn btn-success" disabled hidden>
+            <span class="spinner-border spinner-border-sm"></span>
+            Aguarde..
+          </button> 
+
             <div class="btn btn-danger" data-bs-dismiss="modal">Cancelar</div>           
           </div>
 
@@ -214,8 +223,14 @@
         
         <!-- Modal footer -->
         <div class="modal-footer">
-        <button type="submit" class="btn btn-success" name="CONFIRMAR_ADD" value="true">Confirmar</button> 
-        </form>          
+        <button onclick="ativaCarregamento(this,'btCarregando_modalCreditos')" type="submit" class="btn btn-success" name="CONFIRMAR_ADD" value="true">Confirmar</button> 
+        </form>     
+
+        <button id="btCarregando_modalCreditos" class="btn btn-success" disabled hidden>
+          <span class="spinner-border spinner-border-sm"></span>
+          Aguarde..
+        </button> 
+
         <button class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>           
         </div>
 
@@ -245,8 +260,10 @@
         
           <!-- Modal footer -->
           <div class="modal-footer">
-            <button type="submit" class="btn btn-success" name="DEL" value="true">Confirmar</button> 
-          </form>          
+            <button onclick="ativaCarregamento(this,'btCarregando_DelRegCred')" type="submit" class="btn btn-success" name="DEL" value="true">Confirmar</button> 
+          </form>    
+          <button id="btCarregando_DelRegCred" class="btn btn-success" disabled hidden><span class="spinner-border spinner-border-sm"></span>Aguarde..</button>
+          
             <div class="btn btn-danger" data-bs-dismiss="modal">Cancelar</div>           
           </div>
 
@@ -280,8 +297,10 @@
     
         <!-- Modal footer -->
         <div class="modal-footer">
-        <button type="submit" class="btn btn-success" name="EDI" value="true">Confirmar</button> 
-    </form>          
+        <button onclick="ativaCarregamento(this,'btCarregando_EdiRegCred')" type="submit" class="btn btn-success" name="EDI" value="true">Confirmar</button> 
+    </form>    
+    <button id="btCarregando_EdiRegCred" class="btn btn-success" disabled hidden><span class="spinner-border spinner-border-sm"></span>Aguarde..</button>
+
         <div class="btn btn-danger" data-bs-dismiss="modal">Cancelar</div>           
         </div>
 
@@ -320,7 +339,8 @@
             <input type="checkbox" name="inRecebida"> RECEBIDA
             <hr>
            
-            <button name="CONSUMIR" value="true" class="btn w3-green">Confirmar Consumo</button>
+            <button onclick="ativaCarregamento(this,'btCarregando_ConsumirRegCred')" name="CONSUMIR" value="true" class="btn w3-green">Confirmar</button>
+            <button id="btCarregando_ConsumirRegCred" class="btn btn-success" disabled hidden><span class="spinner-border spinner-border-sm"></span>Aguarde..</button>
           </div>
         </div>    
       

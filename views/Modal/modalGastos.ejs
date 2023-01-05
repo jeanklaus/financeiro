@@ -1,4 +1,74 @@
-    <!-- JANELA GASTOS -->
+  <!-- ADD GASTOS -->
+<div class="modal" id="modalAdicionarGastos">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+  
+    <form class="w3-container was-validated" action="/MotivoGastos/Click" method="post">
+  
+        <!-- Modal Header -->
+        <div class="modal-header">
+        <h4 class="modal-title">Adicionar Gasto</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+  
+        <!-- Modal body -->
+        <div class="modal-body">
+        <div class="form-group">              
+            <input class="form-control" type="text" name="nome" id="nome" style="width: auto;" required>
+            <div class="valid-feedback">Valid.</div>
+            <div class="invalid-feedback">escreva a descrição do gasto.</div>
+        </div>
+  
+        </div>
+  
+        
+        <!-- Modal footer -->
+        <div class="modal-footer">
+        <button onclick="ativaCarregamento(this,'btCarregando_AddGasto')" type="submit" class="btn btn-success" name="CONFIRMAR_ADD" value="true">Confirmar</button> 
+        </form>       
+        
+        <button id="btCarregando_AddGasto" class="btn btn-success" disabled hidden><span class="spinner-border spinner-border-sm"></span>Aguarde..</button>   
+        <button class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>           
+        </div>
+  
+    </div>
+    </div>
+  </div>
+  
+   <!-- EXCLUIR GASTOS -->
+<div class="modal" id="modalExcluirGasto">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+
+      <form class="w3-container was-validated" action="/MotivoGastos/Click" method="post">  
+
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <h4 class="modal-title">Excluir Gasto</h4>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+  
+        <!-- Modal body -->
+        <div class="modal-body">
+          <div class="form-group">              
+            <input id="DescGastoDell" class="form-control" type="text" name="GASTO" style="width: auto;" required readonly>                          
+          </div>
+        </div>    
+        
+        <!-- Modal footer -->
+        <div class="modal-footer">
+          <button onclick="ativaCarregamento(this,'btCarregando_DellGasto')" type="submit" class="btn btn-success" name="CONF_DEL" value="true">Confirmar</button> 
+        </form>   
+          
+          <button id="btCarregando_DellGasto" class="btn btn-success" disabled hidden><span class="spinner-border spinner-border-sm"></span>Aguarde..</button>       
+          <div class="btn btn-danger" data-bs-dismiss="modal">Cancelar</div>           
+        </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- JANELA GASTOS -->
 <div class="modal" id="modalJanelaGasto">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -94,7 +164,8 @@
                         </div>
                     </div>
                         <br>
-                        <button type="submit" class="btn w3-green">Confirmar</button>    
+                        <button onclick="ativaCarregamento(this,'btCarregando_AddRegGasto')" type="submit" class="btn w3-green">Confirmar</button>
+                        <button id="btCarregando_AddRegGasto" class="btn btn-success" disabled hidden><span class="spinner-border spinner-border-sm"></span>Aguarde..</button>    
                     </form>          
                     </div>
 
@@ -215,8 +286,9 @@
         
           <!-- Modal footer -->
           <div class="modal-footer">
-            <button type="submit" class="btn btn-success" name="EDI" value="true">Confirmar</button> 
-          </form>          
+            <button onclick="ativaCarregamento(this,'btCarregando_EdiRegGasto')" type="submit" class="btn btn-success" name="EDI" value="true">Confirmar</button> 
+          </form>     
+            <button id="btCarregando_EdiRegGasto" class="btn btn-success" disabled hidden><span class="spinner-border spinner-border-sm"></span>Aguarde..</button>     
             <div class="btn btn-danger" data-bs-dismiss="modal">Cancelar</div>           
           </div>
 
@@ -247,78 +319,13 @@
         
           <!-- Modal footer -->
           <div class="modal-footer">
-            <button type="submit" class="btn btn-success" name="DEL" value="true">Confirmar</button> 
-          </form>          
+            <button onclick="ativaCarregamento(this,'btCarregando_DelRegGasto')" type="submit" class="btn btn-success" name="DEL" value="true">Confirmar</button> 
+          </form>   
+            <button id="btCarregando_DelRegGasto" class="btn btn-success" disabled hidden><span class="spinner-border spinner-border-sm"></span>Aguarde..</button>       
             <div class="btn btn-danger" data-bs-dismiss="modal">Cancelar</div>           
           </div>
 
       </div>
-    </div>
-</div>
-
-<!-- EXCLUIR GASTOS -->
-<div class="modal" id="modalExcluirGasto">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-
-        <form class="w3-container was-validated" action="/MotivoGastos/Click" method="post">  
-
-          <!-- Modal Header -->
-          <div class="modal-header">
-            <h4 class="modal-title">Excluir Gasto</h4>
-            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-          </div>
-    
-          <!-- Modal body -->
-          <div class="modal-body">
-            <div class="form-group">              
-              <input id="DescGastoDell" class="form-control" type="text" name="GASTO" style="width: auto;" required readonly>                          
-            </div>
-          </div>    
-          
-          <!-- Modal footer -->
-          <div class="modal-footer">
-            <button type="submit" class="btn btn-success" name="CONF_DEL" value="true">Confirmar</button> 
-          </form>          
-            <div class="btn btn-danger" data-bs-dismiss="modal">Cancelar</div>           
-          </div>
-
-      </div>
-    </div>
-</div>
-
-<!-- ADD GASTOS -->
-<div class="modal" id="modalAdicionarGastos">
-<div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-
-    <form class="w3-container was-validated" action="/MotivoGastos/Click" method="post">
-
-        <!-- Modal Header -->
-        <div class="modal-header">
-        <h4 class="modal-title">Adicionar Gasto</h4>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-        </div>
-
-        <!-- Modal body -->
-        <div class="modal-body">
-        <div class="form-group">              
-            <input class="form-control" type="text" name="nome" id="nome" style="width: auto;" required>
-            <div class="valid-feedback">Valid.</div>
-            <div class="invalid-feedback">escreva a descrição do gasto.</div>
-        </div>
-
-        </div>
-
-        
-        <!-- Modal footer -->
-        <div class="modal-footer">
-        <button type="submit" class="btn btn-success" name="CONFIRMAR_ADD" value="true">Confirmar</button> 
-        </form>          
-        <button class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>           
-        </div>
-
-    </div>
     </div>
 </div>
 
@@ -355,7 +362,8 @@
             <input type="checkbox" name="inPaga"> PAGA
             <hr>
            
-            <button name="CONSUMIR" value="true" class="btn w3-green">Confirmar Consumo</button>
+            <button onclick="ativaCarregamento(this,'btCarregando_ConsuRegGasto')" name="CONSUMIR" value="true" class="btn w3-green">Confirmar</button>
+            <button id="btCarregando_ConsuRegGasto" class="btn btn-success" disabled hidden><span class="spinner-border spinner-border-sm"></span>Aguarde..</button>
           </div>
         </div>    
       

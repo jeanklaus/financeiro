@@ -11,7 +11,8 @@
     <div class="alert alert-danger">
         <strong>CONFIRME</strong> Não vai mais usar esse orçamento?
         <form action="/Carteira/PagarGasto" method="post">
-          <button name="CONF_DELL_ORC" value="true" class="btn btn-info m-2">NAO</button>
+          <button onclick="ativaCarregamento(this,'btCarregando_DelOrcGasto')" name="CONF_DELL_ORC" value="true" class="btn btn-info m-2">NAO</button>          
+          <button id="btCarregando_DelOrcGasto" class="btn btn-info m-2" disabled hidden><span class="spinner-border spinner-border-sm"></span>Aguarde..</button>
           <a href="/Carteira/ConsultaGastos" class="btn btn-info m-2">VOU SIM</a>
         </form>
       </div>            

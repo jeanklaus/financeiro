@@ -149,12 +149,12 @@ async function AddGasto(gasto,mes,ano,conta)
     values = [gasto,global.user.id];
     await conn.query(sql, values); 
 
-    let itemsFatura = await getItemsFaturaPendente(idFatura);    
+    let itemsFatura = await getItemsFaturaPendente(idFatura); 
 
     if(itemsFatura.length > 0)
     {
         sql =  `UPDATE Fatura 
-        SET inFatura = 0   
+        SET inPaga = 0   
         WHERE id = ?                     
         AND usuario = ?`;
     
@@ -164,15 +164,13 @@ async function AddGasto(gasto,mes,ano,conta)
     else
     {
         sql =  `UPDATE Fatura 
-        SET inFatura = 1 
+        SET inPaga = 1 
         WHERE id = ?                     
         AND usuario = ?`;
     
         values = [idFatura,global.user.id];
         await conn.query(sql, values); 
     }
-    
-
 }
 
 async function getIdFatura(mes,ano,conta)
@@ -256,7 +254,6 @@ async function RemoverItem(fatura,gasto)
 
     await ValidaItensFatura(fatura)
 }
-
 
 async function getIdFaturaDoGasto(gasto){ 
 
