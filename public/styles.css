@@ -7,7 +7,7 @@
   }
 
 .TabelaDinamica td:hover { 
-  background-color:rgb(0, 241, 0);
+  background-color:rgb(116, 236, 116);
 }
 
 .TabelaDinamica a {
@@ -86,5 +86,11 @@ a
   width: 1px;
   height: 8px; 
   margin-right: 3px;  
+}
+
+.NrFormat
+{
+  padding: 0px;margin:0px ;width: 80px;
+  font-weight: bold;
 }
 

@@ -43,7 +43,7 @@
   }
 </style>
 
-<body onload="getValor('ValoSomaFatura','tblItemFatura',1)">
+<body onload="NumFormat()">
 
 <form action="/Fatura/Atualizar" method="post">
 
@@ -55,8 +55,8 @@
     </h1>
 
     <h1 class="w3-left">       
-      <input data-bs-toggle="modal" data-bs-target="#modalSaldo" id="ValorTotal"  style="text-shadow:1px 1px 2px rgb(96, 252, 0);width: 260px;" class="w3-input"
-      type="text" value="Saldo: $ <%= global.user.saldo %>" readonly>
+      <input data-bs-toggle="modal" data-bs-target="#modalSaldo" id="ValorTotal"  style="text-shadow:1px 1px 2px rgb(96, 252, 0);width: 260px;" class="NrFormat w3-input"
+      type="text" value="<%= global.user.saldo %>" readonly>
     </h1>
 
     <br>
@@ -86,9 +86,6 @@
 
   </div>
 
-
-  
-
   <div class="w3-container mt-3">
 
     <div class="row">
@@ -109,13 +106,13 @@
               <td><%= dado.mes %>/<%= dado.ano %></td>
 
               <% if(dado.Situacao != 'PAGO'){ %>
-                 <td style="background-color: rgb(255, 0, 0);"><b><%= dado.Situacao %></b></td>
+                 <td style="background-color: rgb(240, 128, 128);"><b><%= dado.Situacao %></b></td>
                 <% } else { %>
                   <td style="background-color: rgb(0, 255, 0);"><b><%= dado.Situacao %></b></td>
                 <% } %>
 
               <td><%= dado.dt_pagamento %></td>
-              <td><%= dado.vlTotal %></td>
+              <td><input class="btn SemBorda cell NrFormat" value="<%= dado.vlTotal %>"></td>
 
               <% if(dado.Situacao != 'PAGO'){ %>
               <td>
@@ -138,8 +135,7 @@
         <div class="column">
       <% } else { %>
         <div class="column" hidden>
-      <% }  %>
-      <p id="ValoSomaFatura"></p>
+      <% }  %>     
         <table class="w3-small w3-card table w3-border w3-table table-hover TabelaDinamica table-striped" style="width: auto;" id="tblItemFatura" style="width: auto ;">
           <thead>
             <tr>  
@@ -151,10 +147,10 @@
             <% itemsFatura.forEach(dado => { %>
             <tr>
                 <td><%= dado.motivo %></td>
-                <td><%= dado.valor %></td>
+                <td><input class="btn SemBorda cell NrFormat" value="<%= dado.valor %>"></td>
 
                 <% if(dado.situacao != 'PAGO'){ %>
-                  <td style="background-color: rgb(255, 0, 0);"><b><%= dado.situacao %></b></td> 
+                  <td style="background-color: rgb(240, 128, 128);"><b><%= dado.situacao %></b></td> 
                   <td>
                     <button name="DEL_ITEM" value="<%= dado.fatura %>|<%= dado.gasto %>" class="w3-tiny w3-round btn btn-danger">X</button>
                   </td>

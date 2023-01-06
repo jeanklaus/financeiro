@@ -74,7 +74,7 @@ function check(ids = []) {
   }
 }
 
-function getValor(tbValor, tabela, idColl) {
+function getValorLabel(tbValor, tabela, idColl) {
   let soma = 0;
   let total = 0;
 
@@ -90,6 +90,24 @@ function getValor(tbValor, tabela, idColl) {
     }
   }
   document.getElementById(tbValor).innerHTML = `R$ ${total.toFixed(2)}`;
+}
+
+function getValorInput(tbValor, tabela, idColl) {
+  let soma = 0;
+  let total = 0;
+
+  let table = document.getElementById(tabela);
+  let tr = table.getElementsByTagName("tr");
+
+  for (let i = 0; i < tr.length; i++) {
+    let collvalor = tr[i].getElementsByTagName("td")[idColl];
+
+    if (collvalor) {
+      soma = collvalor.textContent || collvalor.innerText;
+      total += parseFloat(soma);
+    }
+  }
+  document.getElementById(tbValor).value = `${total}`;
 }
 
 function formataData(d) {
@@ -312,6 +330,7 @@ function setDadosJanelaCredito(obj) {
   inputMesRegistroCredito.value = parseInt(mes)
   inputFiltroMotivoEdicao.onchange();
   inputFiltroMotivoEdicao.onchange();
+  
 }
 
 function setDadosJanelaGasto(obj) { 
@@ -333,6 +352,7 @@ function setDadosJanelaGasto(obj) {
   inputMesRegistroGasto.value = parseInt(mes)
   inputFiltroMotivoEdicao.onchange();
   inputMesRegistroGasto.onchange();
+  
 }
 
 function setIdRegistroTag(idRegistro,campoId,tpRegistro) {   
@@ -365,7 +385,7 @@ function NumFormat()
 
   for (let index = 0; index < campo.length; index++) {
     let numero = parseFloat(campo[index].value)
-    numero =  numero.toLocaleString('pt-br')
+    numero =  numero.toLocaleString('pt-br',{ minimumFractionDigits : 2 })
     campo[index].value = numero
   }
 

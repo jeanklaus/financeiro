@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="/styles.css"> 
   <script src="/DLL.js"></script> 
 </head>
-<body>
+<body onload="NumFormat()">
 
 
    <!-- ========= MODAL ============ -->
@@ -18,13 +18,13 @@
 
   <div class="w3-container">
     <h1 class="w3-left">
-      <input id="ValorTotal"  style="text-shadow:1px 1px 2px rgb(135, 128, 128);width: 260px;" class="w3-input"
-        type="text" value="Resultado: $ <%= valorTotal.toFixed(2) %>" readonly>
+      <input id="ValorTotal"  style="text-shadow:1px 1px 2px rgb(135, 128, 128);width: 260px;" class="NrFormat w3-input"
+        type="text" value="<%= valorTotal %>" readonly>
     </h1>
 
     <h1 class="w3-left">
-      <input id="ValorTotal"  style="text-shadow:1px 1px 2px rgb(96, 252, 0);width: 260px;" class="w3-input"
-        type="text" value="Saldo: $ <%= global.user.saldo %>" readonly>
+      <input id="ValorTotal"  style="text-shadow:1px 1px 2px rgb(96, 252, 0);width: 260px;" class="NrFormat w3-input"
+        type="text" value="<%= global.user.saldo %>" readonly>
     </h1>
     
   </div>
@@ -108,7 +108,7 @@
             <td><button onclick="setValorEdi(this,'idEditar','valorEditar')" data-bs-toggle="modal" data-bs-target="#modalEditarRegistroCredito" value="<%= c.id %>|<%= c.valor %>" class="w3-tiny w3-round btn-warning">E</button>
                 <button onclick="setIdDell(this,'IdDell')"   data-bs-toggle="modal" data-bs-target="#modalExcluirRegistroCredito" value="<%= c.id %>" class="w3-tiny w3-round btn-danger">X</button></td>
             <td><%= c.descricao %></td> 
-            <td>$ <%= c.valor %></td>             
+            <td><input class="btn SemBorda cell NrFormat" value="<%= c.valor %>"></td>             
             <td><%= c.conta %></td> 
             <td><%= c.dt_recebimento %></td>  
             <td><%= c.dt_previsao %></td>
