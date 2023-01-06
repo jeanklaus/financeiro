@@ -359,4 +359,17 @@ function ativaCarregamento(obj,descricao) {
 
 }
 
-module.exports = { formataData, ConverterData,AnalisaFiltros,getPedacoData,ConvertDateToNumber }
+function NumFormat()
+{
+  let campo = document.getElementsByClassName('NrFormat')
+
+  for (let index = 0; index < campo.length; index++) {
+    let numero = parseFloat(campo[index].value)
+    numero =  numero.toLocaleString('pt-br')
+    campo[index].value = numero
+  }
+
+}
+
+
+module.exports = { formataData, ConverterData,AnalisaFiltros,getPedacoData,ConvertDateToNumber,NumFormat }
