@@ -376,7 +376,18 @@ function ativaCarregamento(obj,descricao) {
 
   obj.hidden = true;
   bt.hidden = false;
+}
 
+function ativaCarregamentoLogin() { 
+
+  let btsCarr = document.getElementsByClassName('btCarr')
+  let btsEnter = document.getElementsByClassName('btEnter')
+
+  for (let i = 0; i < btsCarr.length; i++) {
+    btsCarr[i].hidden = false;
+    btsEnter[i].hidden = true;
+  }
+ 
 }
 
 function NumFormat()

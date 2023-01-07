@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+	<title>Entrar</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="icon" type="image/png" href="images/icons/favicon.ico"/>
+	<link rel="stylesheet" type="text/css" href="vendor/bootstrap/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" type="text/css" href="fonts/iconic/css/material-design-iconic-font.min.css">
+	<link rel="stylesheet" type="text/css" href="vendor/animate/animate.css">
+	<link rel="stylesheet" type="text/css" href="vendor/css-hamburgers/hamburgers.min.css">
+	<link rel="stylesheet" type="text/css" href="vendor/animsition/css/animsition.min.css">
+	<link rel="stylesheet" type="text/css" href="vendor/select2/select2.min.css">
+	<link rel="stylesheet" type="text/css" href="vendor/daterangepicker/daterangepicker.css">
+	<link rel="stylesheet" type="text/css" href="css/util.css">
+	<link rel="stylesheet" type="text/css" href="css/main.css">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script> 
+    <script src="https://www.w3schools.com/lib/w3.js"></script>
+    <link rel="stylesheet" href="/styles.css">
+    <script src="/DLL.js"></script>
+<!--===============================================================================================-->
+</head>
+<body>
+
+    <div class="modal" id="modalCadastroUsuario">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+    
+            <form class="w3-container was-validated" action="/Login/CadastroUsuario" method="post">
+    
+              <div class="modal-header">
+                <h4 class="modal-title">Cadastro de usuario</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+              </div>
+             
+              <div class="modal-body">
+                <div class="form-group"> 
+    
+                  <input onkeyup="this.value = this.value.toUpperCase();" class="form-control" type="text" name="nome" placeholder="Nome completo" style="width: 400px;" required>
+                  <br>
+                  
+                  <input onkeyup="this.value = this.value.toUpperCase();" class="form-control" type="text" name="usuario" placeholder="Usuario" style="width: auto;" required maxlength="10">
+                  <div class="invalid-feedback">caracteres permitidos Max :10</div>
+                  <br>
+    
+                  <input onkeyup="this.value = this.value.toLowerCase();" class="form-control" type="email" name="email" placeholder="E-mail" style="width: 400px;" required>
+                  <div class="invalid-feedback">insira um e-mail valido.</div>
+                  <br>
+    
+                  <input class="form-control" type="password" name="senha" placeholder="Senha" style="width: auto;" required maxlength="10">
+                  <div class="invalid-feedback">caracteres permitidos Max :10</div>
+                  <br>
+    
+                  <input class="form-control" type="password" name="confirmaSenha" placeholder="Confirma senha" style="width: auto;" required maxlength="10">
+                  <br>
+                 
+                  <button name="CADASTRAR" value="true" class="btn w3-green">Finalizar</button>
+                </div>
+              </div>  
+             
+              <div class="modal-footer">  
+               
+              </form>          
+                <div class="btn btn-danger" data-bs-dismiss="modal">Cancelar</div> 
+              </div>
+    
+          </div>
+        </div>
+      </div>
+<form action="/Login" method="post">
+	<div class="limiter">
+		<div class="container-login100">
+			<div class="wrap-login100">
+				<form class="login100-form validate-form">
+					<span class="login100-form-title p-b-26">
+						Bem-Vindo
+					</span>
+					<span class="login100-form-title p-b-48">
+						<i class="zmdi">J.B.M.H</i>
+					</span>
+
+           
+					<div class="wrap-input100 validate-input" data-validate = "Valid email is: a@b.c">
+						<input class="input100" type="text" name="login">
+						<span data-placeholder="Usuario"></span>
+					</div>
+
+					<div class="wrap-input100 validate-input" data-validate="Enter password">					
+						<input class="input100" type="password" name="senha">
+						<span data-placeholder="Senha"></span>
+					</div>
+                   
+					<div class="container-login100-form-btn btEnter">
+						<div class="wrap-login100-form-btn btEnter">
+							<div class="login100-form-bgbtn btEnter"></div>
+							<button onclick="ativaCarregamentoLogin()" type="submit" class="login100-form-btn btEnter">Entrar</button>
+						</div>
+					</div>
+            
+                    <div hidden class="container-login100-form-btn btCarr">
+						<div hidden class="wrap-login100-form-btn btCarr">
+							<div hidden class="login100-form-bgbtn btCarr"></div>
+							<button hidden class="login100-form-btn btCarr">
+								Aguarde...
+							</button>
+						</div>
+					</div>
+
+					<div data-bs-toggle="modal" data-bs-target="#modalCadastroUsuario" class="container-login100-form-btn">
+						<div class="wrap-login100-form-btn">
+							<div class="login100-form-bgbtn"></div>
+							<div class="login100-form-btn">
+								Cadastrar
+                            </div>
+						</div>
+					</div>
+
+					<div hidden class="text-center p-t-115">
+						<span class="txt1">
+							Don’t have an account?
+						</span>
+
+						<a class="txt2" href="#">
+							Sign Up
+						</a>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	
+
+	<div id="dropDownSelect1"></div>
+
+</form>
+</body>
+</html>

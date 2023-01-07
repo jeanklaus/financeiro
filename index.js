@@ -11,7 +11,7 @@ const route_fatura = require('./routes/route_fatura');
 app.set('view engine','ejs');
 app.use(express.static('public'));
 
-//LOGIN - PAGINA INICIAL
+//login2 - PAGINA INICIAL
 app.get('/', (req,res) => {
     try
     {
@@ -19,7 +19,7 @@ app.get('/', (req,res) => {
         global.connection = false;
         global.logado = false;
         global.conectado = false;
-        res.render('login');
+        res.render('login2');
     }
     catch(erro)   
     {  
@@ -39,7 +39,7 @@ app.get('/Menu', async (req,res) => {
         }
         else
         {
-            res.render('login');
+            res.render('login2');
         }
     }
     catch(erro)
