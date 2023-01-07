@@ -108,11 +108,12 @@
                         <input id="campoDataGasto" class="w3-input w3-border form-control me-2" type="date" name="dtVencimento" required>
                         <br>
                     
-                        <select class="form-control me-2" name="formaPagamento" style="width: auto;" required>
-                        <option value="" disabled selected>Forma de Pagamento</option>           
-                        <option value="DINHEIRO">DINHEIRO</option>
-                        <option value="CREDITO">CARTAO DE CREDITO</option>
-                        </select>
+                        <select class="form-control me-2" name="formaPagamento" style="width: auto;" required>      
+                          <option value="" disabled selected>Forma de Pagamento</option>              
+                          <% lsFormasPag.forEach(reg => { %>
+                              <option value="<%= reg.id %>"><%= reg.descricao %></option>
+                          <% }); %>
+                        </select>                       
                         <br>
                     
                         <select class="form-control me-2" name="conta" style="width: auto;" required>      
@@ -196,11 +197,11 @@
                                 <td hidden><%= g.mes %></td>
 
                                 <% if(g.tag){ %>
-                                <td onclick="setIdRegistroTag('<%= g.id %>','idRegistroTagDel','GASTO')" class="pointer" data-bs-toggle="modal" data-bs-target="#modalExcluirTag"><%= g.valor %>
+                                <td onclick="setIdRegistroTag('<%= g.id %>','idRegistroTagDel','GASTO')" class="pointer" data-bs-toggle="modal" data-bs-target="#modalExcluirTag"><input class="btn SemBorda cell NrFormat" value="<%= g.valor %>">
                                     <span class="w3-tag w3-tiny w3-black"><%= g.tag %></span>
                                 </td> 
                                 <% }else{ %>
-                                    <td onclick="setIdRegistroTag('<%= g.id %>','idRegistroTagAdd','GASTO')" class="pointer" data-bs-toggle="modal" data-bs-target="#modalAdicionarTag"><%= g.valor %></td> 
+                                    <td onclick="setIdRegistroTag('<%= g.id %>','idRegistroTagAdd','GASTO')" class="pointer" data-bs-toggle="modal" data-bs-target="#modalAdicionarTag"><input class="btn SemBorda cell NrFormat" value="<%= g.valor %>"></td> 
                                 <% } %>
 
 

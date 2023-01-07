@@ -11,13 +11,13 @@ const Fatura = require('../services/s_fatura')
 //[3]=PAGO
 //[4]=ORCAMENTO
 
-let SELECT_GERAL = `SELECT g.id,g.valor,g.dt_registro,g.dt_vencimento,formaPagamento,m.descricao as motivo,s.descricao as situacao,
+let SELECT_GERAL = `SELECT g.id,g.valor,g.dt_registro,g.dt_vencimento,f.descricao as formaPagamento,m.descricao as motivo,s.descricao as situacao,
 c.descricao as conta,inOrcamentario,parcela,inFatura,(SELECT YEAR(g.dt_vencimento)) as ano ,(SELECT MONTH(g.dt_vencimento)) as mes,tag
 FROM Gastos as g
 INNER JOIN MotivoGastos as m ON m.id = g.motivo
 INNER JOIN SituacaoGastos as s ON s.id = g.situacao
-INNER JOIN ContaBancaria as c ON c.id = g.contaBancaria`;
-
+INNER JOIN ContaBancaria as c ON c.id = g.contaBancaria
+INNER JOIN FormaPagamento as f ON f.id = g.formaPagamento`;
 
 //SELECT 
 async function getAll(){   

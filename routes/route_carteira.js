@@ -11,6 +11,7 @@ const Fatura = require('../services/s_fatura')
 const LocalProc = require('../public/localProcCarteira');
 const Tag = require('../services/s_tag')
 const ControleValidade = require('../services/s_controleValidade')
+const FormaPag = require('../services/s_formaPag')
 
 const router = express.Router();
 router.use(bodyparser.urlencoded({ extended: false }));
@@ -47,6 +48,7 @@ router.get('/ConsultaGastosResumoAnual', async (req, res) => {
         let Contas = await ContaBancaria.getAll();    
         let ListaCreditos = await Credito.getAll(); 
         let ListaGastos = await Gasto.getAll();   
+        let lsFormasPag = await FormaPag.getAll()       
 
         let data = new Date()
         let anoSelect = data.getFullYear()
@@ -66,7 +68,7 @@ router.get('/ConsultaGastosResumoAnual', async (req, res) => {
        
         res.render('carteira_view/consultaGastosAnual', {
             totaisCredi, resumoCredi, totais, anoSelect, resumo,
-            valorTotal,filtros,Origens,Contas,ListaCreditos,ListaGastos,liquidez
+            valorTotal,filtros,Origens,Contas,ListaCreditos,ListaGastos,liquidez,lsFormasPag
        });
     }
     catch (erro) {
@@ -87,7 +89,8 @@ router.post('/ConsultandoGastosResumoAnual', async (req, res) => {
         let Origens = await Origem.getAll();
         let Contas = await ContaBancaria.getAll();
         let ListaCreditos = await Credito.getAll();
-        let ListaGastos = await Gasto.getAll();  
+        let ListaGastos = await Gasto.getAll(); 
+        let lsFormasPag = await FormaPag.getAll() 
 
         let data = new Date()
         let anoSelect = data.getFullYear();
@@ -112,7 +115,7 @@ router.post('/ConsultandoGastosResumoAnual', async (req, res) => {
 
         res.render('carteira_view/consultaGastosAnual', {
             totaisCredi, resumoCredi, totais, anoSelect, resumo,
-            valorTotal,filtros,Origens,Contas,ListaCreditos,ListaGastos,liquidez
+            valorTotal,filtros,Origens,Contas,ListaCreditos,ListaGastos,liquidez,lsFormasPag
         });
     }
     catch (erro) {
@@ -133,7 +136,8 @@ router.get('/ConsultandoGastosResumoAnual:ano', async (req, res) => {
         let Origens = await Origem.getAll();
         let Contas = await ContaBancaria.getAll();
         let ListaCreditos = await Credito.getAll();
-        let ListaGastos = await Gasto.getAll();  
+        let ListaGastos = await Gasto.getAll(); 
+        let lsFormasPag = await FormaPag.getAll() 
 
         let data = new Date()
         let anoSelect = data.getFullYear();
@@ -158,7 +162,7 @@ router.get('/ConsultandoGastosResumoAnual:ano', async (req, res) => {
 
         res.render('carteira_view/consultaGastosAnual', {
             totaisCredi, resumoCredi, totais, anoSelect, resumo,
-            valorTotal,filtros,Origens,Contas,ListaCreditos,ListaGastos,liquidez
+            valorTotal,filtros,Origens,Contas,ListaCreditos,ListaGastos,liquidez,lsFormasPag
         });
     }
     catch (erro) {
@@ -174,14 +178,17 @@ router.get('/ConsultaGastos', async (req, res) => {
         filtros.motivoGastos = {}
         filtros.conta = {}
         filtros.Situacao = {}
+        filtros.formaPagamento = {}
+
         wheres = []
 
         let Gastos = await Gasto.getAll();
         let valorTotal = LocalProc.getCustoTotal(Gastos);
         let Motivos = await MotivoGastos.getAll();
         let Contas = await ContaBancaria.getAll();
+        let lsFormasPag = await FormaPag.getAll()   
 
-        res.render('carteira_view/inicialGastos', { Gastos, valorTotal, Motivos, Contas, filtros });
+        res.render('carteira_view/inicialGastos', { Gastos, valorTotal, Motivos, Contas, filtros,lsFormasPag });
     }
     catch (erro) {
         global.conectado = false;
@@ -194,6 +201,8 @@ router.post('/ClickGastos', async (req, res) => {
         let Gastos = []
         let Motivos = await MotivoGastos.getAll();
         let Contas = await ContaBancaria.getAll();
+        let lsFormasPag = await FormaPag.getAll()  
+
         let inReflash = false
         wheres = []
 
@@ -231,8 +240,8 @@ router.post('/ClickGastos', async (req, res) => {
             }
 
             if (req.body.formaPagamento) {
-                filtros.formaPagamento = req.body.formaPagamento;
-                wheres.push(`formaPagamento = '${filtros.formaPagamento}'`);
+                [filtros.formaPagamento.id, filtros.formaPagamento.descricao] = req.body.formaPagamento.split('|');               
+                wheres.push(`formaPagamento = '${filtros.formaPagamento.id}'`);
             }
 
             if (req.body.conta) {
@@ -258,7 +267,7 @@ router.post('/ClickGastos', async (req, res) => {
             //======================================
             Gastos = await Gasto.getAll_Filtros(Func.AnalisaFiltros(wheres));
             let valorTotal = LocalProc.getCustoTotal(Gastos);
-            return res.render('carteira_view/inicialGastos', { Gastos, valorTotal, Motivos, Contas, filtros });
+            return res.render('carteira_view/inicialGastos', { Gastos, valorTotal, Motivos, Contas, filtros,lsFormasPag });
         }
 
         if(filtros.motivoGastos.descricao)
@@ -283,10 +292,12 @@ router.get('/ClickGastos:motivo', async (req, res) => {
         filtros.motivoGastos = {}
         filtros.conta = {}
         filtros.Situacao = {}
+        filtros.formaPagamento = {}
 
         let Gastos = []
         let Motivos = await MotivoGastos.getAll();
         let Contas = await ContaBancaria.getAll();
+        let lsFormasPag = await FormaPag.getAll() 
         wheres = []
 
         let motivo = req.params.motivo
@@ -301,7 +312,7 @@ router.get('/ClickGastos:motivo', async (req, res) => {
         //======================================
         Gastos = await Gasto.getAll_Filtros(Func.AnalisaFiltros(wheres));
         let valorTotal = LocalProc.getCustoTotal(Gastos);
-        return res.render('carteira_view/inicialGastos', { Gastos, valorTotal, Motivos, Contas, filtros });
+        return res.render('carteira_view/inicialGastos', { Gastos, valorTotal, Motivos, Contas, filtros,lsFormasPag });
 
     }
     catch (erro) {
@@ -364,7 +375,7 @@ router.post('/CofirmarRegistroGastos', async (req, res) => {
         }
         else
         {
-            if(req.body.formaPagamento == "CREDITO")
+            if(req.body.formaPagamento == 2)//CARTAO DE CREDITO
             {
                 inFatura = true;
             }

@@ -102,16 +102,17 @@
         <% Motivos.forEach(m => { %>
           <option value="<%= m.id %>|<%= m.descricao %>"><%= m.descricao %></option>
         <% }); %>
-      </select>
+      </select>      
 
       <select class="me-2 w3-tiny form-control" name="formaPagamento" style="width: auto;">
-        <% if(filtros.formaPagamento) { %>
-          <option value="<%= filtros.formaPagamento %>|" selected><%= filtros.formaPagamento %></option>
+        <% if(filtros.formaPagamento.id) { %>
+          <option value="<%= filtros.formaPagamento.id %>|filtros.formaPagamento.descricao" selected><%= filtros.formaPagamento.descricao %></option>
         <% }else { %>
           <option value="" disabled selected>Forma de Pagamento</option>
         <% } %>     
-          <option value="DINHEIRO">DINHEIRO</option>
-          <option value="CARTAO">CARTAO</option>
+        <% lsFormasPag.forEach(reg => { %>
+          <option value="<%= reg.id %>|<%= reg.descricao %>"><%= reg.descricao %></option>
+      <% }); %>
       </select>
 
       <select class="me-2 w3-tiny form-control" name="conta" style="width: auto;">
